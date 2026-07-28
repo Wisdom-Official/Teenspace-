@@ -77,7 +77,6 @@
       font-size: 14px;
     }
 
-    /* Stepper Header - Single Line Layout with Spacing */
     .stepper {
       display: flex;
       justify-content: space-between;
@@ -91,10 +90,10 @@
     .step-item {
       display: flex;
       align-items: center;
-      gap: 10px; /* Increased gap between number and label */
+      gap: 10px;
       position: relative;
       z-index: 2;
-      white-space: nowrap; /* Keep each step item content on one line */
+      white-space: nowrap;
       flex-shrink: 0;
     }
 
@@ -131,14 +130,13 @@
       font-size: 13px;
       font-weight: 600;
       color: var(--text-muted);
-      white-space: nowrap; /* Ensures label text doesn't wrap to next line */
+      white-space: nowrap;
     }
 
     .step-item.active .step-label {
       color: var(--text-main);
     }
 
-    /* Form Content */
     form {
       padding: 0 35px 35px 35px;
     }
@@ -228,7 +226,6 @@
       cursor: pointer;
     }
 
-    /* Buttons */
     .btn-container {
       display: flex;
       justify-content: space-between;
@@ -275,23 +272,19 @@
       box-shadow: none !important;
     }
 
-    /* Alerts */
     .alert {
       padding: 14px;
       border-radius: 12px;
       font-size: 13px;
       margin-bottom: 20px;
-      display: none;
     }
 
     .alert-danger {
       background: rgba(239, 68, 68, 0.1);
       border: 1px solid rgba(239, 68, 68, 0.2);
       color: #fca5a5;
-      display: block;
     }
 
-    /* Success Screen */
     .success-screen {
       text-align: center;
       padding: 40px 35px;
@@ -371,15 +364,15 @@
 
     <!-- Stepper Indicator -->
     <div class="stepper" id="stepper">
-      <div class="step-item active" id="indicatorStep0">
+      <div class="step-item active" id="indicatorStep1">
         <div class="step-number">1</div>
         <div class="step-label">Personal</div>
       </div>
-      <div class="step-item" id="indicatorStep1">
+      <div class="step-item" id="indicatorStep2">
         <div class="step-number">2</div>
         <div class="step-label">Location</div>
       </div>
-      <div class="step-item" id="indicatorStep2">
+      <div class="step-item" id="indicatorStep3">
         <div class="step-number">3</div>
         <div class="step-label">Academic</div>
       </div>
@@ -389,7 +382,7 @@
       <div id="formAlert" class="alert hidden"></div>
 
       <!-- STEP 1: Personal Info -->
-      <div class="form-section active" id="step0">
+      <div class="form-section active" id="step1">
         <div class="form-group">
           <label for="name">Full Name</label>
           <input type="text" id="name" placeholder="Enter your full name" required>
@@ -429,7 +422,7 @@
       </div>
 
       <!-- STEP 2: Location & Zone -->
-      <div class="form-section" id="step1">
+      <div class="form-section" id="step2">
         <div class="form-group">
           <label for="district">District</label>
           <select id="district" required>
@@ -468,7 +461,7 @@
       </div>
 
       <!-- STEP 3: Academic & Submit -->
-      <div class="form-section" id="step2">
+      <div class="form-section" id="step3">
         <div class="form-group">
           <label for="school">School / College Name</label>
           <input type="text" id="school" placeholder="Enter your institution name" required>
@@ -507,7 +500,7 @@
           <button type="button" class="btn-secondary" onclick="prevStep()">Back</button>
           <button type="submit" class="btn-primary" id="submitBtn" disabled>
             <span class="btn-text">Submit Registration</span>
-            <span class="spinner hidden" id="submitSpinner"></span>
+            <span class="spinner hidden"></span>
           </button>
         </div>
       </div>
@@ -522,150 +515,7 @@
     </div>
   </div>
 
-  <script>
-    let currentStep = 0;
-    const formSections = document.querySelectorAll('.form-section');
-    const stepIndicators = document.querySelectorAll('.step-item');
-
-    // Function to check validity of current step
-    function validateStep(stepIndex) {
-      const section = formSections[stepIndex];
-      const inputs = section.querySelectorAll('input[required], select[required]');
-      let isValid = true;
-
-      inputs.forEach(input => {
-        const formGroup = input.closest('.form-group');
-        if (!input.checkValidity() || input.value.trim() === "") {
-          formGroup.classList.add('error');
-          isValid = false;
-        } else {
-          formGroup.classList.remove('error');
-        }
-      });
-
-      return isValid;
-    }
-
-    // When user types something, remove the error text immediately
-    document.querySelectorAll('input, select').forEach(element => {
-      element.addEventListener('input', function() {
-        if (this.checkValidity() && this.value.trim() !== "") {
-          this.closest('.form-group').classList.remove('error');
-        }
-      });
-    });
-
-    // Move to next step
-    function nextStep() {
-      if (validateStep(currentStep)) {
-        formSections[currentStep].classList.remove('active');
-        stepIndicators[currentStep].classList.add('completed');
-        stepIndicators[currentStep].classList.remove('active');
-        
-        currentStep++;
-        
-        formSections[currentStep].classList.add('active');
-        stepIndicators[currentStep].classList.add('active');
-      }
-    }
-
-    // Move to previous step
-    function prevStep() {
-      formSections[currentStep].classList.remove('active');
-      stepIndicators[currentStep].classList.remove('active');
-      stepIndicators[currentStep - 1].classList.remove('completed');
-      
-      currentStep--;
-      
-      formSections[currentStep].classList.add('active');
-      stepIndicators[currentStep].classList.add('active');
-    }
-
-    // Logic for "Same as Phone Number" Checkbox
-    document.getElementById('sameAsPhone').addEventListener('change', function() {
-      const phoneVal = document.getElementById('phone').value;
-      const whatsappInput = document.getElementById('whatsapp');
-      
-      if (this.checked) {
-        whatsappInput.value = phoneVal;
-        if (whatsappInput.checkValidity()) {
-          whatsappInput.closest('.form-group').classList.remove('error');
-        }
-      } else {
-        whatsappInput.value = '';
-      }
-    });
-
-    // Logic for "Other" standard dropdown
-    document.getElementById('standard').addEventListener('change', function() {
-      const otherGroup = document.getElementById('otherStandardGroup');
-      const otherInput = document.getElementById('otherStandard');
-      
-      if (this.value === 'Other') {
-        otherGroup.classList.remove('hidden');
-        otherInput.setAttribute('required', 'true');
-      } else {
-        otherGroup.classList.add('hidden');
-        otherInput.removeAttribute('required');
-        otherGroup.classList.remove('error');
-      }
-    });
-
-    // Logic for Consent Checkbox to enable submit button
-    document.getElementById('consentCheck').addEventListener('change', function() {
-      document.getElementById('submitBtn').disabled = !this.checked;
-    });
-
-    // Handle Form Submission
-    document.getElementById('registrationForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      if (validateStep(currentStep)) {
-        const btnText = document.querySelector('.btn-text');
-        const spinner = document.getElementById('submitSpinner');
-        
-        btnText.textContent = 'Submitting...';
-        spinner.classList.remove('hidden');
-        
-        setTimeout(() => {
-          document.getElementById('registrationForm').classList.add('hidden');
-          document.getElementById('formHeader').classList.add('hidden');
-          document.getElementById('stepper').classList.add('hidden');
-          document.getElementById('successScreen').classList.add('active');
-          
-          btnText.textContent = 'Submit Registration';
-          spinner.classList.add('hidden');
-        }, 1500);
-      }
-    });
-
-    // Reset Form for another registration
-    function resetFormState() {
-      document.getElementById('registrationForm').reset();
-      
-      formSections[currentStep].classList.remove('active');
-      stepIndicators[currentStep].classList.remove('active');
-      
-      currentStep = 0;
-      
-      stepIndicators.forEach(indicator => {
-        indicator.classList.remove('completed', 'active');
-      });
-      document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-      
-      document.getElementById('otherStandardGroup').classList.add('hidden');
-      document.getElementById('submitBtn').disabled = true;
-
-      document.getElementById('successScreen').classList.remove('active');
-      document.getElementById('registrationForm').classList.remove('hidden');
-      document.getElementById('formHeader').classList.remove('hidden');
-      document.getElementById('stepper').classList.remove('hidden');
-      
-      formSections[0].classList.add('active');
-      stepIndicators[0].classList.add('active');
-    }
-  </script>
+  <!-- External Script File Link -->
+  <script src="script.js"></script>
 </body>
 </html>
-
-
