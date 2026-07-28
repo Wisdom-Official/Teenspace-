@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teenspace - Student Registration Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #07080c;
+      --card-bg: rgba(16, 18, 27, 0.75);
+      --border-glow: rgba(236, 72, 153, 0.2);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --pink: #ec4899;
+      --purple: #a855f7;
+      --blue: #3b82f6;
+      --gradient-brand: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #3b82f6 100%);
+      --radius-xl: 24px;
+      --radius-md: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient dynamic glow effects */
+    body::before {
+      content: '';
+      position: absolute;
+      top: -15vh;
+      left: -15vw;
+      width: 55vw;
+      height: 55vw;
+      background: radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, rgba(0,0,0,0) 70%);
+      z-index: -1;
+      filter: blur(40px);
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      bottom: -15vh;
+      right: -15vw;
+      width: 55vw;
+      height: 55vw;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.12) 0%, rgba(0,0,0,0) 70%);
+      z-index: -1;
+      filter: blur(40px);
+    }
+
+    .form-shell {
+      width: 100%;
+      max-width: 600px;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), 0 0 30px rgba(168, 85, 247, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-shell::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--gradient-brand);
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .brand-logo {
+      font-weight: 800;
+      font-size: 1.85rem;
+      letter-spacing: -0.03em;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .brand-logo span {
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .brand-header p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    /* Pro Stepper */
+    .stepper-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+      position: relative;
+    }
+
+    .step-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .step-node.active .step-circle {
+      background: var(--gradient-brand);
+      border-color: transparent;
+      color: #ffffff;
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+      transform: scale(1.05);
+    }
+
+    .step-node.completed .step-circle {
+      background: #10b981;
+      border-color: transparent;
+      color: #ffffff;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+    }
+
+    .step-txt {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      transition: color 0.3s ease;
+    }
+
+    .step-node.active .step-txt {
+      color: #ffffff;
+    }
+
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: var(--border-subtle);
+      margin: 0 10px;
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .step-line.filled::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #10b981;
+      animation: fillProgress 0.4s ease forwards;
+    }
+
+    @keyframes fillProgress {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
+
+    /* Form Content Panels */
+    .form-panel {
+      display: none;
+      animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .form-panel.active {
+      display: block;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-heading {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+    }
+
+    .field-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-main);
+      letter-spacing: 0.01em;
+    }
+
+    .star-req {
+      color: var(--pink);
+    }
+
+    .tag-opt {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 400;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="email"],
+    select {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      color: #ffffff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    input:hover, select:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    input:focus, select:focus {
+      border-color: var(--purple);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.15);
+    }
+
+    input.invalid, select.invalid {
+      border-color: #f43f5e;
+      box-shadow: 0 0 0 4px rgba(244, 63, 94, 0.15);
+    }
+
+    select option {
+      background-color: #12141c;
+      color: #ffffff;
+      padding: 10px;
+    }
+
+    .msg-error {
+      display: block;
+      font-size: 0.75rem;
+      color: #f43f5e;
+      margin-top: 6px;
+      min-height: 16px;
+    }
+
+    /* Checkbox Pro Styling */
+    .checkbox-wrap {
+      margin-bottom: 20px;
+    }
+
+    .checkbox-custom {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      user-select: none;
+    }
+
+    .checkbox-custom input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--purple);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    /* Buttons Bar */
+    .btn-row {
+      display: flex;
+      gap: 14px;
+      margin-top: 32px;
+    }
+
+    .align-end { justify-content: flex-end; }
+    .align-between { justify-content: space-between; }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .btn-main {
+      background: var(--gradient-brand);
+      color: #ffffff;
+      box-shadow: 0 4px 20px rgba(236, 72, 153, 0.35);
+    }
+
+    .btn-main:hover:not(:disabled) {
+      opacity: 0.92;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(236, 72, 153, 0.5);
+    }
+
+    .btn-alt {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+    }
+
+    .btn-alt:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Review Card Elements */
+    .review-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .review-tile {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    .review-tile:hover {
+      border-color: rgba(168, 85, 247, 0.3);
+    }
+
+    .review-tile-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 8px;
+    }
+
+    .review-tile-head h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--purple);
+    }
+
+    .action-link {
+      background: none;
+      border: none;
+      color: var(--pink);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .action-link:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    .review-grid-data {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    .review-grid-data span {
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    .privacy-notice {
+      font-size: 0.775rem;
+      color: var(--text-muted);
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+
+    /* Success Screen Modern */
+    .success-pane {
+      text-align: center;
+      padding: 40px 10px;
+      animation: zoomIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .success-badge-icon {
+      width: 76px;
+      height: 76px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.25rem;
+      margin: 0 auto 24px;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
+    }
+
+    .success-pane h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .success-pane p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Dynamic Alert Box */
+    .pro-alert {
+      padding: 14px 18px;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      margin-bottom: 24px;
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: #f43f5e;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+    }
+
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-1px, 0, 0); }
+      20%, 80% { transform: translate3d(2px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-3px, 0, 0); }
+      40%, 60% { transform: translate3d(3px, 0, 0); }
+    }
+
+    /* Spinner loader */
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media(max-width: 520px) {
+      .form-shell { padding: 24px 18px; }
+      .review-grid-data { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-shell">
+    <header class="brand-header form-header">
+      <div class="brand-logo">teenspace<span>.</span></div>
+      <h1>Student Registration Portal</h1>
+      <p>Fill out your details to join the conference</p>
+    </header>
+
+    <!-- Stepper Navigation -->
+    <nav class="stepper-container stepper" aria-label="Progress">
+      <div class="step-node active" data-step="1">
+        <div class="step-circle">1</div>
+        <span class="step-txt">Details</span>
+      </div>
+      <div class="step-line" id="line1"></div>
+      <div class="step-node" data-step="2">
+        <div class="step-circle">2</div>
+        <span class="step-txt">Contact</span>
+      </div>
+      <div class="step-line" id="line2"></div>
+      <div class="step-node" data-step="3">
+        <div class="step-circle">3</div>
+        <span class="step-txt">Education</span>
+      </div>
+      <div class="step-line" id="line3"></div>
+      <div class="step-node" data-step="4">
+        <div class="step-circle">✓</div>
+        <span class="step-txt">Review</span>
+      </div>
+    </nav>
+
+    <!-- Multi-Step Pro Form -->
+    <form id="registrationForm" novalidate>
+      
+      <!-- Dynamic Error Notification Banner -->
+      <div id="formAlert" class="pro-alert hidden" role="alert">
+        <span>⚠️</span> <span id="alertMessage">Please correct the highlighted fields.</span>
+      </div>
+
+      <!-- PANEL 1: Personal Details -->
+      <section class="form-panel active" data-tab="1">
+        <h2 class="panel-heading">Personal Information</h2>
+        
+        <div class="field-group">
+          <label for="studentName">Full Name <span class="star-req">*</span></label>
+          <input type="text" id="studentName" placeholder="Enter student's full name" autocomplete="name" required>
+          <span class="msg-error" id="studentNameError"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="age">Age <span class="star-req">*</span></label>
+          <input type="number" id="age" min="3" max="30" placeholder="Enter age (3-30)" required>
+          <span class="msg-error" id="ageError"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="district">District <span class="star-req">*</span></label>
+          <select id="district" required>
+            <option value="">-- Choose District --</option>
+            <option value="CalicutNorth">Calicut North</option>
+            <option value="CalicutSouth">Calicut South</option>
+          </select>
+          <span class="msg-error" id="districtError"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="panchayat">Panchayat / Local Body <span class="star-req">*</span></label>
+          <input type="text" id="panchayat" placeholder="Enter panchayat / municipality" required>
+          <span class="msg-error" id="panchayatError"></span>
+        </div>
+
+        <div class="btn-row align-end">
+          <button type="button" class="btn btn-main" onclick="nextTab(1)">Next Step &rarr;</button>
+        </div>
+      </section>
+
+      <!-- PANEL 2: Contact Details -->
+      <section class="form-panel" data-tab="2">
+        <h2 class="panel-heading">Contact & Communication</h2>
+
+        <div class="field-group">
+          <label for="phone">Mobile Phone Number <span class="star-req">*</span></label>
+          <input type="tel" id="phone" maxlength="10" placeholder="10-digit mobile number" autocomplete="tel" required>
+          <span class="msg-error" id="phoneError"></span>
+        </div>
+
+        <div class="checkbox-wrap">
+          <label class="checkbox-custom">
+            <input type="checkbox" id="sameAsPhone">
+            <span>WhatsApp number is identical to mobile number</span>
+          </label>
+        </div>
+
+        <div class="field-group">
+          <label for="whatsapp">WhatsApp Number <span class="star-req">*</span></label>
+          <input type="tel" id="whatsapp" maxlength="10" placeholder="10-digit WhatsApp number" required>
+          <span class="msg-error" id="whatsappError"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="email">Email Address <span class="tag-opt">(Optional)</span></label>
+          <input type="email" id="email" placeholder="student@example.com" autocomplete="email">
+          <span class="msg-error" id="emailError"></span>
+        </div>
+
+        <div class="btn-row align-between">
+          <button type="button" class="btn btn-alt" onclick="prevTab(2)">&larr; Back</button>
+          <button type="button" class="btn btn-main" onclick="nextTab(2)">Next Step &rarr;</button>
+        </div>
+      </section>
+
+      <!-- PANEL 3: Education Details -->
+      <section class="form-panel" data-tab="3">
+        <h2 class="panel-heading">Educational Background</h2>
+
+        <div class="field-group">
+          <label for="school">School / Institution Name <span class="star-req">*</span></label>
+          <input type="text" id="school" placeholder="Enter school name" required>
+          <span class="msg-error" id="schoolError"></span>
+        </div>
+
+        <div class="field-group">
+          <label for="standard">Standard / Class <span class="star-req">*</span></label>
+          <select id="standard" required>
+            <option value="">-- Choose Class --</option>
+            <option value="Class 7">Std 7</option>
+            <option value="Class 8">Std 8</option>
+            <option value="Class 9">Std 9</option>
+            <option value="Class 10">Std 10</option>
+            <option value="plusone">+1 Higher Secondary</option>
+            <option value="plustwo">+2 Higher Secondary</option>
+            <option value="Other">Other</option>
+          </select>
+          <span class="msg-error" id="standardError"></span>
+        </div>
+
+        <div class="btn-row align-between">
+          <button type="button" class="btn btn-alt" onclick="prevTab(3)">&larr; Back</button>
+          <button type="button" class="btn btn-main" onclick="nextTab(3)">Review Submission &rarr;</button>
+        </div>
+      </section>
+
+      <!-- PANEL 4: Review & Submit -->
+      <section class="form-panel" data-tab="4">
+        <h2 class="panel-heading">Review & Confirm</h2>
+        <p class="review-desc">Please verify your information before completing your registration.</p>
+
+        <div class="review-tile">
+          <div class="review-tile-head">
+            <h3>Personal Information</h3>
+            <button type="button" class="action-link" onclick="goToTab(1)">Edit</button>
+          </div>
+          <div class="review-grid-data">
+            <div>Name: <span id="revName">-</span></div>
+            <div>Age: <span id="revAge">-</span></div>
+            <div>District: <span id="revDistrict">-</span></div>
+            <div>Panchayat: <span id="revPanchayat">-</span></div>
+          </div>
+        </div>
+
+        <div class="review-tile">
+          <div class="review-tile-head">
+            <h3>Contact Details</h3>
+            <button type="button" class="action-link" onclick="goToTab(2)">Edit</button>
+          </div>
+          <div class="review-grid-data">
+            <div>Phone: <span id="revPhone">-</span></div>
+            <div>WhatsApp: <span id="revWhatsapp">-</span></div>
+            <div>Email: <span id="revEmail">-</span></div>
+          </div>
+        </div>
+
+        <div class="review-tile">
+          <div class="review-tile-head">
+            <h3>Education Information</h3>
+            <button type="button" class="action-link" onclick="goToTab(3)">Edit</button>
+          </div>
+          <div class="review-grid-data">
+            <div>School: <span id="revSchool">-</span></div>
+            <div>Standard: <span id="revStandard">-</span></div>
+          </div>
+        </div>
+
+        <div class="field-group checkbox-wrap" style="margin-top: 20px;">
+          <label class="checkbox-custom">
+            <input type="checkbox" id="consentCheck" required>
+            <span>I confirm that all entered details are accurate and correct. <span class="star-req">*</span></span>
+          </label>
+        </div>
+
+        <p class="privacy-notice">
+          Your details are protected and will only be used for official Teenspace coordination.
+        </p>
+
+        <div class="btn-row align-between">
+          <button type="button" class="btn btn-alt" onclick="prevTab(4)">&larr; Back</button>
+          <button type="submit" class="btn btn-main" id="submitBtn" disabled>
+            <span class="btn-text">Submit Registration</span>
+            <span class="spinner hidden"></span>
+          </button>
+        </div>
+      </section>
+
+    </form>
+
+    <!-- SUCCESS SCREEN -->
+    <section id="successScreen" class="success-pane hidden">
+      <div class="success-badge-icon">✓</div>
+      <h2>Registration Successful!</h2>
+      <p>You are now successfully registered for Teenspace. We have recorded your submission.</p>
+      <button type="button" class="btn btn-main" onclick="resetFormState()" style="margin: 0 auto;">Register Another Student</button>
+    </section>
+
+  </div>
+
+  <script>
+    /**
+     * Student Registration Form - Client Architecture
+     */
+
+    // -------------------------------------------------------------
+    // CONFIGURATION
+    // -------------------------------------------------------------
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeCHSHepLNw13FZGN77ZnCYIgIYPl1cMY-yJkOVdW2pNl-kCjTs2Jm3qzPWmffS89w/exec";
+
+    // State Tracker
+    let currentTab = 1;
+
+    // Elements
+    const form = document.getElementById('registrationForm');
+    const sameAsPhoneCheckbox = document.getElementById('sameAsPhone');
+    const phoneInput = document.getElementById('phone');
+    const whatsappInput = document.getElementById('whatsapp');
+    const consentCheck = document.getElementById('consentCheck');
+    const submitBtn = document.getElementById('submitBtn');
+    const formAlert = document.getElementById('formAlert');
+    const successScreen = document.getElementById('successScreen');
+
+    // -------------------------------------------------------------
+    // EVENT LISTENERS
+    // -------------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+      // Sync Phone to WhatsApp if checkbox is checked
+      sameAsPhoneCheckbox.addEventListener('change', () => {
+        if (sameAsPhoneCheckbox.checked) {
+          whatsappInput.value = phoneInput.value;
+          whatsappInput.readOnly = true;
+          clearFieldError(whatsappInput);
+        } else {
+          whatsappInput.readOnly = false;
+        }
+      });
+
+      phoneInput.addEventListener('input', () => {
+        if (sameAsPhoneCheckbox.checked) {
+          whatsappInput.value = phoneInput.value;
+        }
+      });
+
+      // Enable/Disable Submit Button based on Consent
+      consentCheck.addEventListener('change', () => {
+        submitBtn.disabled = !consentCheck.checked;
+      });
+
+      // Attach live input error clearing
+      const allInputs = form.querySelectorAll('input, select');
+      allInputs.forEach(input => {
+        input.addEventListener('input', () => clearFieldError(input));
+        input.addEventListener('change', () => clearFieldError(input));
+      });
+
+      // Handle Submit
+      form.addEventListener('submit', handleFormSubmit);
+    });
+
+    // -------------------------------------------------------------
+    // NAVIGATION & TABS
+    // -------------------------------------------------------------
+    function showTab(tabIndex) {
+      const tabs = document.querySelectorAll('.form-panel');
+      const indicators = document.querySelectorAll('.step-node');
+
+      tabs.forEach(tab => {
+        tab.classList.remove('active');
+        if (parseInt(tab.dataset.tab, 10) === tabIndex) {
+          tab.classList.add('active');
+        }
+      });
+
+      indicators.forEach((indicator, idx) => {
+        const stepNum = idx + 1;
+        indicator.classList.remove('active', 'completed');
+        if (stepNum === tabIndex) {
+          indicator.classList.add('active');
+        } else if (stepNum < tabIndex) {
+          indicator.classList.add('completed');
+        }
+      });
+
+      // Update connecting lines
+      for (let i = 1; i <= 3; i++) {
+        const line = document.getElementById(`line${i}`);
+        if (i < tabIndex) {
+          line.classList.add('filled');
+        } else {
+          line.classList.remove('filled');
+        }
+      }
+
+      currentTab = tabIndex;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (tabIndex === 4) {
+        populateReviewScreen();
+      }
+    }
+
+    function nextTab(fromTab) {
+      if (validateTab(fromTab)) {
+        showTab(fromTab + 1);
+      }
+    }
+
+    function prevTab(fromTab) {
+      showTab(fromTab - 1);
+    }
+
+    function goToTab(tabIndex) {
+      showTab(tabIndex);
+    }
+
+    // -------------------------------------------------------------
+    // VALIDATION LOGIC
+    // -------------------------------------------------------------
+    function validateTab(tabIndex) {
+      let isValid = true;
+      let firstInvalidInput = null;
+
+      const setInvalid = (inputEl, errorElId, message) => {
+        isValid = false;
+        inputEl.classList.add('invalid');
+        const errEl = document.getElementById(errorElId);
+        if (errEl) errEl.textContent = message;
+        if (!firstInvalidInput) firstInvalidInput = inputEl;
+      };
+
+      if (tabIndex === 1) {
+        const name = document.getElementById('studentName');
+        const age = document.getElementById('age');
+        const district = document.getElementById('district');
+        const panchayat = document.getElementById('panchayat');
+
+        if (!name.value.trim() || name.value.trim().length < 2) {
+          setInvalid(name, 'studentNameError', 'Please enter a valid full name.');
+        }
+
+        const ageVal = parseInt(age.value, 10);
+        if (!age.value || isNaN(ageVal) || ageVal < 3 || ageVal > 30) {
+          setInvalid(age, 'ageError', 'Enter a valid age between 3 and 30.');
+        }
+
+        if (!district.value) {
+          setInvalid(district, 'districtError', 'Please select a district.');
+        }
+
+        if (!panchayat.value.trim()) {
+          setInvalid(panchayat, 'panchayatError', 'Panchayat name is required.');
+        }
+      }
+
+      if (tabIndex === 2) {
+        const phoneRegex = /^[6-9]\d{9}$/;
+        const email = document.getElementById('email');
+
+        if (!phoneInput.value || !phoneRegex.test(phoneInput.value)) {
+          setInvalid(phoneInput, 'phoneError', 'Enter a valid 10-digit Indian phone number.');
+        }
+
+        if (!whatsappInput.value || !phoneRegex.test(whatsappInput.value)) {
+          setInvalid(whatsappInput, 'whatsappError', 'Enter a valid 10-digit WhatsApp number.');
+        }
+
+        if (email.value.trim() !== '') {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email.value.trim())) {
+            setInvalid(email, 'emailError', 'Enter a valid email address.');
+          }
+        }
+      }
+
+      if (tabIndex === 3) {
+        const school = document.getElementById('school');
+        const standard = document.getElementById('standard');
+
+        if (!school.value.trim()) {
+          setInvalid(school, 'schoolError', 'School name is required.');
+        }
+
+        if (!standard.value) {
+          setInvalid(standard, 'standardError', 'Please select a class / standard.');
+        }
+      }
+
+      if (!isValid) {
+        showAlert('Please correct the highlighted fields.');
+      } else {
+        hideAlert();
+      }
+
+      if (firstInvalidInput) {
+        firstInvalidInput.focus();
+      }
+
+      return isValid;
+    }
+
+    function clearFieldError(inputEl) {
+      inputEl.classList.remove('invalid');
+      const errorEl = document.getElementById(`${inputEl.id}Error`);
+      if (errorEl) errorEl.textContent = '';
+      hideAlert();
+    }
+
+    // -------------------------------------------------------------
+    // REVIEW POPULATION
+    // -------------------------------------------------------------
+    function populateReviewScreen() {
+      document.getElementById('revName').textContent = document.getElementById('studentName').value || '-';
+      document.getElementById('revAge').textContent = document.getElementById('age').value || '-';
+      document.getElementById('revDistrict').textContent = document.getElementById('district').value || '-';
+      document.getElementById('revPanchayat').textContent = document.getElementById('panchayat').value || '-';
+      document.getElementById('revPhone').textContent = document.getElementById('phone').value || '-';
+      document.getElementById('revWhatsapp').textContent = document.getElementById('whatsapp').value || '-';
+      document.getElementById('revEmail').textContent = document.getElementById('email').value || 'N/A';
+      document.getElementById('revSchool').textContent = document.getElementById('school').value || '-';
+      document.getElementById('revStandard').textContent = document.getElementById('standard').value || '-';
+    }
+
+    // -------------------------------------------------------------
+    // SUBMISSION HANDLER
+    // -------------------------------------------------------------
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+
+      if (!consentCheck.checked) {
+        showAlert('Please check the confirmation box to proceed.');
+        return;
+      }
+
+      setLoadingState(true);
+      hideAlert();
+
+      const formData = {
+        studentName: document.getElementById('studentName').value.trim(),
+        age: document.getElementById('age').value,
+        district: document.getElementById('district').value,
+        panchayat: document.getElementById('panchayat').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        whatsapp: document.getElementById('whatsapp').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        school: document.getElementById('school').value.trim(),
+        standard: document.getElementById('standard').value,
+        consent: consentCheck.checked
+      };
+
+      try {
+        const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain;charset=utf-8' // Bypasses CORS pre-flight restrictions with Google Apps Script
+          },
+          body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          form.classList.add('hidden');
+          document.querySelector('.stepper').classList.add('hidden');
+          document.querySelector('.form-header').classList.add('hidden');
+          successScreen.classList.remove('hidden');
+        } else {
+          showAlert(result.message || 'Failed to submit registration. Please try again.');
+        }
+      } catch (err) {
+        showAlert('Network error: Could not connect to the server. Please check your internet connection.');
+      } finally {
+        setLoadingState(false);
+      }
+    }
+
+    function setLoadingState(isLoading) {
+      const btnText = submitBtn.querySelector('.btn-text');
+      const spinner = submitBtn.querySelector('.spinner');
+
+      if (isLoading) {
+        submitBtn.disabled = true;
+        btnText.textContent = 'Submitting...';
+        spinner.classList.remove('hidden');
+      } else {
+        submitBtn.disabled = !consentCheck.checked;
+        btnText.textContent = 'Submit Registration';
+        spinner.classList.add('hidden');
+      }
+    }
+
+    function resetFormState() {
+      form.reset();
+      form.classList.remove('hidden');
+      document.querySelector('.stepper').classList.remove('hidden');
+      document.querySelector('.form-header').classList.remove('hidden');
+      successScreen.classList.add('hidden');
+      submitBtn.disabled = true;
+      whatsappInput.readOnly = false;
+      showTab(1);
+    }
+
+    function showAlert(message) {
+      const alertMessage = document.getElementById('alertMessage');
+      if (alertMessage) alertMessage.textContent = message;
+      formAlert.classList.remove('hidden');
+      setTimeout(() => {
+        formAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
+    }
+
+    function hideAlert() {
+      formAlert.classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
+
+
