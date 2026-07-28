@@ -5,8 +5,7 @@
 // -------------------------------------------------------------
 // CONFIGURATION
 // -------------------------------------------------------------
-// PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL HERE:
-const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyeCHSHepLNw13FZGN77ZnCYIgIYPl1cMY-yJkOVdW2pNl-kCjTs2Jm3qzPWmffS89w/exec";
+const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzS6nJJOrtOpWW94ClJBV3FfjyaHCqa5O0jKYX8KsoWSA6dPqQ1P1fuZmJxT1MRKGUsCA/exec";
 
 // State Tracker
 let currentTab = 1;
@@ -16,6 +15,9 @@ const form = document.getElementById('registrationForm');
 const sameAsPhoneCheckbox = document.getElementById('sameAsPhone');
 const phoneInput = document.getElementById('phone');
 const whatsappInput = document.getElementById('whatsapp');
+const standardSelect = document.getElementById('standard');
+const otherStandardGroup = document.getElementById('otherStandardGroup');
+const otherStandardInput = document.getElementById('otherStandard');
 const consentCheck = document.getElementById('consentCheck');
 const submitBtn = document.getElementById('submitBtn');
 const formAlert = document.getElementById('formAlert');
@@ -36,222 +38,147 @@ document.addEventListener('DOMContentLoaded', () => {
   phoneInput.addEventListener('input', () => {
     if (sameAsPhoneCheckbox.checked) {
       whatsappInput.value = phoneInput.value;
+      clearFieldError(whatsappInput);
     }
   });
 
-  // Enable/Disable Submit Button based on Consent
+  // Handle 'Other' option for standard select
+  standardSelect.addEventListener('change', () => {
+    if (standardSelect.value === 'Other') {
+      otherStandardGroup.classList.remove('hidden');
+      otherStandardInput.setAttribute('required', 'true');
+    } else {
+      otherStandardGroup.classList.add('hidden');
+      otherStandardInput.removeAttribute('required');
+      otherStandardInput.value = '';
+      clearFieldError(otherStandardInput);
+    }
+  });
+
+  // Enable/Disable submit button based on consent checkbox
   consentCheck.addEventListener('change', () => {
     submitBtn.disabled = !consentCheck.checked;
   });
 
-  // Attach live input error clearing
-  const allInputs = form.querySelectorAll('input, select');
-  allInputs.forEach(input => {
-    input.addEventListener('input', () => clearFieldError(input));
-    input.addEventListener('change', () => clearFieldError(input));
-  });
-
-  // Handle Submit
+  // Form submission handler
   form.addEventListener('submit', handleFormSubmit);
 });
 
 // -------------------------------------------------------------
-// NAVIGATION & TABS
+// STEP NAVIGATION FUNCTIONS
 // -------------------------------------------------------------
 function showTab(tabIndex) {
-  const tabs = document.querySelectorAll('.form-tab');
-  const indicators = document.querySelectorAll('.step-item');
-
-  tabs.forEach(tab => {
-    tab.classList.remove('active');
-    if (parseInt(tab.dataset.tab, 10) === tabIndex) {
-      tab.classList.add('active');
-    }
+  document.querySelectorAll('.form-section').forEach(section => {
+    section.classList.remove('active');
   });
 
-  indicators.forEach((indicator, idx) => {
-    const stepNum = idx + 1;
+  document.getElementById(`step${tabIndex}`).classList.add('active');
+
+  // Update Stepper indicators
+  for (let i = 1; i <= 3; i++) {
+    const indicator = document.getElementById(`indicatorStep${i}`);
     indicator.classList.remove('active', 'completed');
-    if (stepNum === tabIndex) {
-      indicator.classList.add('active');
-    } else if (stepNum < tabIndex) {
+    if (i < tabIndex) {
       indicator.classList.add('completed');
+    } else if (i === tabIndex) {
+      indicator.classList.add('active');
     }
-  });
+  }
 
   currentTab = tabIndex;
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
-  if (tabIndex === 4) {
-    populateReviewScreen();
+function nextStep() {
+  if (validateCurrentStep()) {
+    hideAlert();
+    if (currentTab < 3) {
+      showTab(currentTab + 1);
+    }
   }
 }
 
-function nextTab(fromTab) {
-  if (validateTab(fromTab)) {
-    showTab(fromTab + 1);
+function prevStep() {
+  hideAlert();
+  if (currentTab > 1) {
+    showTab(currentTab - 1);
   }
-}
-
-function prevTab(fromTab) {
-  showTab(fromTab - 1);
-}
-
-function goToTab(tabIndex) {
-  showTab(tabIndex);
 }
 
 // -------------------------------------------------------------
 // VALIDATION LOGIC
 // -------------------------------------------------------------
-function validateTab(tabIndex) {
+function validateCurrentStep() {
+  const currentSection = document.getElementById(`step${currentTab}`);
+  const inputs = currentSection.querySelectorAll('input:not(.hidden), select:not(.hidden)');
   let isValid = true;
-  let firstInvalidInput = null;
 
-  const setInvalid = (inputEl, errorElId, message) => {
-    isValid = false;
-    inputEl.classList.add('invalid');
-    document.getElementById(errorElId).textContent = message;
-    if (!firstInvalidInput) firstInvalidInput = inputEl;
-  };
-
-  if (tabIndex === 1) {
-    const name = document.getElementById('studentName');
-    const age = document.getElementById('age');
-    const district = document.getElementById('district');
-    const panchayat = document.getElementById('panchayat');
-
-    if (!name.value.trim() || name.value.trim().length < 2) {
-      setInvalid(name, 'studentNameError', 'Please enter a valid full name.');
+  inputs.forEach(input => {
+    const group = input.closest('.form-group');
+    if (!input.checkValidity()) {
+      isValid = false;
+      if (group) group.classList.add('error');
+    } else {
+      if (group) group.classList.remove('error');
     }
+  });
 
-    const ageVal = parseInt(age.value, 10);
-    if (!age.value || isNaN(ageVal) || ageVal < 3 || ageVal > 30) {
-      setInvalid(age, 'ageError', 'Enter a valid age between 3 and 30.');
-    }
-
-    if (!district.value) {
-      setInvalid(district, 'districtError', 'Please select a district.');
-    }
-
-    if (!panchayat.value.trim()) {
-      setInvalid(panchayat, 'panchayatError', 'Panchayat name is required.');
-    }
-  }
-
-  if (tabIndex === 2) {
-    const phoneRegex = /^[6-9]\d{9}$/;
-    const email = document.getElementById('email');
-
-    if (!phoneInput.value || !phoneRegex.test(phoneInput.value)) {
-      setInvalid(phoneInput, 'phoneError', 'Enter a valid 10-digit Indian phone number.');
-    }
-
-    if (!whatsappInput.value || !phoneRegex.test(whatsappInput.value)) {
-      setInvalid(whatsappInput, 'whatsappError', 'Enter a valid 10-digit WhatsApp number.');
-    }
-
-    if (email.value.trim() !== '') {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email.value.trim())) {
-        setInvalid(email, 'emailError', 'Enter a valid email address.');
-      }
-    }
-  }
-
-  if (tabIndex === 3) {
-    const school = document.getElementById('school');
-    const standard = document.getElementById('standard');
-
-    if (!school.value.trim()) {
-      setInvalid(school, 'schoolError', 'School name is required.');
-    }
-
-    if (!standard.value) {
-      setInvalid(standard, 'standardError', 'Please select a class / standard.');
-    }
-  }
-
-  if (firstInvalidInput) {
-    firstInvalidInput.focus();
+  if (!isValid) {
+    showAlert('Please fill in all required fields correctly before proceeding.');
   }
 
   return isValid;
 }
 
-function clearFieldError(inputEl) {
-  inputEl.classList.remove('invalid');
-  const errorEl = document.getElementById(`${inputEl.id}Error`);
-  if (errorEl) errorEl.textContent = '';
-  hideAlert();
+function clearFieldError(input) {
+  const group = input.closest('.form-group');
+  if (group) group.classList.remove('error');
 }
 
 // -------------------------------------------------------------
-// REVIEW POPULATION
-// -------------------------------------------------------------
-function populateReviewScreen() {
-  document.getElementById('revName').textContent = document.getElementById('studentName').value;
-  document.getElementById('revAge').textContent = document.getElementById('age').value;
-  document.getElementById('revDistrict').textContent = document.getElementById('district').value;
-  document.getElementById('revPanchayat').textContent = document.getElementById('panchayat').value;
-  document.getElementById('revPhone').textContent = document.getElementById('phone').value;
-  document.getElementById('revWhatsapp').textContent = document.getElementById('whatsapp').value;
-  document.getElementById('revEmail').textContent = document.getElementById('email').value || 'N/A';
-  document.getElementById('revSchool').textContent = document.getElementById('school').value;
-  document.getElementById('revStandard').textContent = document.getElementById('standard').value;
-}
-
-// -------------------------------------------------------------
-// SUBMISSION HANDLER
+// FORM SUBMISSION & API CALL
 // -------------------------------------------------------------
 async function handleFormSubmit(e) {
   e.preventDefault();
 
-  if (GOOGLE_APPS_SCRIPT_URL === "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE") {
-    showAlert('Configuration Error: Please update GOOGLE_APPS_SCRIPT_URL in script.js');
-    return;
-  }
-
-  if (!consentCheck.checked) {
-    showAlert('Please check the confirmation box to proceed.');
-    return;
-  }
+  if (!validateCurrentStep()) return;
 
   setLoadingState(true);
   hideAlert();
 
+  let standardVal = standardSelect.value;
+  if (standardVal === 'Other') {
+    standardVal = otherStandardInput.value.trim();
+  }
+
   const formData = {
-    studentName: document.getElementById('studentName').value.trim(),
-    age: document.getElementById('age').value,
-    district: document.getElementById('district').value,
-    panchayat: document.getElementById('panchayat').value.trim(),
+    name: document.getElementById('name').value.trim(),
+    age: document.getElementById('age').value.trim(),
     phone: document.getElementById('phone').value.trim(),
     whatsapp: document.getElementById('whatsapp').value.trim(),
     email: document.getElementById('email').value.trim(),
+    district: document.getElementById('district').value.trim(),
+    panchayat: document.getElementById('panchayat').value.trim(),
+    zone: document.getElementById('zone').value.trim(),
     school: document.getElementById('school').value.trim(),
-    standard: document.getElementById('standard').value,
-    consent: consentCheck.checked
+    standard: standardVal
   };
 
   try {
     const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: 'POST',
+      mode: 'no-cors',
       headers: {
-        'Content-Type': 'text/plain;charset=utf-8' // Bypasses CORS pre-flight restrictions with Google Apps Script
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(formData)
     });
 
-    const result = await response.json();
+    form.classList.add('hidden');
+    document.querySelector('.stepper').classList.add('hidden');
+    document.querySelector('.form-header').classList.add('hidden');
+    successScreen.classList.add('active');
 
-    if (result.status === 'success') {
-      form.classList.add('hidden');
-      document.querySelector('.stepper').classList.add('hidden');
-      document.querySelector('.form-header').classList.add('hidden');
-      successScreen.classList.remove('hidden');
-    } else {
-      showAlert(result.message || 'Failed to submit registration. Please try again.');
-    }
   } catch (err) {
     showAlert('Network error: Could not connect to the server. Please check your internet connection.');
   } finally {
@@ -276,10 +203,12 @@ function setLoadingState(isLoading) {
 
 function resetFormState() {
   form.reset();
+  otherStandardGroup.classList.add('hidden');
+  otherStandardInput.removeAttribute('required');
   form.classList.remove('hidden');
   document.querySelector('.stepper').classList.remove('hidden');
   document.querySelector('.form-header').classList.remove('hidden');
-  successScreen.classList.add('hidden');
+  successScreen.classList.remove('active');
   submitBtn.disabled = true;
   showTab(1);
 }
@@ -288,10 +217,10 @@ function showAlert(message) {
   formAlert.textContent = message;
   formAlert.className = 'alert alert-danger';
   formAlert.classList.remove('hidden');
+  formAlert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 function hideAlert() {
   formAlert.classList.add('hidden');
 }
-
 
