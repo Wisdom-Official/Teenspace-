@@ -2,219 +2,145 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Teenspace - Student Registration Pro</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-deep: #030407;
-      --card-bg: rgba(13, 15, 23, 0.65);
-      --card-border: rgba(255, 255, 255, 0.06);
+      --bg-deep: #07080c;
+      --card-bg: rgba(16, 18, 27, 0.75);
+      --border-glow: rgba(236, 72, 153, 0.2);
+      --border-subtle: rgba(255, 255, 255, 0.08);
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
-      --pink: #ff2a85;
-      --purple: #8a2be2;
-      --blue: #2563eb;
-      --gradient-brand: linear-gradient(135deg, var(--pink) 0%, var(--purple) 50%, var(--blue) 100%);
-      --gradient-hover: linear-gradient(135deg, #ff4d9a 0%, #9d4edd 50%, #3b82f6 100%);
-      --error: #fb7185;
-      --error-bg: rgba(225, 29, 72, 0.1);
+      --pink: #ec4899;
+      --purple: #a855f7;
+      --blue: #3b82f6;
+      --gradient-brand: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #3b82f6 100%);
+      --error: #ef4444;
       --success: #10b981;
-      --input-bg: rgba(255, 255, 255, 0.03);
-      --input-border: rgba(255, 255, 255, 0.08);
-      --focus-ring: rgba(138, 43, 226, 0.25);
-      --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
 
     body {
       background-color: var(--bg-deep);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
       padding: 20px;
-      position: relative;
-      overflow-x: hidden;
     }
 
-    /* Animated Background Orbs */
-    body::before, body::after {
-      content: '';
-      position: fixed;
-      width: 50vw;
-      height: 50vw;
-      border-radius: 50%;
-      filter: blur(100px);
-      z-index: -1;
-      opacity: 0.4;
-      animation: float 20s infinite alternate ease-in-out;
-    }
-
-    body::before {
-      top: -20%;
-      left: -10%;
-      background: radial-gradient(circle, rgba(255, 42, 133, 0.15), transparent 60%);
-    }
-
-    body::after {
-      bottom: -20%;
-      right: -10%;
-      background: radial-gradient(circle, rgba(37, 99, 235, 0.15), transparent 60%);
-      animation-delay: -10s;
-    }
-
-    @keyframes float {
-      0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(10%, 10%) scale(1.1); }
-    }
-
-    /* Main Container */
     .container {
       width: 100%;
-      max-width: 580px;
+      max-width: 650px;
       background: var(--card-bg);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid var(--card-border);
-      border-radius: 28px;
-      box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
       position: relative;
-      z-index: 10;
     }
 
-    /* Top Glowing Edge */
     .container::before {
       content: '';
       position: absolute;
       top: 0; left: 0; right: 0;
-      height: 2px;
+      height: 3px;
       background: var(--gradient-brand);
-      border-radius: 28px 28px 0 0;
-      opacity: 0.8;
     }
 
     .form-header {
-      padding: 45px 40px 25px 40px;
+      padding: 35px 35px 20px 35px;
       text-align: center;
     }
 
     .form-header h1 {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 800;
       background: var(--gradient-brand);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 10px;
-      letter-spacing: -0.5px;
+      margin-bottom: 8px;
     }
 
     .form-header p {
       color: var(--text-muted);
-      font-size: 15px;
-      font-weight: 500;
+      font-size: 14px;
     }
 
-    /* Pro Stepper */
+    /* Stepper Header - Single Line Layout with Spacing */
     .stepper {
       display: flex;
       justify-content: space-between;
-      padding: 0 45px 35px 45px;
+      align-items: center;
+      padding: 0 30px 25px 30px;
       position: relative;
-    }
-
-    /* Connecting Line */
-    .stepper::before {
-      content: '';
-      position: absolute;
-      top: 18px; /* Aligned with circles */
-      left: 65px;
-      right: 65px;
-      height: 2px;
-      background: var(--input-border);
-      z-index: 1;
+      gap: 12px;
+      overflow-x: auto;
     }
 
     .step-item {
       display: flex;
-      flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px; /* Increased gap between number and label */
       position: relative;
       z-index: 2;
-      flex: 1;
+      white-space: nowrap; /* Keep each step item content on one line */
+      flex-shrink: 0;
     }
 
     .step-number {
-      width: 38px;
-      height: 38px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
-      background: var(--bg-deep);
-      border: 2px solid var(--input-border);
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 12px;
       color: var(--text-muted);
-      transition: var(--transition-smooth);
-      box-shadow: 0 0 0 4px var(--card-bg); /* Cut out effect */
+      transition: all 0.3s ease;
+      flex-shrink: 0;
     }
 
     .step-item.active .step-number {
       background: var(--gradient-brand);
       border-color: transparent;
       color: white;
-      box-shadow: 0 0 0 4px var(--card-bg), 0 0 20px rgba(138, 43, 226, 0.4);
-      transform: scale(1.1);
+      box-shadow: 0 0 12px rgba(236, 72, 153, 0.4);
     }
 
     .step-item.completed .step-number {
       background: var(--success);
-      border-color: var(--success);
+      border-color: transparent;
       color: white;
-      text-indent: -9999px;
-      position: relative;
-    }
-
-    /* Custom Checkmark for completed steps */
-    .step-item.completed .step-number::after {
-      content: '';
-      position: absolute;
-      width: 6px;
-      height: 12px;
-      border: solid white;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
-      top: 8px;
-      left: 14px;
-      text-indent: 0;
     }
 
     .step-label {
       font-size: 13px;
       font-weight: 600;
       color: var(--text-muted);
-      transition: var(--transition-smooth);
-      white-space: nowrap;
+      white-space: nowrap; /* Ensures label text doesn't wrap to next line */
     }
 
     .step-item.active .step-label {
       color: var(--text-main);
-      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-    }
-
-    .step-item.completed .step-label {
-      color: var(--success);
     }
 
     /* Form Content */
     form {
-      padding: 0 40px 40px 40px;
+      padding: 0 35px 35px 35px;
     }
 
     .form-section {
@@ -223,165 +149,76 @@
 
     .form-section.active {
       display: block;
-      animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      animation: fadeIn 0.4s ease forwards;
     }
 
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(15px); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     .form-group {
-      margin-bottom: 24px;
-      position: relative;
+      margin-bottom: 20px;
     }
 
     label {
       display: block;
       font-size: 13px;
       font-weight: 600;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       color: var(--text-main);
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-      opacity: 0.9;
+      letter-spacing: 0.3px;
     }
 
-    input[type="text"], 
-    input[type="number"], 
-    input[type="tel"], 
-    input[type="email"], 
-    select {
+    input, select {
       width: 100%;
-      padding: 16px 20px;
-      background: var(--input-bg);
-      border: 1px solid var(--input-border);
-      border-radius: 14px;
+      padding: 14px 16px;
+      background: rgba(10, 11, 16, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
       color: var(--text-main);
-      font-size: 15px;
-      font-weight: 500;
-      transition: var(--transition-smooth);
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-    }
-
-    input::placeholder {
-      color: #475569;
-    }
-
-    /* Custom Select Arrow */
-    select {
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 16px center;
-      background-size: 20px;
-      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
     }
 
     input:focus, select:focus {
       outline: none;
-      background: rgba(255, 255, 255, 0.05);
-      border-color: var(--purple);
-      box-shadow: 0 0 0 4px var(--focus-ring), inset 0 2px 4px rgba(0,0,0,0.1);
-      transform: translateY(-1px);
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
     }
 
     select option {
-      background: var(--bg-deep);
+      background: #10121b;
       color: var(--text-main);
-      padding: 15px;
     }
 
     .error-text {
       font-size: 12px;
-      font-weight: 500;
       color: var(--error);
-      margin-top: 8px;
+      margin-top: 5px;
       display: none;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .error-text::before {
-      content: '!';
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 14px;
-      height: 14px;
-      background: var(--error);
-      color: var(--bg-deep);
-      border-radius: 50%;
-      font-size: 10px;
-      font-weight: bold;
     }
 
     .form-group.error input, .form-group.error select {
       border-color: var(--error);
-      background: var(--error-bg);
-      box-shadow: 0 0 0 4px rgba(225, 29, 72, 0.15);
     }
 
     .form-group.error .error-text {
-      display: flex;
-      animation: shake 0.4s ease-in-out;
+      display: block;
     }
 
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-4px); }
-      75% { transform: translateX(4px); }
-    }
-
-    /* Pro Custom Checkbox */
     .checkbox-group {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-top: 14px;
-      padding: 10px 14px;
-      background: rgba(255, 255, 255, 0.02);
-      border: 1px solid var(--input-border);
-      border-radius: 12px;
-      transition: var(--transition-smooth);
-    }
-
-    .checkbox-group:hover {
-      background: rgba(255, 255, 255, 0.04);
+      gap: 10px;
+      margin-top: 10px;
     }
 
     .checkbox-group input {
-      appearance: none;
-      -webkit-appearance: none;
-      width: 22px;
-      height: 22px;
-      border: 2px solid var(--input-border);
-      border-radius: 6px;
-      background: var(--bg-deep);
+      width: 18px;
+      height: 18px;
+      accent-color: var(--pink);
       cursor: pointer;
-      position: relative;
-      transition: var(--transition-smooth);
-      flex-shrink: 0;
-    }
-
-    .checkbox-group input:checked {
-      background: var(--gradient-brand);
-      border-color: transparent;
-      box-shadow: 0 0 10px rgba(255, 42, 133, 0.3);
-    }
-
-    .checkbox-group input:checked::after {
-      content: '';
-      position: absolute;
-      left: 6px;
-      top: 2px;
-      width: 5px;
-      height: 10px;
-      border: solid white;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
     }
 
     .checkbox-group label {
@@ -389,62 +226,46 @@
       font-weight: 500;
       color: var(--text-muted);
       cursor: pointer;
-      text-transform: none;
-      letter-spacing: normal;
-      font-size: 14px;
-      line-height: 1.4;
     }
 
     /* Buttons */
     .btn-container {
       display: flex;
       justify-content: space-between;
-      margin-top: 40px;
+      margin-top: 30px;
       gap: 15px;
     }
 
     button {
-      padding: 16px 30px;
-      border-radius: 14px;
-      font-weight: 700;
-      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
       cursor: pointer;
-      transition: var(--transition-smooth);
+      transition: all 0.3s ease;
       border: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
     }
 
     .btn-primary {
       background: var(--gradient-brand);
-      background-size: 200% auto;
       color: white;
       flex: 1;
-      box-shadow: 0 10px 20px -10px rgba(138, 43, 226, 0.6);
+      box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
     }
 
     .btn-primary:hover {
-      background-position: right center;
-      transform: translateY(-2px);
-      box-shadow: 0 15px 25px -10px rgba(138, 43, 226, 0.8);
-    }
-
-    .btn-primary:active {
-      transform: translateY(1px);
+      opacity: 0.9;
+      transform: translateY(-1px);
     }
 
     .btn-secondary {
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--input-border);
+      border: 1px solid var(--border-subtle);
       color: var(--text-main);
-      backdrop-filter: blur(10px);
     }
 
     .btn-secondary:hover {
       background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.2);
     }
 
     button:disabled {
@@ -452,90 +273,72 @@
       cursor: not-allowed;
       transform: none !important;
       box-shadow: none !important;
-      background: #1e293b; /* Fallback for disabled */
-      color: #64748b;
     }
 
     /* Alerts */
     .alert {
-      padding: 16px;
+      padding: 14px;
       border-radius: 12px;
-      font-size: 14px;
-      font-weight: 500;
-      margin-bottom: 24px;
+      font-size: 13px;
+      margin-bottom: 20px;
       display: none;
-      animation: slideUp 0.3s ease;
     }
 
     .alert-danger {
-      background: var(--error-bg);
-      border: 1px solid rgba(251, 113, 133, 0.3);
-      color: #fda4af;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
       display: block;
     }
 
     /* Success Screen */
     .success-screen {
       text-align: center;
-      padding: 50px 40px;
+      padding: 40px 35px;
       display: none;
     }
 
     .success-screen.active {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      display: block;
+      animation: fadeIn 0.4s ease forwards;
     }
 
     .success-icon {
-      width: 80px;
-      height: 80px;
+      width: 70px;
+      height: 70px;
       background: rgba(16, 185, 129, 0.1);
-      border: 3px solid var(--success);
+      border: 2px solid var(--success);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 24px auto;
+      margin: 0 auto 20px auto;
       color: var(--success);
-      font-size: 36px;
-      box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
-      animation: popIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    @keyframes popIn {
-      0% { transform: scale(0.5); opacity: 0; }
-      70% { transform: scale(1.1); }
-      100% { transform: scale(1); opacity: 1; }
+      font-size: 32px;
     }
 
     .success-screen h2 {
-      font-size: 28px;
-      font-weight: 800;
-      margin-bottom: 12px;
-      background: linear-gradient(to right, #fff, #a7f3d0);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 10px;
     }
 
     .success-screen p {
       color: var(--text-muted);
-      font-size: 15px;
-      line-height: 1.6;
-      margin-bottom: 35px;
-      max-width: 80%;
+      font-size: 14px;
+      margin-bottom: 30px;
     }
 
     .spinner {
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-top-color: white;
+      width: 18px;
+      height: 18px;
+      border: 2px solid white;
+      border-top-color: transparent;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       display: inline-block;
       vertical-align: middle;
+      margin-left: 8px;
     }
 
     .hidden { display: none !important; }
@@ -544,39 +347,39 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Mobile Responsiveness */
     @media (max-width: 480px) {
-      .container { border-radius: 20px; }
-      .form-header { padding: 35px 25px 20px 25px; }
-      .form-header h1 { font-size: 26px; }
-      .stepper { padding: 0 20px 25px 20px; }
-      .stepper::before { left: 40px; right: 40px; }
-      form { padding: 0 25px 30px 25px; }
-      .btn-container { flex-direction: column-reverse; margin-top: 30px; }
-      button { width: 100%; }
-      .step-label { font-size: 11px; }
+      .stepper {
+        padding: 0 20px 20px 20px;
+        gap: 8px;
+      }
+      .step-item {
+        gap: 6px;
+      }
+      .step-label {
+        font-size: 12px;
+      }
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <div class="form-header">
+    <div class="form-header" id="formHeader">
       <h1>Teenspace Registration</h1>
       <p>Please fill out your details to register for the program</p>
     </div>
 
     <!-- Stepper Indicator -->
-    <div class="stepper">
-      <div class="step-item active" id="indicatorStep1">
+    <div class="stepper" id="stepper">
+      <div class="step-item active" id="indicatorStep0">
         <div class="step-number">1</div>
         <div class="step-label">Personal</div>
       </div>
-      <div class="step-item" id="indicatorStep2">
+      <div class="step-item" id="indicatorStep1">
         <div class="step-number">2</div>
         <div class="step-label">Location</div>
       </div>
-      <div class="step-item" id="indicatorStep3">
+      <div class="step-item" id="indicatorStep2">
         <div class="step-number">3</div>
         <div class="step-label">Academic</div>
       </div>
@@ -586,7 +389,7 @@
       <div id="formAlert" class="alert hidden"></div>
 
       <!-- STEP 1: Personal Info -->
-      <div class="form-section active" id="step1">
+      <div class="form-section active" id="step0">
         <div class="form-group">
           <label for="name">Full Name</label>
           <input type="text" id="name" placeholder="Enter your full name" required>
@@ -626,11 +429,11 @@
       </div>
 
       <!-- STEP 2: Location & Zone -->
-      <div class="form-section" id="step2">
+      <div class="form-section" id="step1">
         <div class="form-group">
           <label for="district">District</label>
           <select id="district" required>
-            <option value="" disabled selected>-- Choose district --</option>
+            <option value="">-- Choose district --</option>
             <option value="Calicut North">Calicut North</option>
             <option value="Calicut South">Calicut South</option>
           </select>
@@ -646,7 +449,7 @@
         <div class="form-group">
           <label for="zone">Select Zone</label>
           <select id="zone" required>
-            <option value="" disabled selected>-- Choose your zone --</option>
+            <option value="">-- Choose your zone --</option>
             <option value="Payyoli">Payyoli</option>
             <option value="Koyilandi">Koyilandi</option>
             <option value="Perambra">Perambra</option>
@@ -665,7 +468,7 @@
       </div>
 
       <!-- STEP 3: Academic & Submit -->
-      <div class="form-section" id="step3">
+      <div class="form-section" id="step2">
         <div class="form-group">
           <label for="school">School / College Name</label>
           <input type="text" id="school" placeholder="Enter your institution name" required>
@@ -675,7 +478,7 @@
         <div class="form-group">
           <label for="standard">Standard / Course</label>
           <select id="standard" required>
-            <option value="" disabled selected>-- Choose standard --</option>
+            <option value="">-- Choose standard --</option>
             <option value="Standard 7">Standard 7</option>
             <option value="Standard 8">Standard 8</option>
             <option value="Standard 9">Standard 9</option>
@@ -694,7 +497,7 @@
         </div>
 
         <div class="form-group">
-          <div class="checkbox-group" style="padding: 16px;">
+          <div class="checkbox-group">
             <input type="checkbox" id="consentCheck">
             <label for="consentCheck">I agree to share my details for the Teenspace program communications.</label>
           </div>
@@ -704,7 +507,7 @@
           <button type="button" class="btn-secondary" onclick="prevStep()">Back</button>
           <button type="submit" class="btn-primary" id="submitBtn" disabled>
             <span class="btn-text">Submit Registration</span>
-            <span class="spinner hidden"></span>
+            <span class="spinner hidden" id="submitSpinner"></span>
           </button>
         </div>
       </div>
@@ -715,11 +518,153 @@
       <div class="success-icon">&#10003;</div>
       <h2>Registration Successful!</h2>
       <p>Thank you for registering with Teenspace. We have successfully saved your details.</p>
-      <button type="button" class="btn-primary" onclick="resetFormState()" style="width: 100%;">Register Another Student</button>
+      <button type="button" class="btn-primary" onclick="resetFormState()">Register Another Student</button>
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    let currentStep = 0;
+    const formSections = document.querySelectorAll('.form-section');
+    const stepIndicators = document.querySelectorAll('.step-item');
+
+    // Function to check validity of current step
+    function validateStep(stepIndex) {
+      const section = formSections[stepIndex];
+      const inputs = section.querySelectorAll('input[required], select[required]');
+      let isValid = true;
+
+      inputs.forEach(input => {
+        const formGroup = input.closest('.form-group');
+        if (!input.checkValidity() || input.value.trim() === "") {
+          formGroup.classList.add('error');
+          isValid = false;
+        } else {
+          formGroup.classList.remove('error');
+        }
+      });
+
+      return isValid;
+    }
+
+    // When user types something, remove the error text immediately
+    document.querySelectorAll('input, select').forEach(element => {
+      element.addEventListener('input', function() {
+        if (this.checkValidity() && this.value.trim() !== "") {
+          this.closest('.form-group').classList.remove('error');
+        }
+      });
+    });
+
+    // Move to next step
+    function nextStep() {
+      if (validateStep(currentStep)) {
+        formSections[currentStep].classList.remove('active');
+        stepIndicators[currentStep].classList.add('completed');
+        stepIndicators[currentStep].classList.remove('active');
+        
+        currentStep++;
+        
+        formSections[currentStep].classList.add('active');
+        stepIndicators[currentStep].classList.add('active');
+      }
+    }
+
+    // Move to previous step
+    function prevStep() {
+      formSections[currentStep].classList.remove('active');
+      stepIndicators[currentStep].classList.remove('active');
+      stepIndicators[currentStep - 1].classList.remove('completed');
+      
+      currentStep--;
+      
+      formSections[currentStep].classList.add('active');
+      stepIndicators[currentStep].classList.add('active');
+    }
+
+    // Logic for "Same as Phone Number" Checkbox
+    document.getElementById('sameAsPhone').addEventListener('change', function() {
+      const phoneVal = document.getElementById('phone').value;
+      const whatsappInput = document.getElementById('whatsapp');
+      
+      if (this.checked) {
+        whatsappInput.value = phoneVal;
+        if (whatsappInput.checkValidity()) {
+          whatsappInput.closest('.form-group').classList.remove('error');
+        }
+      } else {
+        whatsappInput.value = '';
+      }
+    });
+
+    // Logic for "Other" standard dropdown
+    document.getElementById('standard').addEventListener('change', function() {
+      const otherGroup = document.getElementById('otherStandardGroup');
+      const otherInput = document.getElementById('otherStandard');
+      
+      if (this.value === 'Other') {
+        otherGroup.classList.remove('hidden');
+        otherInput.setAttribute('required', 'true');
+      } else {
+        otherGroup.classList.add('hidden');
+        otherInput.removeAttribute('required');
+        otherGroup.classList.remove('error');
+      }
+    });
+
+    // Logic for Consent Checkbox to enable submit button
+    document.getElementById('consentCheck').addEventListener('change', function() {
+      document.getElementById('submitBtn').disabled = !this.checked;
+    });
+
+    // Handle Form Submission
+    document.getElementById('registrationForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      if (validateStep(currentStep)) {
+        const btnText = document.querySelector('.btn-text');
+        const spinner = document.getElementById('submitSpinner');
+        
+        btnText.textContent = 'Submitting...';
+        spinner.classList.remove('hidden');
+        
+        setTimeout(() => {
+          document.getElementById('registrationForm').classList.add('hidden');
+          document.getElementById('formHeader').classList.add('hidden');
+          document.getElementById('stepper').classList.add('hidden');
+          document.getElementById('successScreen').classList.add('active');
+          
+          btnText.textContent = 'Submit Registration';
+          spinner.classList.add('hidden');
+        }, 1500);
+      }
+    });
+
+    // Reset Form for another registration
+    function resetFormState() {
+      document.getElementById('registrationForm').reset();
+      
+      formSections[currentStep].classList.remove('active');
+      stepIndicators[currentStep].classList.remove('active');
+      
+      currentStep = 0;
+      
+      stepIndicators.forEach(indicator => {
+        indicator.classList.remove('completed', 'active');
+      });
+      document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+      
+      document.getElementById('otherStandardGroup').classList.add('hidden');
+      document.getElementById('submitBtn').disabled = true;
+
+      document.getElementById('successScreen').classList.remove('active');
+      document.getElementById('registrationForm').classList.remove('hidden');
+      document.getElementById('formHeader').classList.remove('hidden');
+      document.getElementById('stepper').classList.remove('hidden');
+      
+      formSections[0].classList.add('active');
+      stepIndicators[0].classList.add('active');
+    }
+  </script>
 </body>
 </html>
 
