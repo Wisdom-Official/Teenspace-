@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teenspace - Zone Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #07080c;
+      --card-bg: rgba(16, 18, 27, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --pink: #ec4899;
+      --purple: #a855f7;
+      --blue: #3b82f6;
+      --gradient-brand: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #3b82f6 100%);
+      --error: #ef4444;
+      --success: #10b981;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    body {
+      background-color: var(--bg-deep);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 30px 20px;
+    }
+
+    .max-w { max-width: 1200px; margin: 0 auto; }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    header p { color: var(--text-muted); font-size: 14px; }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+      margin-bottom: 25px;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 150px;
+      gap: 20px;
+      align-items: end;
+    }
+
+    @media (max-width: 768px) {
+      .controls-grid { grid-template-columns: 1fr; }
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+
+    label { font-size: 13px; font-weight: 600; color: var(--text-main); }
+
+    input, select {
+      padding: 13px 16px;
+      background: rgba(10, 11, 16, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      color: var(--text-main);
+      font-size: 14px;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--pink);
+      box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
+    }
+
+    select option { background: #10121b; color: var(--text-main); }
+
+    button {
+      padding: 13px 24px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      background: var(--gradient-brand);
+      color: white;
+      border: none;
+      transition: opacity 0.3s ease;
+      height: 48px;
+    }
+
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .alert {
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .alert-danger {
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #fca5a5;
+      display: block;
+    }
+
+    /* Table styles */
+    .table-container {
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    th {
+      background: rgba(255, 255, 255, 0.03);
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+    .stats-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(236, 72, 153, 0.1);
+      border: 1px solid rgba(236, 72, 153, 0.2);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--pink);
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .spinner {
+      width: 24px; height: 24px;
+      border: 3px solid white; border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 40px auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div class="max-w">
+    <header>
+      <h1>Zone Admin Dashboard</h1>
+      <p>Secure portal to view registered students by zone</p>
+    </header>
+
+    <div class="card">
+      <div id="dashboardAlert" class="alert hidden"></div>
+
+      <div class="controls-grid">
+        <div class="form-group">
+          <label for="adminPassword">Admin Password</label>
+          <input type="password" id="adminPassword" placeholder="Enter admin password">
+        </div>
+
+        <div class="form-group">
+          <label for="filterZone">Select Zone</label>
+          <select id="filterZone">
+            <option value="">-- Choose zone to filter --</option>
+            <option value="Payyoli">Payyoli</option>
+            <option value="Koyilandi">Koyilandi</option>
+            <option value="Perambra">Perambra</option>
+            <option value="Vadakara">Vadakara</option>
+            <option value="Poonur">Poonur</option>
+            <option value="Balussery">Balussery</option>
+            <option value="Nadapuram">Nadapuram</option>
+          </select>
+        </div>
+
+        <button type="button" id="fetchBtn" onclick="fetchZoneData()">Load Data</button>
+      </div>
+    </div>
+
+    <div class="card hidden" id="resultsCard">
+      <div id="statsContainer"></div>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Timestamp</th>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Phone</th>
+              <th>WhatsApp</th>
+              <th>Panchayat</th>
+              <th>School</th>
+              <th>Standard</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzS6nJJOrtOpWW94ClJBV3FfjyaHCqa5O0jKYX8KsoWSA6dPqQ1P1fuZmJxT1MRKGUsCA/exec";
+
+    async function fetchZoneData() {
+      const password = document.getElementById('adminPassword').value.trim();
+      const zone = document.getElementById('filterZone').value;
+      const alertBox = document.getElementById('dashboardAlert');
+      const resultsCard = document.getElementById('resultsCard');
+      const fetchBtn = document.getElementById('fetchBtn');
+
+      alertBox.classList.add('hidden');
+
+      if (!password) {
+        showAlert('Please enter the admin password.');
+        return;
+      }
+      if (!zone) {
+        showAlert('Please select a zone to view.');
+        return;
+      }
+
+      fetchBtn.disabled = true;
+      fetchBtn.textContent = 'Loading...';
+
+      try {
+        const url = `${GOOGLE_APPS_SCRIPT_URL}?action=getZoneData&password=${encodeURIComponent(password)}&zone=${encodeURIComponent(zone)}`;
+        
+        const response = await fetch(url);
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          renderTable(result.data, zone);
+        } else {
+          showAlert(result.message || 'Authentication failed or incorrect password.');
+          resultsCard.classList.add('hidden');
+        }
+      } catch (err) {
+        showAlert('Failed to fetch data from the server. Please check your URL and connection.');
+        resultsCard.classList.add('hidden');
+      } finally {
+        fetchBtn.disabled = false;
+        fetchBtn.textContent = 'Load Data';
+      }
+    }
+
+    function renderTable(data, zoneName) {
+      const tableBody = document.getElementById('tableBody');
+      const statsContainer = document.getElementById('statsContainer');
+      const resultsCard = document.getElementById('resultsCard');
+
+      tableBody.innerHTML = '';
+      statsContainer.innerHTML = `<div class="stats-badge">Zone: ${zoneName} &bull; Total Registrations: ${data.length}</div>`;
+
+      if (data.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 30px;">No registrations found for this zone yet.</td></tr>`;
+      } else {
+        data.forEach((row, index) => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${row.timestamp || ''}</td>
+            <td><strong>${row.name || ''}</strong></td>
+            <td>${row.age || ''}</td>
+            <td>${row.phone || ''}</td>
+            <td>${row.whatsapp || ''}</td>
+            <td>${row.panchayat || ''}</td>
+            <td>${row.school || ''}</td>
+            <td>${row.standard || ''}</td>
+          `;
+          tableBody.appendChild(tr);
+        });
+      }
+
+      resultsCard.classList.remove('hidden');
+    }
+
+    function showAlert(msg) {
+      const alertBox = document.getElementById('dashboardAlert');
+      alertBox.textContent = msg;
+      alertBox.className = 'alert alert-danger';
+      alertBox.classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
+
+
