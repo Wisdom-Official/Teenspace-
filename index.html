@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teenspace | Higher Secondary Students Conference</title>
+    <meta name="description" content="Program Teenspace is a modern, youth-focused initiative empowering the next generation through creative workshops, tech mentorship, and community leadership.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons (Lightweight & Modern) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'media', // Automatically uses system preference (prefers-color-scheme)
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            pink: '#F02D7D',
+                            pinkHover: '#D81B60',
+                            blue: '#2EAEE5',
+                            blueHover: '#0288D1',
+                            dark: '#050505',
+                            darkCard: '#111111',
+                            light: '#FAFAFA',
+                            lightCard: '#FFFFFF'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Styles for interactions & base elements */
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #F02D7D 0%, #2EAEE5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #F02D7D 0%, #2EAEE5 100%);
+        }
+
+        .gradient-bg-hover:hover {
+            background: linear-gradient(135deg, #D81B60 0%, #0288D1 100%);
+        }
+
+        /* Reveal Animation on Scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Nav Glassmorphism - Always dark to support logo */
+        .nav-glass {
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        /* Ensures the black background of the logo blends perfectly */
+        .logo-blend {
+            mix-blend-mode: screen; 
+            /* Screen mode drops black and keeps colors. 
+               Safe here since nav/hero are black/dark. */
+        }
+    </style>
+</head>
+<body class="bg-brand-light text-gray-900 dark:bg-brand-dark dark:text-gray-100 transition-colors duration-300 overflow-x-hidden">
+
+    <!-- NAVIGATION -->
+    <header class="fixed w-full top-0 z-50 nav-glass transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+            
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <img src="3274.png" alt="Teenspace Logo Icon" class="h-10 w-auto logo-blend group-hover:scale-105 transition-transform duration-300">
+                <span class="text-2xl font-bold tracking-tight text-white"></span>
+            </a>
+
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
+                <a href="#about" class="hover:text-white transition-colors">About</a>
+                <a href="#programs" class="hover:text-white transition-colors">Programs</a>
+                <a href="#benefits" class="hover:text-white transition-colors">Benefits</a>
+                <a href="#community" class="hover:text-white transition-colors">Community</a>
+            </nav>
+
+            <!-- CTA Desktop -->
+            <div class="hidden md:block">
+                <a href="register.html" class="gradient-bg text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-[0_0_20px_rgba(240,45,125,0.4)] transition-all duration-300 transform hover:-translate-y-0.5 inline-block">
+                    Register Now
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button id="mobile-menu-btn" class="md:hidden text-white p-2 focus:outline-none" aria-label="Toggle Menu">
+                <i class="ph ph-list text-3xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Nav Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-brand-dark/95 backdrop-blur-xl border-b border-white/10 overflow-hidden transition-all">
+            <div class="flex flex-col px-6 py-8 gap-6 text-center text-lg font-medium text-gray-300">
+                <a href="#about" class="mobile-link hover:text-white transition-colors">About</a>
+                <a href="#programs" class="mobile-link hover:text-white transition-colors">Programs</a>
+                <a href="#benefits" class="mobile-link hover:text-white transition-colors">Benefits</a>
+                <a href="#community" class="mobile-link hover:text-white transition-colors">Community</a>
+                <a href="register.html" class="mobile-link gradient-bg text-white px-6 py-3 rounded-full font-semibold mt-4 w-full">Register Now
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION (Dark theme by default to highlight brand assets) -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 bg-brand-dark overflow-hidden flex items-center min-h-[90vh]">
+        <!-- Background Ornaments -->
+        <div class="absolute top-1/4 left-0 w-96 h-96 bg-brand-pink/20 rounded-full mix-blend-screen filter blur-[100px] animate-pulse-slow"></div>
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-brand-blue/20 rounded-full mix-blend-screen filter blur-[100px] animate-pulse-slow" style="animation-delay: 2s;"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10 w-full">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                
+                <!-- Hero Text -->
+                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
+                        Discover your space. <br>
+                        <span class="gradient-text">Shape your future.</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-400 mb-8 max-w-2xl mx-auto lg:mx-0">
+                        Program Teenspace is the ultimate hub for youth innovation. Connect with mentors, build real-world skills, and join a community that empowers your creative potential.
+                    </p>
+                    <!--div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
+                        <!-- Small Size Countdown Container -->
+<div class="teenspace-countdown">
+    <div class="countdown-item">
+        <span id="days">00</span>
+        <p>Days</p>
+    </div>
+    <span class="countdown-colon">:</span>
+    <div class="countdown-item">
+        <span id="hours">00</span>
+        <p>Hours</p>
+    </div>
+    <span class="countdown-colon">:</span>
+    <div class="countdown-item">
+        <span id="minutes">00</span>
+        <p>Minutes</p>
+    </div>
+    <span class="countdown-colon">:</span>
+    <div class="countdown-item">
+        <span id="seconds">00</span>
+        <p>Seconds</p>
+    </div>
+</div>
+
+<style>
+.teenspace-countdown {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin: 20px auto;
+    width: 100%;
+    max-width: 400px;
+    flex-wrap: wrap;
+    font-family: sans-serif;
+}
+
+.countdown-item {
+    background: transparent;
+    border: none;
+    padding: 0;
+    text-align: center;
+    flex: 1;
+    min-width: 45px;
+}
+
+.countdown-item span {
+    font-size: 22px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #ff007f, #00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block;
+}
+
+.countdown-item p {
+    margin: 2px 0 0 0;
+    font-size: 10px;
+    color: #b3b3b3;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.countdown-colon {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-top: -14px;
+}
+@media (max-width: 480px) {
+    .teenspace-countdown {
+        gap: 8px;
+    }
+    
+    .countdown-item span {
+        font-size: 18px;
+    }
+    
+    .countdown-item p {
+        font-size: 8px;
+    }
+    
+    .countdown-colon {
+        font-size: 14px;
+        margin-top: -10px;
+    }
+}
+</style>
+
+                        <a href="register.html" class="w-full sm:w-auto gradient-bg text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-[0_0_25px_rgba(46,174,229,0.5)] transition-all duration-300 transform hover:-translate-y-1 text-center">
+                            Register Now</a>
+                   
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 40px; padding: 12px 24px; width: 100%; max-width: 300px; margin: 0 auto;">
+  <img src="3275.png" alt="Icon" style="width: 24px; height: 24px; object-fit: contain;">
+  <span style="color: white; font-weight: bold; font-size: 16px;">Learn More</span>
+
+
+
+        
+    </section>
+
+    <!-- ABOUT SECTION (Adapts to Light/Dark) -->
+    <section id="about" class="py-24 bg-brand-light dark:bg-brand-dark transition-colors duration-300 relative">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                
+                <!-- Abstract Image / Graphic Placeholder -->
+                <div class="order-2 lg:order-1 relative reveal">
+                    <div class="aspect-square rounded-[3rem] overflow-hidden relative">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand-pink/20 to-brand-blue/20 dark:from-brand-pink/10 dark:to-brand-blue/10"></div>
+                        <img src="3276.jpg" alt="Teens collaborating" class="object-cover w-full h-full mix-blend-overlay dark:mix-blend-normal opacity-90">
+                    </div>
+                    <!-- Floating badge -->
+                    <div class="absolute -bottom-6 -right-6 md:bottom-10 md:-right-10 bg-white dark:bg-brand-darkCard p-6 rounded-2xl shadow-xl dark:shadow-none dark:border dark:border-white/10 max-w-xs reveal" style="transition-delay: 200ms;">
+                        <div class="flex items-center gap-4 mb-2">
+                            <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center text-white text-xl">
+                                <i class="ph-fill ph-star"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-900 dark:text-white text-xl">1,000+</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Teens Empowered</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Text Content -->
+                <div class="order-1 lg:order-2 reveal">
+                    <h2 class="text-brand-pink font-bold tracking-wider uppercase text-sm mb-3">About Program Teenspace</h2>
+                    <h3 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">A catalyst for the next generation of creators.</h3>
+                    <p class="text-gray-600 dark:text-gray-400 text-lg mb-6 leading-relaxed">
+                        We believe that youth possess untamed creativity and potential. Program Teenspace provides the environment, tools, and mentorship needed to turn raw ideas into real-world impact.
+                    </p>
+                    <p class="text-gray-600 dark:text-gray-400 text-lg mb-8 leading-relaxed">
+                        Whether you're interested in technology, arts, leadership, or entrepreneurship, our spaces are designed to support your unique journey in a safe, dynamic, and inclusive community.
+                    </p>
+                    
+                    <ul class="space-y-4">
+                        <li class="flex items-center gap-3 text-gray-800 dark:text-gray-200 font-medium">
+                            <i class="ph-fill ph-check-circle text-brand-blue text-2xl"></i> State-of-the-art collaborative spaces
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-800 dark:text-gray-200 font-medium">
+                            <i class="ph-fill ph-check-circle text-brand-blue text-2xl"></i> Industry-leading mentorship programs
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-800 dark:text-gray-200 font-medium">
+                            <i class="ph-fill ph-check-circle text-brand-blue text-2xl"></i> Hands-on experiential learning
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </section>
+    <!-- FOOTER (Dark permanently) -->
+    <footer class="bg-brand-dark text-white pt-20 pb-10 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 reveal">
+                
+                <!-- Brand Info -->
+                <div class="lg:col-span-1">
+                    <a href="#" class="flex items-center gap-3 mb-6">
+                        <img src="3275.png" alt="Teenspace Logo" class="h-8 w-auto logo-blend">
+                        <span class="text-xl font-bold tracking-tight"></span>
+                    </a>
+                    <p class="text-gray-400 mb-6 leading-relaxed">
+                        Empowering the next generation through space, mentorship, and creative freedom.
+                    </p>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-pink transition-colors"><i class="ph-fill ph-instagram-logo text-xl"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-blue transition-colors"><i class="ph-fill ph-twitter-logo text-xl"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#5865F2] transition-colors"><i class="ph-fill ph-discord-logo text-xl"></i></a>
+                    </div>
+                </div>
+
+                <!-- Links 1 -->
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Other Programs</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#" class="hover:text-brand-pink transition-colors">CRE</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Summer Camps</a></li>
+                        <li><a href="#" class="hover:text-brand-pink transition-colors">Winter Camps</a></li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors"></a>Jaalakam Camp</li>
+                    </ul>
+                </div>
+
+                <!-- Links 2 -->
+                <div>
+                    <h4 class="text-lg font-bold mb-6">About Us</h4>
+                    <ul class="space-y-3 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">Our Story</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Locations</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+                    </ul>
+                </div>
+
+                <!-- Contact -->
+                <div>
+                    <h4 class="text-lg font-bold mb-6">Contact</h4>
+                    <ul class="space-y-3 text-gray-400">
+                       <li class="flex items-center gap-3">
+  <i class="ph ph-instagram-logo text-xl text-brand-blue"></i>
+                           <a href="https://www.instagram.com/teenspace._/">teenspace._</a>
+</li>
+
+                        <li class="flex items-center gap-3"><i class="ph ph-phone text-xl text-brand-pink"></i> 1-800-TEEN-SPC</li>
+                        <li class="flex items-start gap-3">
+  <i class="ph ph-map-pin text-xl text-brand-blue mt-1"></i>
+  <a href="https://maps.app.goo.gl/BUqR61Ce5vrGZmBx9" target="_blank" rel="noopener noreferrer">
+    C.V. Complex, P.V. Swami Road,<br>Palayam, Kozhikode, Kerala - 673002
+  </a>
+</li>
+
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Copyright -->
+            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-sm reveal">
+                <p>&copy; 2026 Program Teenspace. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Interactions -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Mobile Menu Toggle
+            const btn = document.getElementById('mobile-menu-btn');
+            const menu = document.getElementById('mobile-menu');
+            const icon = btn.querySelector('i');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+
+            const toggleMenu = () => {
+                menu.classList.toggle('hidden');
+                if (menu.classList.contains('hidden')) {
+                    icon.classList.replace('ph-x', 'ph-list');
+                } else {
+                    icon.classList.replace('ph-list', 'ph-x');
+                }
+            };
+
+            btn.addEventListener('click', toggleMenu);
+            
+            // Close menu when clicking a link
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', toggleMenu);
+            });
+
+            // 2. Navbar Scroll Effect (Glassmorphism enhancement)
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.style.background = 'rgba(5, 5, 5, 0.95)';
+                    navbar.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.5)';
+                } else {
+                    navbar.style.background = 'rgba(5, 5, 5, 0.85)';
+                    navbar.style.boxShadow = 'none';
+                }
+            });
+
+            // 3. Scroll Reveal Animation using IntersectionObserver
+            const revealElements = document.querySelectorAll('.reveal');
+            
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealObserver = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); // Run once
+                    }
+                });
+            }, revealOptions);
+
+            revealElements.forEach(el => {
+                revealObserver.observe(el);
+            });
+            
+            // Trigger immediately for elements already in viewport on load
+            setTimeout(() => {
+                revealElements.forEach(el => {
+                    const rect = el.getBoundingClientRect();
+                    if(rect.top < window.innerHeight) {
+                        el.classList.add('active');
+                    }
+                });
+            }, 100);
+        });
+    </script>
+    <script>
+const countDate = new Date("October 21, 2026 09:00:00").getTime();
+
+function updateCountdown() {
+    const now = new Date().getTime();
+    const gap = countDate - now;
+
+    const second = 1000;
+    const minute = second * 60;
+    const hour = minute * 60;
+    const day = hour * 24;
+
+    const textDay = Math.floor(gap / day);
+    const textHour = Math.floor((gap % day) / hour);
+    const textMinute = Math.floor((gap % hour) / minute);
+    const textSecond = Math.floor((gap % minute) / second);
+
+    document.getElementById("days").innerText = String(textDay).padStart(2, '0');
+    document.getElementById("hours").innerText = String(textHour).padStart(2, '0');
+    document.getElementById("minutes").innerText = String(textMinute).padStart(2, '0');
+    document.getElementById("seconds").innerText = String(textSecond).padStart(2, '0');
+
+    if (gap < 0) {
+        document.querySelector(".teenspace-countdown").innerHTML = "<h4 style='color: #fff; text-align: center; width: 100%; margin: 0;'>Event Started!</h4>";
+    }
+}
+
+setInterval(updateCountdown, 1000);
+</script>
+
+</body>
+</html>
+
+
