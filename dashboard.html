@@ -44,35 +44,20 @@
         .gradient-glow {
             background: radial-gradient(circle, rgba(240, 45, 125, 0.15) 0%, rgba(5, 5, 5, 0) 70%);
         }
-        
-        /* Toast Animation */
-        #customToast {
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
         }
-        .toast-show {
-            opacity: 1 !important;
-            transform: translateY(0) scale(1) !important;
-            pointer-events: auto !important;
+        .animate-pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
     </style>
 </head>
-<body class="bg-brand-dark text-gray-100 min-h-screen font-sans flex flex-col antialiased selection:bg-brand-pink selection:text-white relative">
-
-    <!-- PRO TEENSPACE TOAST NOTIFICATION -->
-    <div id="customToast" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 opacity-0 translate-y-[-20px] scale-95 pointer-events-none max-w-sm w-[90%] sm:w-full">
-        <div id="toastCard" class="bg-brand-darkCard/95 backdrop-blur-xl border border-brand-pink/30 p-4 rounded-2xl shadow-2xl shadow-brand-pink/10 flex items-center gap-3.5">
-            <div id="toastIconBg" class="w-10 h-10 rounded-xl bg-brand-pink/20 text-brand-pink flex items-center justify-center text-xl shrink-0">
-                <i id="toastIcon" class="ph ph-check-circle"></i>
-            </div>
-            <div class="flex-grow">
-                <h4 id="toastTitle" class="text-xs font-bold uppercase tracking-wider text-brand-pink">System Notice</h4>
-                <p id="toastMessage" class="text-xs text-gray-200 mt-0.5 font-medium leading-relaxed">Action completed successfully.</p>
-            </div>
-        </div>
-    </div>
+<body class="bg-brand-dark text-gray-100 min-h-screen font-sans flex flex-col antialiased selection:bg-brand-pink selection:text-white">
 
     <!-- LOGIN MODAL -->
-    <div id="loginModal" class="fixed inset-0 z-40 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div id="loginModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
         <div class="absolute w-96 h-96 gradient-glow rounded-full pointer-events-none"></div>
 
         <div class="bg-brand-darkCard border border-white/10 p-6 sm:p-8 rounded-3xl max-w-md w-full shadow-2xl relative z-10">
@@ -87,7 +72,7 @@
                 <p class="text-gray-400 text-xs sm:text-sm mt-1" id="modalSubtitle">Select Zone & authenticate to continue</p>
             </div>
 
-            <!-- PRO SCANNER STATUS BANNER -->
+            <!-- PRO SCANNER STATUS BANNER (Hidden by default) -->
             <div id="scannerStatusBanner" class="hidden mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-center relative overflow-hidden">
                 <div class="flex items-center justify-center gap-3">
                     <span class="relative flex h-4 w-4">
@@ -158,7 +143,7 @@
     <div id="dashboardContent" class="hidden flex-grow flex-col">
         
         <!-- HEADER -->
-        <header class="glass-panel sticky top-0 z-30">
+        <header class="glass-panel sticky top-0 z-40">
             <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
                 <!-- Branding -->
                 <div class="flex items-center gap-3.5">
@@ -273,37 +258,6 @@
         const logoutBtn = document.getElementById('logoutBtn');
         const registerBioBtn = document.getElementById('registerBioBtn');
 
-        // Custom Toast Elements
-        const customToast = document.getElementById('customToast');
-        const toastTitle = document.getElementById('toastTitle');
-        const toastMessage = document.getElementById('toastMessage');
-        const toastIcon = document.getElementById('toastIcon');
-        const toastIconBg = document.getElementById('toastIconBg');
-        let toastTimeout;
-
-        // Custom Toast Function
-        function showToast(title, message, isSuccess = true) {
-            clearTimeout(toastTimeout);
-            toastTitle.textContent = title;
-            toastMessage.textContent = message;
-
-            if (isSuccess) {
-                toastTitle.className = "text-xs font-bold uppercase tracking-wider text-emerald-400";
-                toastIconBg.className = "w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl shrink-0";
-                toastIcon.className = "ph ph-check-circle";
-            } else {
-                toastTitle.className = "text-xs font-bold uppercase tracking-wider text-rose-400";
-                toastIconBg.className = "w-10 h-10 rounded-xl bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl shrink-0";
-                toastIcon.className = "ph ph-warning-circle";
-            }
-
-            customToast.classList.add('toast-show');
-
-            toastTimeout = setTimeout(() => {
-                customToast.classList.remove('toast-show');
-            }, 3500);
-        }
-
         function bufferToBase64(buffer) {
             return btoa(String.fromCharCode(...new Uint8Array(buffer)));
         }
@@ -345,7 +299,6 @@
                     if (dbPasswords[selectedZone] && enteredPassword === dbPasswords[selectedZone]) {
                         currentZone = selectedZone;
                         openDashboard(selectedZone);
-                        showToast("Welcome Back", `Successfully logged in to ${selectedZone} Zone`, true);
                     } else {
                         loginError.textContent = "Invalid Password! Please check and try again.";
                         loginError.classList.remove('hidden');
@@ -361,14 +314,14 @@
             }
         });
 
-        // Fingerprint Direct Login Handler
+        // Fingerprint Direct Login Handler with Pro UI Feedback
         bioLoginBtn.addEventListener('click', async () => {
             const selectedZone = loginZoneSelect.value;
             const savedCred = localStorage.getItem(`bio_cred_${selectedZone}`);
             if (!savedCred) return;
 
             loginError.classList.add('hidden');
-            scannerStatusBanner.classList.remove('hidden');
+            scannerStatusBanner.classList.remove('hidden'); // Show scanner indicator
 
             try {
                 const publicKeyRequestOptions = {
@@ -386,26 +339,28 @@
                 if (assertion) {
                     currentZone = selectedZone;
                     openDashboard(selectedZone);
-                    showToast("Biometric Success", `Fingerprint verified for ${selectedZone} Admin!`, true);
                 }
             } catch (err) {
                 console.error("Biometric Verification Failed:", err);
-                showToast("Verification Failed", "Fingerprint scan was cancelled or failed.", false);
+                loginError.textContent = "Fingerprint verification cancelled or failed.";
+                loginError.classList.remove('hidden');
             } finally {
-                scannerStatusBanner.classList.add('hidden');
+                scannerStatusBanner.classList.add('hidden'); // Hide scanner indicator
             }
         });
 
-        // Register Fingerprint Handler (With Custom Pro Popup)
+        // Register Fingerprint (Customized for Professional WebAuthn Prompt Text)
         registerBioBtn.addEventListener('click', async () => {
             if (!window.PublicKeyCredential) {
-                showToast("Not Supported", "Your device doesn't support Fingerprint Scanner.", false);
+                alert("Your device or browser doesn't support Biometric Authentication.");
                 return;
             }
 
             try {
                 const publicKeyCreationOptions = {
                     challenge: Uint8Array.from("teenspace_register_challenge_key", c => c.charCodeAt(0)),
+                    
+                    // Professional App & User Display Text for Phone Biometric Dialog
                     rp: { 
                         name: "Teenspace Admin Security Portal",
                         id: window.location.hostname
@@ -415,6 +370,7 @@
                         name: `admin.${currentZone.toLowerCase()}@teenspace.org`,
                         displayName: `Teenspace ${currentZone} Admin`
                     },
+                    
                     pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
                     authenticatorSelection: {
                         authenticatorAttachment: "platform",
@@ -428,13 +384,11 @@
                 const base64CredId = bufferToBase64(credential.rawId);
 
                 localStorage.setItem(`bio_cred_${currentZone}`, base64CredId);
-                
-                // SHOW CUSTOM BEAUTIFUL TEENSPACE TOAST
-                showToast("Biometric Enabled", `Fingerprint successfully registered for ${currentZone} Admin!`, true);
+                alert(`✅ Fingerprint successfully registered for ${currentZone} Admin!`);
 
             } catch (err) {
                 console.error("Biometric Registration Error:", err);
-                showToast("Registration Cancelled", "Fingerprint setup was not completed.", false);
+                alert("Fingerprint registration cancelled.");
             }
         });
 
@@ -456,7 +410,6 @@
             bioLoginBtn.classList.add('hidden');
             bioDivider.classList.add('hidden');
             loginZoneSelect.value = '';
-            showToast("Logged Out", "You have been logged out securely.", true);
         });
 
         async function fetchData(zoneFilter) {
