@@ -454,8 +454,13 @@
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-white/[0.02] transition-colors";
 
-                const defaultMsg = encodeURIComponent(`السلام عليكم ورحمة الله ${student.fullName}, Greetings from Program Teenspace! We received your registration.`);
-                const whatsappUrl = `https://wa.me/91${student.whatsapp}?text=${defaultMsg}`;
+                   const defaultMsg = encodeURIComponent(
+  `السلام عليكم ورحمة الله وبركاته ✨
+*${student.fullName}*
+
+Greetings from Program Teenspace! We received your registration.`
+);
+                   const whatsappUrl = `https://wa.me/91${student.whatsapp}?text=${defaultMsg}`;
 
                 tr.innerHTML = `
                     <td class="py-4 px-6 font-semibold text-white">${student.fullName}</td>
