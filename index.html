@@ -1,27 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="ml" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teenspace | Higher Secondary Students Conference</title>
-    <!-- Favicon PNG -->
-<link rel="icon" type="image/png" href="favicon.png">
+    <!-- ഫെവിക്കോൺ (Favicon PNG) -->
+    <link rel="icon" type="image/png" href="favicon.png">
 
     <meta name="description" content="Program Teenspace is a modern, youth-focused initiative empowering the next generation through creative workshops, tech mentorship, and community leadership.">
     
-    <!-- Google Fonts -->
+    <!-- ഗൂഗിൾ ഫോണ്ടുകൾ (Google Fonts) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Phosphor Icons (Lightweight & Modern) -->
+    <!-- ഫോസ്ഫോർ ഐക്കണുകൾ (Phosphor Icons) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- Tailwind CSS -->
+    <!-- ടെയിൽവിൻഡ് സി.എസ്.എസ് (Tailwind CSS) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'media', // Automatically uses system preference (prefers-color-scheme)
             theme: {
                 extend: {
                     fontFamily: {
@@ -33,11 +32,15 @@
                             pinkHover: '#D81B60',
                             blue: '#2EAEE5',
                             blueHover: '#0288D1',
-                            dark: '#050505',
-                            darkCard: '#111111',
-                            light: '#FAFAFA',
-                            lightCard: '#FFFFFF'
+                            darkText: '#0F172A',
+                            lightBg: '#FAFAFC',
+                            cardBg: '#FFFFFF'
                         }
+                    },
+                    boxShadow: {
+                        'glow': '0 10px 30px -5px rgba(240, 45, 125, 0.25)',
+                        'blue-glow': '0 10px 30px -5px rgba(46, 174, 229, 0.25)',
+                        'soft': '0 10px 30px rgba(0, 0, 0, 0.04)',
                     },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
@@ -46,7 +49,7 @@
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-20px)' },
+                            '50%': { transform: 'translateY(-15px)' },
                         }
                     }
                 }
@@ -54,10 +57,11 @@
         }
     </script>
     <style>
-        /* Custom Styles for interactions & base elements */
         body {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            background-color: #FAFAFC;
+            color: #0F172A;
         }
         
         .gradient-text {
@@ -71,15 +75,11 @@
             background: linear-gradient(135deg, #F02D7D 0%, #2EAEE5 100%);
         }
 
-        .gradient-bg-hover:hover {
-            background: linear-gradient(135deg, #D81B60 0%, #0288D1 100%);
-        }
-
-        /* Reveal Animation on Scroll */
+        /* സ്ക്രോൾ ചെയ്യുമ്പോൾ ആനിമേഷൻ */
         .reveal {
             opacity: 0;
             transform: translateY(30px);
-            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .reveal.active {
@@ -87,314 +87,592 @@
             transform: translateY(0);
         }
 
-        /* Nav Glassmorphism - Always dark to support logo */
-        .nav-glass {
-            background: rgba(5, 5, 5, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        /* ലൈറ്റ് ഗ്ലാസ് നാവിഗേഷൻ ബാർ */
+        .nav-glass-light {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
-        
-        /* Ensures the black background of the logo blends perfectly */
-        .logo-blend {
-            mix-blend-mode: screen; 
-            /* Screen mode drops black and keeps colors. 
-               Safe here since nav/hero are black/dark. */
+
+        /* സ്മൂത്ത് പാരലാക്സ് ആൻഡ് സ്കേലിംഗ് */
+        .img-zoom {
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .group:hover .img-zoom {
+            transform: scale(1.08);
         }
     </style>
 </head>
-<body class="bg-brand-light text-gray-900 dark:bg-brand-dark dark:text-gray-100 transition-colors duration-300 overflow-x-hidden">
+<body class="bg-brand-lightBg text-brand-darkText transition-colors duration-300 overflow-x-hidden">
 
-    <!-- NAVIGATION -->
-    <header class="fixed w-full top-0 z-50 nav-glass transition-all duration-300" id="navbar">
+    <!-- നോട്ടിഫിക്കേഷൻ ടോസ്റ്റ് (Toast Message) -->
+    <div id="toast" class="fixed bottom-24 right-6 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl z-50 flex items-center gap-3 transition-all duration-300 opacity-0 translate-y-10 pointer-events-none">
+        <i class="ph-fill ph-check-circle text-green-400 text-xl"></i>
+        <span id="toast-message" class="text-sm font-semibold">Link copied to clipboard!</span>
+    </div>
+
+    <!-- ഫ്ലോട്ടിംഗ് വാട്ട്‌സ്ആപ്പ് ബട്ടൺ -->
+    <a href="https://wa.me/916282397438" target="_blank" aria-label="Chat on WhatsApp" class="fixed bottom-6 right-6 z-40 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-110 group">
+        <i class="ph-fill ph-whatsapp-logo text-3xl"></i>
+        <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-500 ease-in-out font-bold text-sm px-0 group-hover:px-2">
+            Chat with Us
+        </span>
+    </a>
+
+    <!-- ഗാലറി ലൈറ്റ്‌ബോക്സ് മോഡൽ (Image Lightbox Modal) -->
+    <div id="image-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4 transition-all duration-300">
+        <button onclick="closeModal()" class="absolute top-6 right-6 text-white text-3xl p-2 hover:text-brand-pink transition-colors">
+            <i class="ph ph-x"></i>
+        </button>
+        <div class="max-w-4xl max-h-[85vh] relative overflow-hidden rounded-2xl shadow-2xl">
+            <img id="modal-img" src="" alt="Full Preview" class="w-full h-full object-contain max-h-[80vh] rounded-2xl">
+            <p id="modal-caption" class="text-center text-white font-medium mt-4 text-base sm:text-lg"></p>
+        </div>
+    </div>
+
+    <!-- നാവിഗേഷൻ ബാർ -->
+    <header class="fixed w-full top-0 z-40 nav-glass-light transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
             
-            <!-- Logo -->
-            <a href="#" class="flex items-center gap-3 group">
-                <img src="3274.png" alt="Teenspace Logo Icon" class="h-10 w-auto logo-blend group-hover:scale-105 transition-transform duration-300">
-                <span class="text-2xl font-bold tracking-tight text-white"></span>
+            <!-- ലോഗോകൾ -->
+            <a href="#" class="flex items-center gap-3 sm:gap-4 group">
+                <img src="3274.png" alt="Teenspace Logo" class="h-9 sm:h-10 w-auto group-hover:scale-105 transition-transform duration-300">
+                <span class="h-6 w-px bg-slate-300"></span>
+                <img src="Students Logo.png" alt="Wisdom Students Logo" class="h-7 sm:h-8 w-auto group-hover:scale-105 transition-transform duration-300">
             </a>
 
-            <!-- Desktop Nav -->
-            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-300">
-                <a href="#about" class="hover:text-white transition-colors">About</a>
-                <a href="#programs" class="hover:text-white transition-colors">Programs</a>
-                <a href="#benefits" class="hover:text-white transition-colors">Benefits</a>
-                <a href="#community" class="hover:text-white transition-colors">Community</a>
+            <!-- ഡെസ്ക്ടോപ്പ് നാവിഗേഷൻ -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+                <a href="#about" class="hover:text-brand-pink transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">About</a>
+                <a href="#gallery" class="hover:text-brand-pink transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">Gallery</a>
+                <a href="#programs" class="hover:text-brand-pink transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">Programs</a>
+                <a href="#contact" class="hover:text-brand-pink transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">Contact</a>
+                <a href="#faq" class="hover:text-brand-pink transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">FAQ</a>
             </nav>
 
-            <!-- CTA Desktop -->
+            <!-- സി.റ്റി.എ (CTA Button) -->
             <div class="hidden md:block">
-                <a href="register.html" class="gradient-bg text-white px-6 py-2.5 rounded-full font-semibold hover:shadow-[0_0_20px_rgba(240,45,125,0.4)] transition-all duration-300 transform hover:-translate-y-0.5 inline-block">
-                    Register Now
+                <a href="register.html" class="gradient-bg text-white px-7 py-3 rounded-full font-bold text-sm tracking-wide shadow-glow hover:shadow-[0_8px_25px_rgba(240,45,125,0.45)] transition-all duration-300 transform hover:-translate-y-0.5 inline-block">
+                    Register Now <i class="ph ph-arrow-right ml-1"></i>
                 </a>
             </div>
 
-            <!-- Mobile Menu Toggle -->
-            <button id="mobile-menu-btn" class="md:hidden text-white p-2 focus:outline-none" aria-label="Toggle Menu">
+            <!-- മൊബൈൽ മെനു ടോഗിൾ -->
+            <button id="mobile-menu-btn" class="md:hidden text-slate-800 p-2 focus:outline-none" aria-label="Toggle Menu">
                 <i class="ph ph-list text-3xl"></i>
             </button>
         </div>
 
-        <!-- Mobile Nav Dropdown -->
-        <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-brand-dark/95 backdrop-blur-xl border-b border-white/10 overflow-hidden transition-all">
-            <div class="flex flex-col px-6 py-8 gap-6 text-center text-lg font-medium text-gray-300">
-                <a href="#about" class="mobile-link hover:text-white transition-colors">About</a>
-                <a href="#programs" class="mobile-link hover:text-white transition-colors">Programs</a>
-                <a href="#benefits" class="mobile-link hover:text-white transition-colors">Benefits</a>
-                <a href="#community" class="mobile-link hover:text-white transition-colors">Community</a>
-                <a href="register.html" class="mobile-link gradient-bg text-white px-6 py-3 rounded-full font-semibold mt-4 w-full">Register Now
-                </a>
+        <!-- മൊബൈൽ ഡ്രോപ്പ്ഡൗൺ -->
+        <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-white/95 backdrop-blur-xl border-b border-slate-200 overflow-hidden transition-all shadow-xl">
+            <div class="flex flex-col px-6 py-8 gap-5 text-center text-lg font-semibold text-slate-700">
+                <a href="#about" class="mobile-link hover:text-brand-pink transition-colors">About</a>
+                <a href="#gallery" class="mobile-link hover:text-brand-pink transition-colors">Gallery</a>
+                <a href="#programs" class="mobile-link hover:text-brand-pink transition-colors">Programs</a>
+                <a href="#contact" class="mobile-link hover:text-brand-pink transition-colors">Contact</a>
+                <a href="#faq" class="mobile-link hover:text-brand-pink transition-colors">FAQ</a>
+                <a href="register.html" class="mobile-link gradient-bg text-white px-6 py-3.5 rounded-full font-bold mt-2 w-full shadow-glow">Register Now</a>
             </div>
         </div>
     </header>
 
-    <!-- HERO SECTION (Dark theme by default to highlight brand assets) -->
-    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 bg-brand-dark overflow-hidden flex items-center min-h-[90vh]">
-        <!-- Background Ornaments -->
-        <div class="absolute top-1/4 left-0 w-96 h-96 bg-brand-pink/20 rounded-full mix-blend-screen filter blur-[100px] animate-pulse-slow"></div>
-        <div class="absolute bottom-0 right-0 w-96 h-96 bg-brand-blue/20 rounded-full mix-blend-screen filter blur-[100px] animate-pulse-slow" style="animation-delay: 2s;"></div>
+    <!-- ഹീറോ സെക്ഷൻ (HERO SECTION WITH LARGE TEENSPACE LOGO) -->
+    <section class="relative pt-32 pb-20 lg:pt-44 lg:pb-32 bg-gradient-to-b from-slate-100/90 via-white to-brand-lightBg overflow-hidden flex items-center min-h-[92vh]">
+        <!-- ആനിമേഷൻ ഡെക്കറേഷൻ ലൈറ്റുകൾ -->
+        <div class="absolute top-1/4 -left-20 w-96 h-96 bg-brand-pink/10 rounded-full filter blur-[100px] animate-pulse-slow"></div>
+        <div class="absolute bottom-0 -right-20 w-96 h-96 bg-brand-blue/10 rounded-full filter blur-[100px] animate-pulse-slow" style="animation-delay: 2s;"></div>
         
         <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10 w-full">
-            <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
                 
-                <!-- Hero Text -->
-                    <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-6">
-                        Discover your space. <br>
-                        <span class="gradient-text">Shape your future.</span>
-                    </h1>
-                    <p class="text-lg md:text-xl text-gray-400 mb-8 max-w-2xl mx-auto lg:mx-0">
+                    
+                    <!-- ടെക്സ്റ്റിന് പകരം വലിയ ലോഗോ (Enlarged Teenspace Logo) -->
+                    <div class="mb-8">
+                        <img src="3274.png" alt="Teenspace Logo" class="h-20 sm:h-28 md:h-36 lg:h-44 w-auto object-contain drop-shadow-sm">
+                    </div>
+                    
+                    <p class="text-base sm:text-lg md:text-xl text-slate-600 mb-8 max-w-2xl font-normal leading-relaxed">
                         Program Teenspace is the ultimate hub for youth innovation. Connect with mentors, build real-world skills, and join a community that empowers your creative potential.
                     </p>
-                    <!--div class="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                        <!-- Small Size Countdown Container -->
-<div class="teenspace-countdown">
-    <div class="countdown-item">
-        <span id="days">00</span>
-        <p>Days</p>
-    </div>
-    <span class="countdown-colon">:</span>
-    <div class="countdown-item">
-        <span id="hours">00</span>
-        <p>Hours</p>
-    </div>
-    <span class="countdown-colon">:</span>
-    <div class="countdown-item">
-        <span id="minutes">00</span>
-        <p>Minutes</p>
-    </div>
-    <span class="countdown-colon">:</span>
-    <div class="countdown-item">
-        <span id="seconds">00</span>
-        <p>Seconds</p>
-    </div>
-</div>
 
-<style>
-.teenspace-countdown {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin: 20px auto;
-    width: 100%;
-    max-width: 400px;
-    flex-wrap: wrap;
-    font-family: sans-serif;
-}
-
-.countdown-item {
-    background: transparent;
-    border: none;
-    padding: 0;
-    text-align: center;
-    flex: 1;
-    min-width: 45px;
-}
-
-.countdown-item span {
-    font-size: 22px;
-    font-weight: bold;
-    background: linear-gradient(135deg, #ff007f, #00c6ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    display: block;
-}
-
-.countdown-item p {
-    margin: 2px 0 0 0;
-    font-size: 10px;
-    color: #b3b3b3;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.countdown-colon {
-    font-size: 18px;
-    font-weight: bold;
-    color: #ffffff;
-    margin-top: -14px;
-}
-@media (max-width: 480px) {
-    .teenspace-countdown {
-        gap: 8px;
-    }
-    
-    .countdown-item span {
-        font-size: 18px;
-    }
-    
-    .countdown-item p {
-        font-size: 8px;
-    }
-    
-    .countdown-colon {
-        font-size: 14px;
-        margin-top: -10px;
-    }
-}
-</style>
-
-                        <a href="register.html" class="w-full sm:w-auto gradient-bg text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-[0_0_25px_rgba(46,174,229,0.5)] transition-all duration-300 transform hover:-translate-y-1 text-center">
-                            Register Now</a>
-                   
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 40px; padding: 12px 24px; width: 100%; max-width: 300px; margin: 0 auto;">
-  <img src="3275.png" alt="Icon" style="width: 24px; height: 24px; object-fit: contain;">
-  <span style="color: white; font-weight: bold; font-size: 16px;">Learn More</span>
-
-
-
-        
-    </section>
-
-    <!-- ABOUT SECTION (Adapts to Light/Dark) -->
-    <section id="about" class="py-24 bg-brand-light dark:bg-brand-dark transition-colors duration-300 relative">
-        <div class="max-w-7xl mx-auto px-6 md:px-12">
-            <div class="grid lg:grid-cols-2 gap-16 items-center">
-                
-                <!-- Abstract Image / Graphic Placeholder -->
-                <div class="order-2 lg:order-1 relative reveal">
-                    <div class="aspect-square rounded-[3rem] overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-brand-pink/20 to-brand-blue/20 dark:from-brand-pink/10 dark:to-brand-blue/10"></div>
-                        <img src="3276.jpg" alt="Teens collaborating" class="object-cover w-full h-full mix-blend-overlay dark:mix-blend-normal opacity-90">
+                    <!-- പ്രൊഫഷണൽ ലൈറ്റ് കൗണ്ട്ഡൗൺ കാർഡ് -->
+                    <div class="teenspace-countdown bg-white/80 backdrop-blur-md p-5 rounded-2xl shadow-soft border border-slate-200/80 mb-8 max-w-md">
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 text-center sm:text-left">Event Starts In</p>
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="countdown-item">
+                                <span id="days">00</span>
+                                <p>Days</p>
+                            </div>
+                            <span class="countdown-colon">:</span>
+                            <div class="countdown-item">
+                                <span id="hours">00</span>
+                                <p>Hours</p>
+                            </div>
+                            <span class="countdown-colon">:</span>
+                            <div class="countdown-item">
+                                <span id="minutes">00</span>
+                                <p>Minutes</p>
+                            </div>
+                            <span class="countdown-colon">:</span>
+                            <div class="countdown-item">
+                                <span id="seconds">00</span>
+                                <p>Seconds</p>
+                            </div>
+                        </div>
                     </div>
-                    <!-- Floating badge -->
-                    <div class="absolute -bottom-6 -right-6 md:bottom-10 md:-right-10 bg-white dark:bg-brand-darkCard p-6 rounded-2xl shadow-xl dark:shadow-none dark:border dark:border-white/10 max-w-xs reveal" style="transition-delay: 200ms;">
-                        <div class="flex items-center gap-4 mb-2">
-                            <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center text-white text-xl">
-                                <i class="ph-fill ph-star"></i>
+
+                    <style>
+                    .teenspace-countdown .countdown-item {
+                        text-align: center;
+                        flex: 1;
+                    }
+                    .teenspace-countdown .countdown-item span {
+                        font-size: 26px;
+                        font-weight: 800;
+                        background: linear-gradient(135deg, #F02D7D, #2EAEE5);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        display: block;
+                        line-height: 1;
+                    }
+                    .teenspace-countdown .countdown-item p {
+                        margin-top: 4px;
+                        font-size: 10px;
+                        color: #64748B;
+                        font-weight: 700;
+                        text-transform: uppercase;
+                    }
+                    .teenspace-countdown .countdown-colon {
+                        font-size: 20px;
+                        font-weight: bold;
+                        color: #CBD5E1;
+                        margin-top: -12px;
+                    }
+                    </style>
+
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="register.html" class="gradient-bg text-white px-8 py-4 rounded-full font-bold text-base hover:shadow-glow transition-all duration-300 transform hover:-translate-y-1 text-center flex items-center justify-center gap-2">
+                            <span>Register Now</span>
+                            <i class="ph ph-arrow-right text-lg"></i>
+                        </a>
+                        <a href="#about" class="flex items-center justify-center gap-2 border-2 border-slate-200 bg-white/60 rounded-full px-6 py-4 text-slate-800 font-bold hover:bg-slate-100 hover:border-slate-300 transition-all shadow-sm">
+                            <img src="3275.png" alt="Icon" class="w-5 h-5 object-contain">
+                            <span>Learn More</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- ഹീറോ ചിത്രവും ഫ്ലോട്ടിംഗ് കാർഡും -->
+                <div class="lg:col-span-5 relative hidden lg:block">
+                    <div class="relative mx-auto max-w-md">
+                        <div class="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white relative">
+                            <img src="3276.jpg" alt="Conference Students" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
+                        </div>
+                        
+                        <div class="absolute -bottom-6 -left-6 bg-white/95 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-4 animate-float">
+                            <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center text-white text-2xl shadow-md">
+                                <i class="ph-fill ph-users"></i>
                             </div>
                             <div>
-                                <p class="font-bold text-gray-900 dark:text-white text-xl">1,000+</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Teens Empowered</p>
+                                <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Expected Attendees</p>
+                                <p class="text-xl font-extrabold text-slate-900">1000+ Students</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Text Content -->
+            </div>
+        </div>
+    </section>
+
+    <!-- എബൗട്ട് സെക്ഷൻ -->
+    <section id="about" class="py-24 bg-white transition-colors duration-300 relative border-t border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                
+                <div class="order-2 lg:order-1 relative reveal">
+                    <div class="aspect-square rounded-[3rem] overflow-hidden relative shadow-xl border border-slate-100 group">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brand-pink/10 to-brand-blue/10 z-10 pointer-events-none"></div>
+                        <img src="3276.jpg" alt="Teens collaborating" class="object-cover w-full h-full img-zoom">
+                    </div>
+                    <div class="absolute -bottom-6 -right-6 md:bottom-10 md:-right-10 bg-white p-6 rounded-2xl shadow-2xl border border-slate-100 max-w-xs reveal" style="transition-delay: 200ms;">
+                        <div class="flex items-center gap-4 mb-2">
+                            <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center text-white text-xl shadow-md">
+                                <i class="ph-fill ph-star"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-900 text-xl">1,000+</p>
+                                <p class="text-sm text-slate-500 font-medium">Teens Empowered</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="order-1 lg:order-2 reveal">
-                    <h2 class="text-brand-pink font-bold tracking-wider uppercase text-sm mb-3">About Program Teenspace</h2>
-                    <h3 class="text-4xl md:text-5xl font-bold mb-6 text-gray-900 dark:text-white">A catalyst for the next generation of creators.</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-lg mb-6 leading-relaxed">
+                    <span class="text-brand-pink font-extrabold tracking-wider uppercase text-xs px-3.5 py-1.5 rounded-full bg-brand-pink/10 inline-block mb-4">About Program Teenspace</span>
+                    <h3 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 text-slate-900 leading-tight">A catalyst for the next generation of creators.</h3>
+                    <p class="text-slate-600 text-base sm:text-lg mb-6 leading-relaxed">
                         We believe that youth possess untamed creativity and potential. Program Teenspace provides the environment, tools, and mentorship needed to turn raw ideas into real-world impact.
                     </p>
-                    <p class="text-gray-600 dark:text-gray-400 text-lg mb-8 leading-relaxed">
+                    <p class="text-slate-600 text-base sm:text-lg mb-8 leading-relaxed">
                         Whether you're interested in technology, arts, leadership, or entrepreneurship, our spaces are designed to support your unique journey in a safe, dynamic, and inclusive community.
                     </p>
                     
-                    <ul class="space-y-4">
-                        <li class="flex items-center gap-3 text-gray-800 dark:text-gray-200 font-medium">
-                            <i class="ph-fill ph-check-circle text-brand-blue text-2xl"></i> State-of-the-art collaborative spaces
-                        </li>
-                        <li class="flex items-center gap-3 text-gray-800 dark:text-gray-200 font-medium">
-                            <i class="ph-fill ph-check-circle text-brand-blue text-2xl"></i> Industry-leading mentorship programs
-                        </li>
-                        <li class="flex items-center gap-3 text-gray-800 dark:text-gray-200 font-medium">
-                            <i class="ph-fill ph-check-circle text-brand-blue text-2xl"></i> Hands-on experiential learning
-                        </li>
-                    </ul>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-brand-pink/30 transition-all">
+                            <i class="ph-fill ph-buildings text-brand-pink text-2xl mb-2"></i>
+                            <h4 class="font-bold text-slate-900 text-sm">Interactive Spaces</h4>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-brand-blue/30 transition-all">
+                            <i class="ph-fill ph-user-gear text-brand-blue text-2xl mb-2"></i>
+                            <h4 class="font-bold text-slate-900 text-sm">Expert Mentorship</h4>
+                        </div>
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 hover:border-brand-pink/30 transition-all">
+                            <i class="ph-fill ph-lightbulb text-brand-pink text-2xl mb-2"></i>
+                            <h4 class="font-bold text-slate-900 text-sm">Hands-on Learning</h4>
+                        </div>
+                    </div>
                 </div>
 
             </div>
         </div>
     </section>
-    <!-- FOOTER (Dark permanently) -->
-    <footer class="bg-brand-dark text-white pt-20 pb-10 border-t border-white/10">
+
+    <!-- പ്രോഗ്രാം ഹൈലൈറ്റ്‌സ് -->
+    <section id="programs" class="py-20 bg-brand-lightBg">
         <div class="max-w-7xl mx-auto px-6 md:px-12">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 reveal">
-                
-                <!-- Brand Info -->
-                <div class="lg:col-span-1">
-                    <a href="#" class="flex items-center gap-3 mb-6">
-                        <img src="3275.png" alt="Teenspace Logo" class="h-8 w-auto logo-blend">
-                        <span class="text-xl font-bold tracking-tight"></span>
-                    </a>
-                    <p class="text-gray-400 mb-6 leading-relaxed">
-                        Empowering the next generation through space, mentorship, and creative freedom.
+            <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+                <span class="text-brand-blue font-extrabold tracking-wider uppercase text-xs px-3.5 py-1.5 rounded-full bg-brand-blue/10 inline-block mb-3">Key Highlights</span>
+                <h3 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">What To Expect</h3>
+                <p class="text-slate-600 text-base sm:text-lg">
+                    Discover sessions designed to inspire, build skills, and build lifelong connections.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
+                <!-- Card 1 -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-pink group-hover:text-white transition-all">
+                        <i class="ph-fill ph-chats-teardrop"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-3">Keynote Sessions</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Engaging talks from inspiring youth icons and industry leaders who share real-life lessons and advice.
                     </p>
-                    <div class="flex gap-4">
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-pink transition-colors"><i class="ph-fill ph-instagram-logo text-xl"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-brand-blue transition-colors"><i class="ph-fill ph-twitter-logo text-xl"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-[#5865F2] transition-colors"><i class="ph-fill ph-discord-logo text-xl"></i></a>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-blue group-hover:text-white transition-all">
+                        <i class="ph-fill ph-code-block"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-3">Skill Workshops</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Hands-on sessions covering technology, creative arts, leadership development, and future careers.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
+                    <div class="w-14 h-14 rounded-2xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-pink group-hover:text-white transition-all">
+                        <i class="ph-fill ph-handshake"></i>
+                    </div>
+                    <h4 class="text-xl font-bold text-slate-900 mb-3">Youth Networking</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">
+                        Connect with like-minded peers from higher secondary schools across the district and collaborate.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ഗാലറി സെക്ഷൻ (1 വരിയിൽ 2 ഫോട്ടോകൾ വീതം) -->
+    <section id="gallery" class="py-24 bg-white border-t border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
+            <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+                <span class="text-brand-pink font-extrabold tracking-wider uppercase text-xs px-3.5 py-1.5 rounded-full bg-brand-pink/10 inline-block mb-3">Event Highlights</span>
+                <h3 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">Gallery</h3>
+                <p class="text-slate-600 text-base sm:text-lg">
+                    Check out some memorable moments and workshops. Click on any image for full view.
+                </p>
+            </div>
+
+            <!-- grid-cols-2: എപ്പോഴും 1 വരിയിൽ 2 ഫോട്ടോകൾ -->
+            <div class="grid grid-cols-2 gap-3 sm:gap-6 md:gap-8 max-w-5xl mx-auto reveal">
+                
+                <!-- ചിത്രം 1 -->
+                <div onclick="openModal('3276.jpg', 'Interactive Workshops')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                    <img src="3276.jpg" alt="Gallery Photo 1" class="w-full h-full object-cover img-zoom">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
+                        <p class="text-white font-bold text-xs sm:text-base">Interactive Workshops</p>
+                        <i class="ph ph-magnifying-glass-plus text-white text-lg sm:text-2xl"></i>
                     </div>
                 </div>
 
-                <!-- Links 1 -->
+                <!-- ചിത്രം 2 -->
+                <div onclick="openModal('3276.jpg', 'Team Collaboration')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                    <img src="3276.jpg" alt="Gallery Photo 2" class="w-full h-full object-cover img-zoom">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
+                        <p class="text-white font-bold text-xs sm:text-base">Team Collaboration</p>
+                        <i class="ph ph-magnifying-glass-plus text-white text-lg sm:text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- ചിത്രം 3 -->
+                <div onclick="openModal('3276.jpg', 'Youth Mentorship')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                    <img src="3276.jpg" alt="Gallery Photo 3" class="w-full h-full object-cover img-zoom">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
+                        <p class="text-white font-bold text-xs sm:text-base">Youth Mentorship</p>
+                        <i class="ph ph-magnifying-glass-plus text-white text-lg sm:text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- ചിത്രം 4 -->
+                <div onclick="openModal('3276.jpg', 'Student Presentations')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                    <img src="3276.jpg" alt="Gallery Photo 4" class="w-full h-full object-cover img-zoom">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
+                        <p class="text-white font-bold text-xs sm:text-base">Student Presentations</p>
+                        <i class="ph ph-magnifying-glass-plus text-white text-lg sm:text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- ചിത്രം 5 (View More ക്ലിക്ക് ചെയ്യുമ്പോൾ തെളിയും) -->
+                <div onclick="openModal('3276.jpg', 'Creative Brainstorming')" class="extra-gallery-item hidden group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                    <img src="3276.jpg" alt="Gallery Photo 5" class="w-full h-full object-cover img-zoom">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
+                        <p class="text-white font-bold text-xs sm:text-base">Creative Brainstorming</p>
+                        <i class="ph ph-magnifying-glass-plus text-white text-lg sm:text-2xl"></i>
+                    </div>
+                </div>
+
+                <!-- ചിത്രം 6 (View More ക്ലിക്ക് ചെയ്യുമ്പോൾ തെളിയും) -->
+                <div onclick="openModal('3276.jpg', 'Leadership Summit')" class="extra-gallery-item hidden group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                    <img src="3276.jpg" alt="Gallery Photo 6" class="w-full h-full object-cover img-zoom">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
+                        <p class="text-white font-bold text-xs sm:text-base">Leadership Summit</p>
+                        <i class="ph ph-magnifying-glass-plus text-white text-lg sm:text-2xl"></i>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- "View More Images" ബട്ടൺ -->
+            <div class="text-center mt-12 reveal">
+                <button id="view-more-btn" onclick="toggleGallery()" class="inline-flex items-center gap-2 sm:gap-3 px-8 py-3.5 rounded-full border-2 border-brand-pink text-brand-pink font-extrabold text-sm sm:text-base hover:bg-brand-pink hover:text-white transition-all duration-300 transform hover:-translate-y-1 shadow-sm">
+                    <i class="ph ph-images text-lg sm:text-xl"></i>
+                    <span id="view-more-text">View More Images</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- കോൺടാക്ട് ഇൻഫോ സെക്ഷൻ -->
+    <section id="contact" class="py-24 bg-brand-lightBg transition-colors duration-300">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+                <span class="text-brand-pink font-extrabold tracking-wider uppercase text-xs px-3.5 py-1.5 rounded-full bg-brand-pink/10 inline-block mb-3">Get In Touch</span>
+                <h3 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">Contact Information</h3>
+                <p class="text-slate-600 text-base sm:text-lg">
+                    Reach out to us directly via WhatsApp, Email, or visit our location.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
+                
+                <!-- ഗൂഗിൾ മാപ്സ് ലൊക്കേഷൻ കാർഡ് -->
+                <a href="https://maps.google.com/?q=Mujahid+Centre+Wisdom+Office+Kozhikode+North+673620" target="_blank" rel="noopener noreferrer" class="bg-white p-8 rounded-3xl border border-slate-200/80 hover:border-brand-pink/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-pink group-hover:text-white transition-colors duration-300 shadow-sm">
+                            <i class="ph-fill ph-map-pin"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-2">Location</h4>
+                        <p class="text-slate-600 leading-relaxed font-normal text-sm sm:text-base">
+                            Mujahid Centre, Wisdom Office,<br>Kozhikode North - 673620
+                        </p>
+                    </div>
+                    <span class="inline-flex items-center gap-2 text-brand-pink font-bold mt-6 text-sm">
+                        Open in Google Maps <i class="ph ph-arrow-right"></i>
+                    </span>
+                </a>
+
+                <!-- വാട്ട്‌സ്ആപ്പ് കാർഡ് -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 hover:border-brand-blue/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300 shadow-sm">
+                            <i class="ph-fill ph-whatsapp-logo"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-3">Call / WhatsApp</h4>
+                        <div class="flex flex-col gap-3">
+                            <a href="https://wa.me/916282397438" target="_blank" class="text-slate-700 hover:text-brand-blue font-bold transition-colors inline-flex items-center gap-2.5 text-sm sm:text-base bg-slate-50 p-2.5 rounded-xl border border-slate-100 hover:border-brand-blue/30">
+                                <i class="ph-fill ph-whatsapp-logo text-green-500 text-xl"></i> +91 62823 97438
+                            </a>
+                            <a href="https://wa.me/919567276017" target="_blank" class="text-slate-700 hover:text-brand-blue font-bold transition-colors inline-flex items-center gap-2.5 text-sm sm:text-base bg-slate-50 p-2.5 rounded-xl border border-slate-100 hover:border-brand-blue/30">
+                                <i class="ph-fill ph-whatsapp-logo text-green-500 text-xl"></i> +91 95672 76017
+                            </a>
+                        </div>
+                    </div>
+                    <span class="inline-flex items-center gap-2 text-brand-blue font-bold mt-6 text-sm">
+                        Direct WhatsApp Chat <i class="ph ph-arrow-right"></i>
+                    </span>
+                </div>
+
+                <!-- Mailto ഇമെയിൽ കാർഡ് -->
+                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 hover:border-brand-pink/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="w-14 h-14 rounded-2xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-pink group-hover:text-white transition-colors duration-300 shadow-sm">
+                            <i class="ph-fill ph-envelope-simple"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-slate-900 mb-2">Email Us</h4>
+                        <p class="text-slate-600 break-all leading-relaxed font-semibold text-sm mb-4">
+                            wisdomstudentskkdnorth@gmail.com
+                        </p>
+                    </div>
+                    <div class="flex items-center gap-2 mt-4">
+                        <a href="mailto:wisdomstudentskkdnorth@gmail.com" class="gradient-bg text-white px-5 py-2.5 rounded-xl font-bold text-xs inline-flex items-center gap-1.5 shadow-sm">
+                            Send Email <i class="ph ph-paper-plane-tilt"></i>
+                        </a>
+                        <button onclick="copyToClipboard('wisdomstudentskkdnorth@gmail.com')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2.5 rounded-xl font-bold text-xs inline-flex items-center gap-1 transition-colors" title="Copy Email">
+                            <i class="ph ph-copy text-base"></i> Copy
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ സെക്ഷൻ -->
+    <section id="faq" class="py-20 bg-white border-t border-slate-100">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="text-center mb-12 reveal">
+                <span class="text-brand-blue font-extrabold tracking-wider uppercase text-xs px-3.5 py-1.5 rounded-full bg-brand-blue/10 inline-block mb-3">Help Center</span>
+                <h3 class="text-3xl font-extrabold text-slate-900">Frequently Asked Questions</h3>
+            </div>
+
+            <div class="space-y-4 reveal">
+                <details class="group bg-slate-50 p-6 rounded-2xl border border-slate-200/80 [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="flex items-center justify-between cursor-pointer font-bold text-slate-900 text-base sm:text-lg">
+                        <span>Who can attend Program Teenspace?</span>
+                        <span class="transition group-open:rotate-180">
+                            <i class="ph ph-caret-down text-xl text-brand-pink"></i>
+                        </span>
+                    </summary>
+                    <p class="mt-4 leading-relaxed text-slate-600 text-sm sm:text-base">
+                        Program Teenspace is specially curated for Higher Secondary (Plus One & Plus Two) students looking to explore creativity, tech, leadership, and personal development.
+                    </p>
+                </details>
+
+                <details class="group bg-slate-50 p-6 rounded-2xl border border-slate-200/80 [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="flex items-center justify-between cursor-pointer font-bold text-slate-900 text-base sm:text-lg">
+                        <span>How can I register for the conference?</span>
+                        <span class="transition group-open:rotate-180">
+                            <i class="ph ph-caret-down text-xl text-brand-pink"></i>
+                        </span>
+                    </summary>
+                    <p class="mt-4 leading-relaxed text-slate-600 text-sm sm:text-base">
+                        Click on any "Register Now" button on this website, fill out the simple registration form, and submit your details.
+                    </p>
+                </details>
+
+                <details class="group bg-slate-50 p-6 rounded-2xl border border-slate-200/80 [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="flex items-center justify-between cursor-pointer font-bold text-slate-900 text-base sm:text-lg">
+                        <span>Where is the event venue located?</span>
+                        <span class="transition group-open:rotate-180">
+                            <i class="ph ph-caret-down text-xl text-brand-pink"></i>
+                        </span>
+                    </summary>
+                    <p class="mt-4 leading-relaxed text-slate-600 text-sm sm:text-base">
+                        The event takes place at Mujahid Centre, Wisdom Office, Kozhikode North. You can click the location card above to navigate via Google Maps.
+                    </p>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- ഫൂട്ടർ -->
+    <footer class="bg-slate-900 text-white pt-20 pb-10">
+        <div class="max-w-7xl mx-auto px-6 md:px-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 reveal">
+                
+                <!-- ബ്രാൻഡ് വിവരം -->
+                <div class="lg:col-span-1">
+                    <div class="flex items-center gap-3 mb-6 bg-slate-800/80 p-3 rounded-xl w-fit">
+                        <img src="0.png" alt="Teenspace Logo" class="h-7 w-auto">
+                        <span class="h-4 w-px bg-slate-600"></span>
+                        <img src="Students Logo.png" alt="Wisdom Students Logo" class="h-5 w-auto invert brightness-200">
+                    </div>
+                    <p class="text-slate-400 mb-6 leading-relaxed text-sm">
+                        Empowering the next generation through space, mentorship, and creative freedom.
+                    </p>
+                    <div class="flex gap-3">
+                        <a href="https://www.instagram.com/teenspace._/" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-pink transition-colors"><i class="ph-fill ph-instagram-logo text-xl"></i></a>
+                        <a href="https://wa.me/916282397438" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-green-500 transition-colors"><i class="ph-fill ph-whatsapp-logo text-xl"></i></a>
+                        <a href="mailto:wisdomstudentskkdnorth@gmail.com" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-brand-blue transition-colors"><i class="ph-fill ph-envelope-simple text-xl"></i></a>
+                    </div>
+                </div>
+
+                <!-- ലിങ്കുകൾ 1 -->
                 <div>
                     <h4 class="text-lg font-bold mb-6">Other Programs</h4>
-                    <ul class="space-y-3 text-gray-400">
+                    <ul class="space-y-3 text-slate-400 text-sm">
                         <li><a href="#" class="hover:text-brand-pink transition-colors">CRE</a></li>
                         <li><a href="#" class="hover:text-brand-blue transition-colors">Summer Camps</a></li>
                         <li><a href="#" class="hover:text-brand-pink transition-colors">Winter Camps</a></li>
-                        <li><a href="#" class="hover:text-brand-blue transition-colors"></a>Jaalakam Camp</li>
+                        <li><a href="#" class="hover:text-brand-blue transition-colors">Jaalakam Camp</a></li>
                     </ul>
                 </div>
 
-                <!-- Links 2 -->
+                <!-- ലിങ്കുകൾ 2 -->
                 <div>
-                    <h4 class="text-lg font-bold mb-6">About Us</h4>
-                    <ul class="space-y-3 text-gray-400">
-                        <li><a href="#" class="hover:text-white transition-colors">Our Story</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Locations</a></li>
-                        <li><a href="#" class="hover:text-white transition-colors">Careers</a></li>
+                    <h4 class="text-lg font-bold mb-6">Quick Links</h4>
+                    <ul class="space-y-3 text-slate-400 text-sm">
+                        <li><a href="#about" class="hover:text-white transition-colors">About Us</a></li>
+                        <li><a href="#gallery" class="hover:text-white transition-colors">Gallery</a></li>
+                        <li><a href="#programs" class="hover:text-white transition-colors">Programs</a></li>
+                        <li><a href="#contact" class="hover:text-white transition-colors">Contact</a></li>
                     </ul>
                 </div>
 
-                <!-- Contact -->
+                <!-- കോൺടാക്ട് -->
                 <div>
-                    <h4 class="text-lg font-bold mb-6">Contact</h4>
-                    <ul class="space-y-3 text-gray-400">
-                       <li class="flex items-center gap-3">
-  <i class="ph ph-instagram-logo text-xl text-brand-blue"></i>
-                           <a href="https://www.instagram.com/teenspace._/">teenspace._</a>
-</li>
-
-                        <li class="flex items-center gap-3"><i class="ph ph-phone text-xl text-brand-pink"></i> 1-800-TEEN-SPC</li>
+                    <h4 class="text-lg font-bold mb-6">Contact Us</h4>
+                    <ul class="space-y-3 text-slate-400 text-sm">
+                        <li class="flex items-center gap-3">
+                            <i class="ph ph-instagram-logo text-lg text-brand-blue"></i>
+                            <a href="https://www.instagram.com/teenspace._/" target="_blank" class="hover:text-white transition-colors">teenspace._</a>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="ph ph-whatsapp-logo text-lg text-green-400"></i>
+                            <a href="https://wa.me/916282397438" target="_blank" class="hover:text-white transition-colors">+91 62823 97438</a>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="ph ph-envelope text-lg text-brand-pink"></i>
+                            <a href="mailto:wisdomstudentskkdnorth@gmail.com" class="hover:text-white transition-colors break-all">wisdomstudentskkdnorth@gmail.com</a>
+                        </li>
                         <li class="flex items-start gap-3">
-  <i class="ph ph-map-pin text-xl text-brand-blue mt-1"></i>
-  <a href="https://maps.app.goo.gl/BUqR61Ce5vrGZmBx9" target="_blank" rel="noopener noreferrer">
-    C.V. Complex, P.V. Swami Road,<br>Palayam, Kozhikode, Kerala - 673002
-  </a>
-</li>
-
+                            <i class="ph ph-map-pin text-lg text-brand-blue mt-0.5"></i>
+                            <a href="https://maps.google.com/?q=Mujahid+Centre+Wisdom+Office+Kozhikode+North+673620" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">
+                                Mujahid Centre, Wisdom Office,<br>Kozhikode North - 673620
+                            </a>
+                        </li>
                     </ul>
                 </div>
 
             </div>
 
-            <!-- Copyright -->
-            <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-500 text-sm reveal">
+            <!-- കോപ്പിറൈറ്റ് -->
+            <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm reveal">
                 <p>&copy; 2026 Program Teenspace. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- JavaScript for Interactions -->
+    <!-- ജാവാസ്ക്രിപ്റ്റ് Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            
-            // 1. Mobile Menu Toggle
+            // മൊബൈൽ മെനു ടോഗിൾ
             const btn = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('mobile-menu');
             const icon = btn.querySelector('i');
@@ -410,87 +688,128 @@
             };
 
             btn.addEventListener('click', toggleMenu);
-            
-            // Close menu when clicking a link
-            mobileLinks.forEach(link => {
-                link.addEventListener('click', toggleMenu);
-            });
+            mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
 
-            // 2. Navbar Scroll Effect (Glassmorphism enhancement)
+            // നാവിഗേഷൻ സ്ക്രോൾ ഷാഡോ
             const navbar = document.getElementById('navbar');
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
-                    navbar.style.background = 'rgba(5, 5, 5, 0.95)';
-                    navbar.style.boxShadow = '0 4px 30px rgba(0, 0, 0, 0.5)';
+                    navbar.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.06)';
                 } else {
-                    navbar.style.background = 'rgba(5, 5, 5, 0.85)';
                     navbar.style.boxShadow = 'none';
                 }
             });
 
-            // 3. Scroll Reveal Animation using IntersectionObserver
+            // സ്ക്രോൾ റിവീൽ ആനിമേഷൻ
             const revealElements = document.querySelectorAll('.reveal');
-            
-            const revealOptions = {
-                threshold: 0.15,
-                rootMargin: "0px 0px -50px 0px"
-            };
-
-            const revealObserver = new IntersectionObserver(function(entries, observer) {
+            const revealObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add('active');
-                        observer.unobserve(entry.target); // Run once
+                        observer.unobserve(entry.target);
                     }
                 });
-            }, revealOptions);
+            }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
 
-            revealElements.forEach(el => {
-                revealObserver.observe(el);
-            });
+            revealElements.forEach(el => revealObserver.observe(el));
             
-            // Trigger immediately for elements already in viewport on load
             setTimeout(() => {
                 revealElements.forEach(el => {
-                    const rect = el.getBoundingClientRect();
-                    if(rect.top < window.innerHeight) {
+                    if(el.getBoundingClientRect().top < window.innerHeight) {
                         el.classList.add('active');
                     }
                 });
             }, 100);
         });
+
+        /* ഗാലറി കാണിക്കാനുള്ള ബട്ടൺ ലോജിക് */
+        function toggleGallery() {
+            const extraItems = document.querySelectorAll('.extra-gallery-item');
+            const btnText = document.getElementById('view-more-text');
+            
+            let isHidden = true;
+            extraItems.forEach(item => {
+                if (item.classList.contains('hidden')) {
+                    item.classList.remove('hidden');
+                    isHidden = false;
+                } else {
+                    item.classList.add('hidden');
+                    isHidden = true;
+                }
+            });
+
+            if (!isHidden) {
+                btnText.innerText = 'Show Less';
+            } else {
+                btnText.innerText = 'View More Images';
+            }
+        }
+
+        /* ഗാലറി ഫുൾ സ്ക്രീൻ പ്രിവ്യൂ മോഡൽ (Image Lightbox) */
+        function openModal(imgSrc, caption) {
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('modal-img');
+            const modalCaption = document.getElementById('modal-caption');
+
+            modalImg.src = imgSrc;
+            modalCaption.innerText = caption;
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('image-modal').classList.add('hidden');
+        }
+
+        /* ക്ലിപ്പ്ബോർഡിലേക്ക് കോപ്പി ചെയ്യൽ (Toast UX) */
+        function copyToClipboard(text) {
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+
+            showToast("Email copied to clipboard!");
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.innerText = message;
+            
+            toast.classList.remove('opacity-0', 'translate-y-10', 'pointer-events-none');
+            toast.classList.add('opacity-100', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', 'translate-y-10', 'pointer-events-none');
+            }, 3000);
+        }
+
+        /* കൗണ്ട്ഡൗൺ ടൈമർ */
+        const countDate = new Date("October 21, 2026 09:00:00").getTime();
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const gap = countDate - now;
+
+            const second = 1000, minute = second * 60, hour = minute * 60, day = hour * 24;
+
+            const textDay = Math.floor(gap / day);
+            const textHour = Math.floor((gap % day) / hour);
+            const textMinute = Math.floor((gap % hour) / minute);
+            const textSecond = Math.floor((gap % minute) / second);
+
+            document.getElementById("days").innerText = String(textDay).padStart(2, '0');
+            document.getElementById("hours").innerText = String(textHour).padStart(2, '0');
+            document.getElementById("minutes").innerText = String(textMinute).padStart(2, '0');
+            document.getElementById("seconds").innerText = String(textSecond).padStart(2, '0');
+
+            if (gap < 0) {
+                document.querySelector(".teenspace-countdown").innerHTML = "<h4 class='text-slate-800 font-bold text-center'>Event Started!</h4>";
+            }
+        }
+        setInterval(updateCountdown, 1000);
     </script>
-    <script>
-const countDate = new Date("October 21, 2026 09:00:00").getTime();
-
-function updateCountdown() {
-    const now = new Date().getTime();
-    const gap = countDate - now;
-
-    const second = 1000;
-    const minute = second * 60;
-    const hour = minute * 60;
-    const day = hour * 24;
-
-    const textDay = Math.floor(gap / day);
-    const textHour = Math.floor((gap % day) / hour);
-    const textMinute = Math.floor((gap % hour) / minute);
-    const textSecond = Math.floor((gap % minute) / second);
-
-    document.getElementById("days").innerText = String(textDay).padStart(2, '0');
-    document.getElementById("hours").innerText = String(textHour).padStart(2, '0');
-    document.getElementById("minutes").innerText = String(textMinute).padStart(2, '0');
-    document.getElementById("seconds").innerText = String(textSecond).padStart(2, '0');
-
-    if (gap < 0) {
-        document.querySelector(".teenspace-countdown").innerHTML = "<h4 style='color: #fff; text-align: center; width: 100%; margin: 0;'>Event Started!</h4>";
-    }
-}
-
-setInterval(updateCountdown, 1000);
-</script>
-
 </body>
 </html>
-
 
