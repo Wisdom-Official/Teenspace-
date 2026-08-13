@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard | Teenspace</title>
+    <title>Admin Dashboard | Teenspace Portal</title>
     <link rel="icon" type="image/png" href="favicon.png">
 
     <!-- Google Fonts & Phosphor Icons -->
@@ -44,6 +44,14 @@
         .gradient-glow {
             background: radial-gradient(circle, rgba(240, 45, 125, 0.15) 0%, rgba(5, 5, 5, 0) 70%);
         }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 0.4; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .animate-pulse-ring {
+            animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
     </style>
 </head>
 <body class="bg-brand-dark text-gray-100 min-h-screen font-sans flex flex-col antialiased selection:bg-brand-pink selection:text-white">
@@ -53,14 +61,27 @@
         <div class="absolute w-96 h-96 gradient-glow rounded-full pointer-events-none"></div>
 
         <div class="bg-brand-darkCard border border-white/10 p-6 sm:p-8 rounded-3xl max-w-md w-full shadow-2xl relative z-10">
+            
             <!-- Header Icon -->
-            <div class="w-16 h-16 bg-gradient-to-tr from-brand-pink to-brand-blue rounded-2xl flex items-center justify-center mx-auto mb-5 text-white text-3xl shadow-lg shadow-brand-pink/20">
+            <div id="modalHeaderIcon" class="w-16 h-16 bg-gradient-to-tr from-brand-pink to-brand-blue rounded-2xl flex items-center justify-center mx-auto mb-5 text-white text-3xl shadow-lg shadow-brand-pink/20 transition-all duration-300">
                 <i class="ph ph-shield-check"></i>
             </div>
             
             <div class="text-center mb-6">
-                <h2 class="text-2xl font-extrabold text-white tracking-tight">Admin Access</h2>
-                <p class="text-gray-400 text-xs sm:text-sm mt-1">Select Zone & authenticate to continue</p>
+                <h2 class="text-2xl font-extrabold text-white tracking-tight" id="modalTitle">Admin Access</h2>
+                <p class="text-gray-400 text-xs sm:text-sm mt-1" id="modalSubtitle">Select Zone & authenticate to continue</p>
+            </div>
+
+            <!-- PRO SCANNER STATUS BANNER (Hidden by default) -->
+            <div id="scannerStatusBanner" class="hidden mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-center relative overflow-hidden">
+                <div class="flex items-center justify-center gap-3">
+                    <span class="relative flex h-4 w-4">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-xs font-semibold text-emerald-300 tracking-wide uppercase">Touch Fingerprint Sensor</span>
+                </div>
+                <p class="text-[11px] text-emerald-400/80 mt-1">Authenticating with device biometrics...</p>
             </div>
             
             <form id="loginForm" class="space-y-4">
@@ -107,13 +128,13 @@
 
                 <!-- Fingerprint Login Button -->
                 <button type="button" id="bioLoginBtn" class="hidden w-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/5 transition-all duration-300 flex items-center justify-center gap-2">
-                    <i class="ph ph-fingerprint text-xl"></i>
+                    <i class="ph ph-fingerprint text-xl animate-pulse"></i>
                     <span>Login with Fingerprint</span>
                 </button>
             </form>
 
-            <p id="loginError" class="text-rose-400 text-xs mt-4 text-center hidden bg-rose-500/10 py-2.5 rounded-lg border border-rose-500/20">
-                Invalid credentials or biometric scan failed!
+            <p id="loginError" class="text-rose-400 text-xs mt-4 text-center hidden bg-rose-500/10 py-2.5 rounded-lg border border-rose-500/20 font-medium">
+                Authentication failed! Please try again.
             </p>
         </div>
     </div>
@@ -201,7 +222,7 @@
         </main>
     </div>
 
-    <!-- FIREBASE & WEBAUTHN STRICT SCRIPT -->
+    <!-- FIREBASE & WEBAUTHN SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, getDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -229,6 +250,7 @@
         const bioDivider = document.getElementById('bioDivider');
         const loginZoneSelect = document.getElementById('loginZone');
         const loginError = document.getElementById('loginError');
+        const scannerStatusBanner = document.getElementById('scannerStatusBanner');
         const activeZoneBadge = document.getElementById('activeZoneBadge');
         const studentTableBody = document.getElementById('studentTableBody');
         const totalCount = document.getElementById('totalCount');
@@ -236,7 +258,6 @@
         const logoutBtn = document.getElementById('logoutBtn');
         const registerBioBtn = document.getElementById('registerBioBtn');
 
-        // Helper functions for ArrayBuffer conversion
         function bufferToBase64(buffer) {
             return btoa(String.fromCharCode(...new Uint8Array(buffer)));
         }
@@ -244,7 +265,7 @@
             return Uint8Array.from(atob(base64), c => c.charCodeAt(0)).buffer;
         }
 
-        // Check for saved credential on Zone selection
+        // Zone selection listener
         loginZoneSelect.addEventListener('change', () => {
             const selectedZone = loginZoneSelect.value;
             const savedCred = localStorage.getItem(`bio_cred_${selectedZone}`);
@@ -257,7 +278,7 @@
             }
         });
 
-        // Password Login Handler
+        // Password Login
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const selectedZone = loginZoneSelect.value;
@@ -279,11 +300,13 @@
                         currentZone = selectedZone;
                         openDashboard(selectedZone);
                     } else {
+                        loginError.textContent = "Invalid Password! Please check and try again.";
                         loginError.classList.remove('hidden');
                     }
                 }
             } catch (err) {
                 console.error("Auth error:", err);
+                loginError.textContent = "Connection error. Please try again.";
                 loginError.classList.remove('hidden');
             } finally {
                 loginBtn.disabled = false;
@@ -291,23 +314,24 @@
             }
         });
 
-        // Strict Biometric Fingerprint Login Handler
+        // Fingerprint Direct Login Handler with Pro UI Feedback
         bioLoginBtn.addEventListener('click', async () => {
             const selectedZone = loginZoneSelect.value;
             const savedCred = localStorage.getItem(`bio_cred_${selectedZone}`);
             if (!savedCred) return;
 
             loginError.classList.add('hidden');
+            scannerStatusBanner.classList.remove('hidden'); // Show scanner indicator
 
             try {
                 const publicKeyRequestOptions = {
-                    challenge: Uint8Array.from("teenspace_login_challenge_12345", c => c.charCodeAt(0)),
+                    challenge: Uint8Array.from("teenspace_auth_challenge_key", c => c.charCodeAt(0)),
                     allowCredentials: [{
                         id: base64ToBuffer(savedCred),
                         type: 'public-key',
-                        transports: ['internal'] // Forces internal biometric sensor
+                        transports: ['internal']
                     }],
-                    userVerification: "required", // Strict requirement for User Verification (Biometric)
+                    userVerification: "required",
                     timeout: 60000
                 };
 
@@ -318,31 +342,40 @@
                 }
             } catch (err) {
                 console.error("Biometric Verification Failed:", err);
+                loginError.textContent = "Fingerprint verification cancelled or failed.";
                 loginError.classList.remove('hidden');
+            } finally {
+                scannerStatusBanner.classList.add('hidden'); // Hide scanner indicator
             }
         });
 
-        // Register Fingerprint Handler (Strict Hardware Validation)
+        // Register Fingerprint (Customized for Professional WebAuthn Prompt Text)
         registerBioBtn.addEventListener('click', async () => {
             if (!window.PublicKeyCredential) {
-                alert("Your device or browser doesn't support Fingerprint Authentication.");
+                alert("Your device or browser doesn't support Biometric Authentication.");
                 return;
             }
 
             try {
                 const publicKeyCreationOptions = {
-                    challenge: Uint8Array.from("teenspace_register_challenge_12345", c => c.charCodeAt(0)),
-                    rp: { name: "Teenspace Dashboard" },
-                    user: {
-                        id: Uint8Array.from(currentZone, c => c.charCodeAt(0)),
-                        name: currentZone,
-                        displayName: `Admin (${currentZone})`
+                    challenge: Uint8Array.from("teenspace_register_challenge_key", c => c.charCodeAt(0)),
+                    
+                    // Professional App & User Display Text for Phone Biometric Dialog
+                    rp: { 
+                        name: "Teenspace Admin Security Portal",
+                        id: window.location.hostname
                     },
+                    user: {
+                        id: Uint8Array.from(`teenspace_admin_${currentZone}`, c => c.charCodeAt(0)),
+                        name: `admin.${currentZone.toLowerCase()}@teenspace.org`,
+                        displayName: `Teenspace ${currentZone} Admin`
+                    },
+                    
                     pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
                     authenticatorSelection: {
-                        authenticatorAttachment: "platform", // Forces built-in fingerprint sensor
-                        userVerification: "required",       // Biometric validation strictly required
-                        residentKey: "required"            // Forces resident credential on local device
+                        authenticatorAttachment: "platform",
+                        userVerification: "required",
+                        residentKey: "required"
                     },
                     timeout: 60000
                 };
@@ -350,18 +383,18 @@
                 const credential = await navigator.credentials.create({ publicKey: publicKeyCreationOptions });
                 const base64CredId = bufferToBase64(credential.rawId);
 
-                // Save credential strictly for this phone & zone
                 localStorage.setItem(`bio_cred_${currentZone}`, base64CredId);
-                alert(`Fingerprint registered successfully for ${currentZone} zone! You can now use fast biometric login.`);
+                alert(`✅ Fingerprint successfully registered for ${currentZone} Admin!`);
 
             } catch (err) {
                 console.error("Biometric Registration Error:", err);
-                alert("Fingerprint registration cancelled or failed.");
+                alert("Fingerprint registration cancelled.");
             }
         });
 
         function openDashboard(zone) {
             loginModal.classList.add('hidden');
+            scannerStatusBanner.classList.add('hidden');
             dashboardContent.classList.remove('hidden');
             dashboardContent.classList.add('flex');
             activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-xs"></i> Zone: ${zone === 'ALL' ? 'All Zones (Main Admin)' : zone}`;
