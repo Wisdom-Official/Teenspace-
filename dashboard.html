@@ -397,7 +397,7 @@
             scannerStatusBanner.classList.add('hidden');
             dashboardContent.classList.remove('hidden');
             dashboardContent.classList.add('flex');
-            activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-xs"></i> Zone: ${zone === 'ALL' ? 'All Zones (Main Admin)' : zone}`;
+            activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-xs"></i> Zone: ${zone === 'ALL' ? 'Main Admin' : zone}`;
             fetchData(zone);
         }
 
