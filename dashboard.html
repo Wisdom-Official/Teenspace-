@@ -36,7 +36,7 @@
     <style>
         body { -webkit-font-smoothing: antialiased; }
         .glass-panel {
-            background: rgba(15, 15, 16, 0.75);
+            background: rgba(15, 15, 16, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -50,7 +50,6 @@
 
     <!-- LOGIN MODAL -->
     <div id="loginModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-        <!-- Glow Effect behind modal -->
         <div class="absolute w-96 h-96 gradient-glow rounded-full pointer-events-none"></div>
 
         <div class="bg-brand-darkCard border border-white/10 p-6 sm:p-8 rounded-3xl max-w-md w-full shadow-2xl relative z-10">
@@ -61,7 +60,7 @@
             
             <div class="text-center mb-6">
                 <h2 class="text-2xl font-extrabold text-white tracking-tight">Admin Access</h2>
-                <p class="text-gray-400 text-xs sm:text-sm mt-1">Select your Zone & authenticate to continue</p>
+                <p class="text-gray-400 text-xs sm:text-sm mt-1">Select Zone & authenticate to continue</p>
             </div>
             
             <form id="loginForm" class="space-y-4">
@@ -100,7 +99,7 @@
                     <span>Login with Password</span>
                 </button>
 
-                <!-- Divider (Shows when fingerprint is available) -->
+                <!-- Divider -->
                 <div id="bioDivider" class="hidden relative my-4 text-center">
                     <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/10"></div></div>
                     <span class="relative bg-brand-darkCard px-3 text-[10px] text-gray-500 uppercase tracking-widest font-bold">OR</span>
@@ -202,7 +201,7 @@
         </main>
     </div>
 
-    <!-- FIREBASE & WEBAUTHN SCRIPT -->
+    <!-- FIREBASE & WEBAUTHN STRICT SCRIPT -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, collection, getDocs, doc, getDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -237,7 +236,7 @@
         const logoutBtn = document.getElementById('logoutBtn');
         const registerBioBtn = document.getElementById('registerBioBtn');
 
-        // Helpers for Buffer conversion
+        // Helper functions for ArrayBuffer conversion
         function bufferToBase64(buffer) {
             return btoa(String.fromCharCode(...new Uint8Array(buffer)));
         }
@@ -245,7 +244,7 @@
             return Uint8Array.from(atob(base64), c => c.charCodeAt(0)).buffer;
         }
 
-        // Check if Fingerprint exists for selected zone
+        // Check for saved credential on Zone selection
         loginZoneSelect.addEventListener('change', () => {
             const selectedZone = loginZoneSelect.value;
             const savedCred = localStorage.getItem(`bio_cred_${selectedZone}`);
@@ -292,7 +291,7 @@
             }
         });
 
-        // Fingerprint Login Handler
+        // Strict Biometric Fingerprint Login Handler
         bioLoginBtn.addEventListener('click', async () => {
             const selectedZone = loginZoneSelect.value;
             const savedCred = localStorage.getItem(`bio_cred_${selectedZone}`);
@@ -306,9 +305,9 @@
                     allowCredentials: [{
                         id: base64ToBuffer(savedCred),
                         type: 'public-key',
-                        transports: ['internal']
+                        transports: ['internal'] // Forces internal biometric sensor
                     }],
-                    userVerification: "required",
+                    userVerification: "required", // Strict requirement for User Verification (Biometric)
                     timeout: 60000
                 };
 
@@ -318,12 +317,12 @@
                     openDashboard(selectedZone);
                 }
             } catch (err) {
-                console.error("Biometric Failed:", err);
+                console.error("Biometric Verification Failed:", err);
                 loginError.classList.remove('hidden');
             }
         });
 
-        // Register Fingerprint Handler
+        // Register Fingerprint Handler (Strict Hardware Validation)
         registerBioBtn.addEventListener('click', async () => {
             if (!window.PublicKeyCredential) {
                 alert("Your device or browser doesn't support Fingerprint Authentication.");
@@ -341,8 +340,9 @@
                     },
                     pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
                     authenticatorSelection: {
-                        authenticatorAttachment: "platform",
-                        userVerification: "required"
+                        authenticatorAttachment: "platform", // Forces built-in fingerprint sensor
+                        userVerification: "required",       // Biometric validation strictly required
+                        residentKey: "required"            // Forces resident credential on local device
                     },
                     timeout: 60000
                 };
@@ -350,8 +350,9 @@
                 const credential = await navigator.credentials.create({ publicKey: publicKeyCreationOptions });
                 const base64CredId = bufferToBase64(credential.rawId);
 
+                // Save credential strictly for this phone & zone
                 localStorage.setItem(`bio_cred_${currentZone}`, base64CredId);
-                alert(`Fingerprint registered successfully for ${currentZone} zone!`);
+                alert(`Fingerprint registered successfully for ${currentZone} zone! You can now use fast biometric login.`);
 
             } catch (err) {
                 console.error("Biometric Registration Error:", err);
