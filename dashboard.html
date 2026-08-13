@@ -1,327 +1,465 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teenspace - Zone Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --bg-deep: #07080c;
-      --card-bg: rgba(16, 18, 27, 0.85);
-      --border-subtle: rgba(255, 255, 255, 0.08);
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --pink: #ec4899;
-      --purple: #a855f7;
-      --blue: #3b82f6;
-      --gradient-brand: linear-gradient(135deg, #ec4899 0%, #a855f7 50%, #3b82f6 100%);
-      --error: #ef4444;
-      --success: #10b981;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Teenspace</title>
+    <link rel="icon" type="image/png" href="favicon.png">
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-
-    body {
-      background-color: var(--bg-deep);
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(236, 72, 153, 0.1) 0%, transparent 40%),
-        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 40%);
-      color: var(--text-main);
-      min-height: 100vh;
-      padding: 30px 20px;
-    }
-
-    .max-w { max-width: 1200px; margin: 0 auto; }
-
-    header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    header h1 {
-      font-size: 28px;
-      font-weight: 800;
-      background: var(--gradient-brand);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 6px;
-    }
-
-    header p { color: var(--text-muted); font-size: 14px; }
-
-    .card {
-      background: var(--card-bg);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--border-subtle);
-      border-radius: 20px;
-      padding: 30px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-      margin-bottom: 25px;
-    }
-
-    .controls-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 150px;
-      gap: 20px;
-      align-items: end;
-    }
-
-    @media (max-width: 768px) {
-      .controls-grid { grid-template-columns: 1fr; }
-    }
-
-    .form-group { display: flex; flex-direction: column; gap: 8px; }
-
-    label { font-size: 13px; font-weight: 600; color: var(--text-main); }
-
-    input, select {
-      padding: 13px 16px;
-      background: rgba(10, 11, 16, 0.6);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      color: var(--text-main);
-      font-size: 14px;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: var(--pink);
-      box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.15);
-    }
-
-    select option { background: #10121b; color: var(--text-main); }
-
-    button {
-      padding: 13px 24px;
-      border-radius: 12px;
-      font-weight: 600;
-      font-size: 14px;
-      cursor: pointer;
-      background: var(--gradient-brand);
-      color: white;
-      border: none;
-      transition: opacity 0.3s ease;
-      height: 48px;
-    }
-
-    button:hover { opacity: 0.9; }
-    button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    .alert {
-      padding: 14px;
-      border-radius: 12px;
-      font-size: 13px;
-      margin-bottom: 20px;
-      display: none;
-    }
-    .alert-danger {
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      color: #fca5a5;
-      display: block;
-    }
-
-    /* Table styles */
-    .table-container {
-      overflow-x: auto;
-      margin-top: 15px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 14px;
-    }
-
-    th, td {
-      padding: 14px 16px;
-      border-bottom: 1px solid var(--border-subtle);
-    }
-
-    th {
-      background: rgba(255, 255, 255, 0.03);
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    tr:hover td { background: rgba(255, 255, 255, 0.02); }
-
-    .stats-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 14px;
-      background: rgba(236, 72, 153, 0.1);
-      border: 1px solid rgba(236, 72, 153, 0.2);
-      border-radius: 20px;
-      font-size: 13px;
-      color: var(--pink);
-      font-weight: 600;
-      margin-bottom: 15px;
-    }
-
-    .spinner {
-      width: 24px; height: 24px;
-      border: 3px solid white; border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 40px auto;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .hidden { display: none !important; }
-  </style>
-</head>
-<body>
-
-  <div class="max-w">
-    <header>
-      <h1>Zone Admin Dashboard</h1>
-      <p>Secure portal to view registered students by zone</p>
-    </header>
-
-    <div class="card">
-      <div id="dashboardAlert" class="alert hidden"></div>
-
-      <div class="controls-grid">
-        <div class="form-group">
-          <label for="adminPassword">Admin Password</label>
-          <input type="password" id="adminPassword" placeholder="Enter admin password">
-        </div>
-
-        <div class="form-group">
-          <label for="filterZone">Select Zone</label>
-          <select id="filterZone">
-            <option value="">-- Choose zone to filter --</option>
-            <option value="Payyoli">Payyoli</option>
-            <option value="Koyilandi">Koyilandi</option>
-            <option value="Perambra">Perambra</option>
-            <option value="Vadakara">Vadakara</option>
-            <option value="Poonur">Poonur</option>
-            <option value="Balussery">Balussery</option>
-            <option value="Nadapuram">Nadapuram</option>
-          </select>
-        </div>
-
-        <button type="button" id="fetchBtn" onclick="fetchZoneData()">Load Data</button>
-      </div>
-    </div>
-
-    <div class="card hidden" id="resultsCard">
-      <div id="statsContainer"></div>
-      
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Timestamp</th>
-              <th>Name</th>
-              <th>Age</th>
-              <th>Phone</th>
-              <th>WhatsApp</th>
-              <th>Panchayat</th>
-              <th>School</th>
-              <th>Standard</th>
-            </tr>
-          </thead>
-          <tbody id="tableBody">
-            <!-- Dynamic rows -->
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <script>
+    <!-- Google Fonts & Phosphor Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
     
-    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzS6nJJOrtOpWW94ClJBV3FfjyaHCqa5O0jKYX8KsoWSA6dPqQ1P1fuZmJxT1MRKGUsCA/exec";
-
-    async function fetchZoneData() {
-      const password = document.getElementById('adminPassword').value.trim();
-      const zone = document.getElementById('filterZone').value;
-      const alertBox = document.getElementById('dashboardAlert');
-      const resultsCard = document.getElementById('resultsCard');
-      const fetchBtn = document.getElementById('fetchBtn');
-
-      alertBox.classList.add('hidden');
-
-      if (!password) {
-        showAlert('Please enter the admin password.');
-        return;
-      }
-      if (!zone) {
-        showAlert('Please select a zone to view.');
-        return;
-      }
-
-      fetchBtn.disabled = true;
-      fetchBtn.textContent = 'Loading...';
-
-      try {
-        const url = `${GOOGLE_APPS_SCRIPT_URL}?action=getZoneData&password=${encodeURIComponent(password)}&zone=${encodeURIComponent(zone)}`;
-        
-        const response = await fetch(url);
-        const result = await response.json();
-
-        if (result.status === 'success') {
-          renderTable(result.data, zone);
-        } else {
-          showAlert(result.message || 'Authentication failed or incorrect password.');
-          resultsCard.classList.add('hidden');
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            pink: '#F02D7D',
+                            pinkHover: '#D81B60',
+                            blue: '#2EAEE5',
+                            dark: '#050505',
+                            darkCard: '#0F0F10',
+                            darkBorder: '#1F1F23'
+                        }
+                    }
+                }
+            }
         }
-      } catch (err) {
-        showAlert('Failed to fetch data from the server. Please check your URL and connection.');
-        resultsCard.classList.add('hidden');
-      } finally {
-        fetchBtn.disabled = false;
-        fetchBtn.textContent = 'Load Data';
-      }
-    }
+    </script>
+    <style>
+        body { -webkit-font-smoothing: antialiased; }
+        .glass-panel {
+            background: rgba(15, 15, 16, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gradient-glow {
+            background: radial-gradient(circle, rgba(240, 45, 125, 0.15) 0%, rgba(5, 5, 5, 0) 70%);
+        }
+    </style>
+</head>
+<body class="bg-brand-dark text-gray-100 min-h-screen font-sans flex flex-col antialiased selection:bg-brand-pink selection:text-white">
 
-    function renderTable(data, zoneName) {
-      const tableBody = document.getElementById('tableBody');
-      const statsContainer = document.getElementById('statsContainer');
-      const resultsCard = document.getElementById('resultsCard');
+    <!-- LOGIN MODAL -->
+    <div id="loginModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+        <!-- Glow Effect behind modal -->
+        <div class="absolute w-96 h-96 gradient-glow rounded-full pointer-events-none"></div>
 
-      tableBody.innerHTML = '';
-      statsContainer.innerHTML = `<div class="stats-badge">Zone: ${zoneName} &bull; Total Registrations: ${data.length}</div>`;
+        <div class="bg-brand-darkCard border border-white/10 p-6 sm:p-8 rounded-3xl max-w-md w-full shadow-2xl relative z-10">
+            <!-- Header Icon -->
+            <div class="w-16 h-16 bg-gradient-to-tr from-brand-pink to-brand-blue rounded-2xl flex items-center justify-center mx-auto mb-5 text-white text-3xl shadow-lg shadow-brand-pink/20">
+                <i class="ph ph-shield-check"></i>
+            </div>
+            
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-extrabold text-white tracking-tight">Admin Access</h2>
+                <p class="text-gray-400 text-xs sm:text-sm mt-1">Select your Zone & authenticate to continue</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <!-- Zone Selection -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 text-left">Select Zone</label>
+                    <div class="relative">
+                        <i class="ph ph-map-pin absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                        <select id="loginZone" required class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-10 text-sm text-white focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer">
+                            <option value="" disabled selected class="bg-black">-- Select Zone --</option>
+                            <option value="ALL" class="bg-black text-brand-pink font-bold">ALL ZONES (Main Admin)</option>
+                            <option value="Payyoli" class="bg-black">Payyoli</option>
+                            <option value="Koyilandi" class="bg-black">Koyilandi</option>
+                            <option value="Perambra" class="bg-black">Perambra</option>
+                            <option value="Vadakara" class="bg-black">Vadakara</option>
+                            <option value="Poonur" class="bg-black">Poonur</option>
+                            <option value="Balussery" class="bg-black">Balussery</option>
+                            <option value="Nadapuram" class="bg-black">Nadapuram</option>
+                        </select>
+                        <i class="ph ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-sm"></i>
+                    </div>
+                </div>
 
-      if (data.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 30px;">No registrations found for this zone yet.</td></tr>`;
-      } else {
-        data.forEach((row, index) => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${index + 1}</td>
-            <td>${row.timestamp || ''}</td>
-            <td><strong>${row.name || ''}</strong></td>
-            <td>${row.age || ''}</td>
-            <td>${row.phone || ''}</td>
-            <td>${row.whatsapp || ''}</td>
-            <td>${row.panchayat || ''}</td>
-            <td>${row.school || ''}</td>
-            <td>${row.standard || ''}</td>
-          `;
-          tableBody.appendChild(tr);
+                <!-- Password Input -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5 text-left">Password</label>
+                    <div class="relative">
+                        <i class="ph ph-lock-key absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                        <input type="password" id="loginPassword" placeholder="Enter zone password" class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-pink transition-all">
+                    </div>
+                </div>
+                
+                <!-- Password Login Button -->
+                <button type="submit" id="loginBtn" class="w-full bg-gradient-to-r from-brand-pink to-brand-blue hover:opacity-95 text-white py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-brand-pink/20 hover:shadow-brand-pink/30 transition-all duration-300 flex items-center justify-center gap-2 mt-2">
+                    <i class="ph ph-key text-lg"></i>
+                    <span>Login with Password</span>
+                </button>
+
+                <!-- Divider (Shows when fingerprint is available) -->
+                <div id="bioDivider" class="hidden relative my-4 text-center">
+                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-white/10"></div></div>
+                    <span class="relative bg-brand-darkCard px-3 text-[10px] text-gray-500 uppercase tracking-widest font-bold">OR</span>
+                </div>
+
+                <!-- Fingerprint Login Button -->
+                <button type="button" id="bioLoginBtn" class="hidden w-full bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 py-3.5 rounded-xl font-bold text-sm shadow-lg shadow-emerald-500/5 transition-all duration-300 flex items-center justify-center gap-2">
+                    <i class="ph ph-fingerprint text-xl"></i>
+                    <span>Login with Fingerprint</span>
+                </button>
+            </form>
+
+            <p id="loginError" class="text-rose-400 text-xs mt-4 text-center hidden bg-rose-500/10 py-2.5 rounded-lg border border-rose-500/20">
+                Invalid credentials or biometric scan failed!
+            </p>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD APP -->
+    <div id="dashboardContent" class="hidden flex-grow flex-col">
+        
+        <!-- HEADER -->
+        <header class="glass-panel sticky top-0 z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+                <!-- Branding -->
+                <div class="flex items-center gap-3.5">
+                    <img src="3274.png" alt="Teenspace Logo" class="h-9 w-auto">
+                    <div>
+                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white">Dashboard</h1>
+                        <p class="text-[11px] text-brand-blue font-semibold tracking-wide flex items-center gap-1 mt-0.5" id="activeZoneBadge">
+                            <i class="ph ph-circle-wavy-check text-xs"></i> Zone: -
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex items-center gap-2.5">
+                    <!-- Enable Fingerprint Button -->
+                    <button id="registerBioBtn" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2.5 text-xs font-semibold rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all duration-300 shadow-sm">
+                        <i class="ph ph-fingerprint text-base"></i>
+                        <span class="hidden sm:inline">Enable Fingerprint</span>
+                    </button>
+
+                    <!-- Logout Button -->
+                    <button id="logoutBtn" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2.5 text-xs font-semibold rounded-xl bg-white/5 text-gray-300 border border-white/10 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-all duration-300">
+                        <i class="ph ph-sign-out text-base"></i>
+                        <span class="hidden sm:inline">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD BODY -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8 w-full flex-grow">
+            
+            <!-- Controls Bar (Stats + Search) -->
+            <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 mb-6">
+                
+                <!-- Stat Card -->
+                <div class="bg-brand-darkCard border border-white/10 p-4 sm:p-5 rounded-2xl flex items-center gap-4 shadow-xl">
+                    <div class="w-12 h-12 bg-gradient-to-tr from-brand-pink/20 to-brand-blue/20 border border-brand-pink/30 text-brand-pink rounded-xl flex items-center justify-center text-2xl">
+                        <i class="ph ph-users-three"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 font-medium">Total Registrations</p>
+                        <h3 class="text-2xl font-extrabold text-white tracking-tight" id="totalCount">0</h3>
+                    </div>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative w-full md:w-80">
+                    <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
+                    <input type="text" id="searchInput" placeholder="Search name, phone, school..." class="w-full bg-brand-darkCard border border-white/10 rounded-2xl py-3 pl-11 pr-4 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-blue transition-all shadow-xl">
+                </div>
+            </div>
+
+            <!-- TABLE CONTAINER -->
+            <div class="bg-brand-darkCard border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm text-gray-300">
+                        <thead class="bg-white/[0.03] border-b border-white/10 text-[11px] uppercase text-gray-400 font-semibold tracking-wider">
+                            <tr>
+                                <th class="py-4 px-6">Student Name</th>
+                                <th class="py-4 px-6">Zone & Place</th>
+                                <th class="py-4 px-6 text-center">Direct Call</th>
+                                <th class="py-4 px-6 text-center">WhatsApp Chat</th>
+                                <th class="py-4 px-6">School / Course</th>
+                                <th class="py-4 px-6">Age</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody" class="divide-y divide-white/5">
+                            <tr>
+                                <td colspan="6" class="text-center py-12 text-gray-500 font-medium">Loading registrations...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- FIREBASE & WEBAUTHN SCRIPT -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyCdFXOw1M3itF4hWBwCForfjIeJAEleLfY",
+          authDomain: "teenspace-25dc8.firebaseapp.com",
+          projectId: "teenspace-25dc8",
+          storageBucket: "teenspace-25dc8.firebasestorage.app",
+          messagingSenderId: "855322325984",
+          appId: "1:855322325984:web:891248f7db7215142e3185"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let allStudentsData = [];
+        let currentZone = null;
+
+        const loginModal = document.getElementById('loginModal');
+        const dashboardContent = document.getElementById('dashboardContent');
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const bioLoginBtn = document.getElementById('bioLoginBtn');
+        const bioDivider = document.getElementById('bioDivider');
+        const loginZoneSelect = document.getElementById('loginZone');
+        const loginError = document.getElementById('loginError');
+        const activeZoneBadge = document.getElementById('activeZoneBadge');
+        const studentTableBody = document.getElementById('studentTableBody');
+        const totalCount = document.getElementById('totalCount');
+        const searchInput = document.getElementById('searchInput');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const registerBioBtn = document.getElementById('registerBioBtn');
+
+        // Helpers for Buffer conversion
+        function bufferToBase64(buffer) {
+            return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+        }
+        function base64ToBuffer(base64) {
+            return Uint8Array.from(atob(base64), c => c.charCodeAt(0)).buffer;
+        }
+
+        // Check if Fingerprint exists for selected zone
+        loginZoneSelect.addEventListener('change', () => {
+            const selectedZone = loginZoneSelect.value;
+            const savedCred = localStorage.getItem(`bio_cred_${selectedZone}`);
+            if (savedCred && window.PublicKeyCredential) {
+                bioLoginBtn.classList.remove('hidden');
+                bioDivider.classList.remove('hidden');
+            } else {
+                bioLoginBtn.classList.add('hidden');
+                bioDivider.classList.add('hidden');
+            }
         });
-      }
 
-      resultsCard.classList.remove('hidden');
-    }
+        // Password Login Handler
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const selectedZone = loginZoneSelect.value;
+            const enteredPassword = document.getElementById('loginPassword').value;
 
-    function showAlert(msg) {
-      const alertBox = document.getElementById('dashboardAlert');
-      alertBox.textContent = msg;
-      alertBox.className = 'alert alert-danger';
-      alertBox.classList.remove('hidden');
-    }
-  </script>
+            if(!enteredPassword) return;
+
+            loginError.classList.add('hidden');
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> Verifying...`;
+
+            try {
+                const passDocRef = doc(db, "passwords", "zones");
+                const passDocSnap = await getDoc(passDocRef);
+
+                if (passDocSnap.exists()) {
+                    const dbPasswords = passDocSnap.data();
+                    if (dbPasswords[selectedZone] && enteredPassword === dbPasswords[selectedZone]) {
+                        currentZone = selectedZone;
+                        openDashboard(selectedZone);
+                    } else {
+                        loginError.classList.remove('hidden');
+                    }
+                }
+            } catch (err) {
+                console.error("Auth error:", err);
+                loginError.classList.remove('hidden');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = `<i class="ph ph-key text-lg"></i><span>Login with Password</span>`;
+            }
+        });
+
+        // Fingerprint Login Handler
+        bioLoginBtn.addEventListener('click', async () => {
+            const selectedZone = loginZoneSelect.value;
+            const savedCred = localStorage.getItem(`bio_cred_${selectedZone}`);
+            if (!savedCred) return;
+
+            loginError.classList.add('hidden');
+
+            try {
+                const publicKeyRequestOptions = {
+                    challenge: Uint8Array.from("teenspace_login_challenge_12345", c => c.charCodeAt(0)),
+                    allowCredentials: [{
+                        id: base64ToBuffer(savedCred),
+                        type: 'public-key',
+                        transports: ['internal']
+                    }],
+                    userVerification: "required",
+                    timeout: 60000
+                };
+
+                const assertion = await navigator.credentials.get({ publicKey: publicKeyRequestOptions });
+                if (assertion) {
+                    currentZone = selectedZone;
+                    openDashboard(selectedZone);
+                }
+            } catch (err) {
+                console.error("Biometric Failed:", err);
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        // Register Fingerprint Handler
+        registerBioBtn.addEventListener('click', async () => {
+            if (!window.PublicKeyCredential) {
+                alert("Your device or browser doesn't support Fingerprint Authentication.");
+                return;
+            }
+
+            try {
+                const publicKeyCreationOptions = {
+                    challenge: Uint8Array.from("teenspace_register_challenge_12345", c => c.charCodeAt(0)),
+                    rp: { name: "Teenspace Dashboard" },
+                    user: {
+                        id: Uint8Array.from(currentZone, c => c.charCodeAt(0)),
+                        name: currentZone,
+                        displayName: `Admin (${currentZone})`
+                    },
+                    pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
+                    authenticatorSelection: {
+                        authenticatorAttachment: "platform",
+                        userVerification: "required"
+                    },
+                    timeout: 60000
+                };
+
+                const credential = await navigator.credentials.create({ publicKey: publicKeyCreationOptions });
+                const base64CredId = bufferToBase64(credential.rawId);
+
+                localStorage.setItem(`bio_cred_${currentZone}`, base64CredId);
+                alert(`Fingerprint registered successfully for ${currentZone} zone!`);
+
+            } catch (err) {
+                console.error("Biometric Registration Error:", err);
+                alert("Fingerprint registration cancelled or failed.");
+            }
+        });
+
+        function openDashboard(zone) {
+            loginModal.classList.add('hidden');
+            dashboardContent.classList.remove('hidden');
+            dashboardContent.classList.add('flex');
+            activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-xs"></i> Zone: ${zone === 'ALL' ? 'All Zones (Main Admin)' : zone}`;
+            fetchData(zone);
+        }
+
+        logoutBtn.addEventListener('click', () => {
+            dashboardContent.classList.add('hidden');
+            dashboardContent.classList.remove('flex');
+            loginModal.classList.remove('hidden');
+            document.getElementById('loginPassword').value = '';
+            studentTableBody.innerHTML = '';
+            bioLoginBtn.classList.add('hidden');
+            bioDivider.classList.add('hidden');
+            loginZoneSelect.value = '';
+        });
+
+        async function fetchData(zoneFilter) {
+            studentTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-400 font-medium"><i class="ph ph-spinner animate-spin text-2xl mb-2 block mx-auto text-brand-pink"></i> Fetching records from Firebase...</td></tr>`;
+
+            try {
+                let q;
+                const colRef = collection(db, "registrations");
+
+                if (zoneFilter === 'ALL') {
+                    q = query(colRef, orderBy("createdAt", "desc"));
+                } else {
+                    q = query(colRef, where("zone", "==", zoneFilter));
+                }
+
+                const querySnapshot = await getDocs(q);
+                allStudentsData = [];
+
+                querySnapshot.forEach((doc) => {
+                    allStudentsData.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderTable(allStudentsData);
+
+            } catch (error) {
+                console.error("Data fetch error: ", error);
+                studentTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-rose-400">Failed to load data. Please check Firebase permissions.</td></tr>`;
+            }
+        }
+
+        function renderTable(dataList) {
+            totalCount.textContent = dataList.length;
+
+            if (dataList.length === 0) {
+                studentTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-500">No registrations found.</td></tr>`;
+                return;
+            }
+
+            studentTableBody.innerHTML = '';
+
+            dataList.forEach(student => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-white/[0.02] transition-colors";
+
+                const defaultMsg = encodeURIComponent(`Hello ${student.fullName}, Greetings from Program Teenspace! We received your registration.`);
+                const whatsappUrl = `https://wa.me/91${student.whatsapp}?text=${defaultMsg}`;
+
+                tr.innerHTML = `
+                    <td class="py-4 px-6 font-semibold text-white">${student.fullName}</td>
+                    <td class="py-4 px-6">
+                        <span class="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-brand-pink/15 text-brand-pink border border-brand-pink/20 mb-1">${student.zone}</span>
+                        <p class="text-xs text-gray-400">${student.place}</p>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        <a href="tel:${student.phone}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/40 transition-all">
+                            <i class="ph ph-phone-call text-sm"></i> Call (${student.phone})
+                        </a>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        <a href="${whatsappUrl}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20 hover:border-green-500/40 transition-all">
+                            <i class="ph ph-whatsapp-logo text-sm"></i> Chat
+                        </a>
+                    </td>
+                    <td class="py-4 px-6">
+                        <p class="font-medium text-gray-200">${student.institution}</p>
+                        <p class="text-xs text-gray-400">${student.standard}</p>
+                    </td>
+                    <td class="py-4 px-6 text-gray-400 font-medium">${student.age} yrs</td>
+                `;
+
+                studentTableBody.appendChild(tr);
+            });
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtered = allStudentsData.filter(item => 
+                item.fullName?.toLowerCase().includes(val) ||
+                item.institution?.toLowerCase().includes(val) ||
+                item.phone?.includes(val) ||
+                item.place?.toLowerCase().includes(val)
+            );
+            renderTable(filtered);
+        });
+    </script>
 </body>
 </html>
-
-
