@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teenspace | Higher Secondary Students Conference</title>
-    <!-- ഫെവിക്കോൺ (Favicon PNG) -->
+    <!-- (Favicon PNG) -->
     <link rel="icon" type="image/png" href="favicon.png">
 
     <meta name="description" content="Program Teenspace is a modern, youth-focused initiative empowering the next generation through creative workshops, tech mentorship, and community leadership.">
     
-    <!-- ഗൂഗിൾ ഫോണ്ടുകൾ (Google Fonts) -->
+    <!-- (Google Fonts) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- ഫോസ്ഫോർ ഐക്കണുകൾ (Phosphor Icons) -->
+    <!-- (Phosphor Icons) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- ടെയിൽവിൻഡ് സി.എസ്.എസ് (Tailwind CSS) -->
+    <!-- (Tailwind CSS) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -74,9 +74,7 @@
         .gradient-bg {
             background: linear-gradient(135deg, #F02D7D 0%, #2EAEE5 100%);
         }
-
-        /* സ്ക്രോൾ ചെയ്യുമ്പോൾ ആനിമേഷൻ */
-        .reveal {
+       .reveal {
             opacity: 0;
             transform: translateY(30px);
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -87,16 +85,13 @@
             transform: translateY(0);
         }
 
-        /* ലൈറ്റ് ഗ്ലാസ് നാവിഗേഷൻ ബാർ */
-        .nav-glass-light {
+       .nav-glass-light {
             background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
-
-        /* സ്മൂത്ത് പാരലാക്സ് ആൻഡ് സ്കേലിംഗ് */
-        .img-zoom {
+   .img-zoom {
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .group:hover .img-zoom {
@@ -106,13 +101,13 @@
 </head>
 <body class="bg-brand-lightBg text-brand-darkText transition-colors duration-300 overflow-x-hidden">
 
-    <!-- നോട്ടിഫിക്കേഷൻ ടോസ്റ്റ് (Toast Message) -->
+    <!-- (Toast Message) -->
     <div id="toast" class="fixed bottom-24 right-6 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl z-50 flex items-center gap-3 transition-all duration-300 opacity-0 translate-y-10 pointer-events-none">
         <i class="ph-fill ph-check-circle text-green-400 text-xl"></i>
         <span id="toast-message" class="text-sm font-semibold">Link copied to clipboard!</span>
     </div>
 
-    <!-- ഫ്ലോട്ടിംഗ് വാട്ട്‌സ്ആപ്പ് ബട്ടൺ -->
+    <!-- whsapp button -->
     <a href="https://wa.me/916282397438" target="_blank" aria-label="Chat on WhatsApp" class="fixed bottom-6 right-6 z-40 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 transform hover:scale-110 group">
         <i class="ph-fill ph-whatsapp-logo text-3xl"></i>
         <span class="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-500 ease-in-out font-bold text-sm px-0 group-hover:px-2">
@@ -120,7 +115,7 @@
         </span>
     </a>
 
-    <!-- ഗാലറി ലൈറ്റ്‌ബോക്സ് മോഡൽ (Image Lightbox Modal) -->
+    <!--  (Image Lightbox Modal) -->
     <div id="image-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4 transition-all duration-300">
         <button onclick="closeModal()" class="absolute top-6 right-6 text-white text-3xl p-2 hover:text-brand-pink transition-colors">
             <i class="ph ph-x"></i>
@@ -131,18 +126,18 @@
         </div>
     </div>
 
-    <!-- നാവിഗേഷൻ ബാർ -->
+    <!-- navbar-->
     <header class="fixed w-full top-0 z-40 nav-glass-light transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
             
-            <!-- ലോഗോകൾ -->
+            <!-- logos -->
             <a href="#" class="flex items-center gap-3 sm:gap-4 group">
                 <img src="3274.png" alt="Teenspace Logo" class="h-9 sm:h-10 w-auto group-hover:scale-105 transition-transform duration-300">
                 <span class="h-6 w-px bg-slate-300"></span>
                 <img src="Students Logo.png" alt="Wisdom Students Logo" class="h-7 sm:h-8 w-auto group-hover:scale-105 transition-transform duration-300">
             </a>
 
-            <!-- ഡെസ്ക്ടോപ്പ് നാവിഗേഷൻ -->
+            <!-- nav deck -->
             <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
                 <a href="#about" class="hover:text-brand-pink transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">About</a>
                 <a href="#gallery" class="hover:text-brand-pink transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">Gallery</a>
@@ -151,20 +146,20 @@
                 <a href="#faq" class="hover:text-brand-pink transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">FAQ</a>
             </nav>
 
-            <!-- സി.റ്റി.എ (CTA Button) -->
+            <!-- (CTA Button) -->
             <div class="hidden md:block">
                 <a href="register.html" class="gradient-bg text-white px-7 py-3 rounded-full font-bold text-sm tracking-wide shadow-glow hover:shadow-[0_8px_25px_rgba(240,45,125,0.45)] transition-all duration-300 transform hover:-translate-y-0.5 inline-block">
                     Register Now <i class="ph ph-arrow-right ml-1"></i>
                 </a>
             </div>
 
-            <!-- മൊബൈൽ മെനു ടോഗിൾ -->
+            <!-- menu mob -->
             <button id="mobile-menu-btn" class="md:hidden text-slate-800 p-2 focus:outline-none" aria-label="Toggle Menu">
                 <i class="ph ph-list text-3xl"></i>
             </button>
         </div>
 
-        <!-- മൊബൈൽ ഡ്രോപ്പ്ഡൗൺ -->
+        <!-- mobile dop -->
         <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-white/95 backdrop-blur-xl border-b border-slate-200 overflow-hidden transition-all shadow-xl">
             <div class="flex flex-col px-6 py-8 gap-5 text-center text-lg font-semibold text-slate-700">
                 <a href="#about" class="mobile-link hover:text-brand-pink transition-colors">About</a>
@@ -177,9 +172,9 @@
         </div>
     </header>
 
-    <!-- ഹീറോ സെക്ഷൻ (HERO SECTION WITH LARGE TEENSPACE LOGO) -->
+    <!--  (HERO SECTION WITH LARGE TEENSPACE LOGO) -->
     <section class="relative pt-32 pb-20 lg:pt-44 lg:pb-32 bg-gradient-to-b from-slate-100/90 via-white to-brand-lightBg overflow-hidden flex items-center min-h-[92vh]">
-        <!-- ആനിമേഷൻ ഡെക്കറേഷൻ ലൈറ്റുകൾ -->
+        <!-- lights -->
         <div class="absolute top-1/4 -left-20 w-96 h-96 bg-brand-pink/10 rounded-full filter blur-[100px] animate-pulse-slow"></div>
         <div class="absolute bottom-0 -right-20 w-96 h-96 bg-brand-blue/10 rounded-full filter blur-[100px] animate-pulse-slow" style="animation-delay: 2s;"></div>
         
@@ -199,7 +194,7 @@
 <p class="text-base sm:text-lg md:text-xl text-slate-600 mb-8 max-w-2xl font-normal leading-relaxed">
     Program Teenspace is the ultimate hub for youth innovation. Connect with mentors, build real-world skills, and join a community that empowers your creative potential.
 </p>
-                    <!-- പ്രൊഫഷണൽ ലൈറ്റ് കൗണ്ട്ഡൗൺ കാർഡ് -->
+                    <!-- voynt card -->
                     <div class="teenspace-countdown bg-white/80 backdrop-blur-md p-5 rounded-2xl shadow-soft border border-slate-200/80 mb-8 max-w-md">
                         <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 text-center sm:text-left">Event Starts In</p>
                         <div class="flex items-center justify-between gap-2">
@@ -266,7 +261,7 @@
                     </div>
                 </div>
 
-                <!-- ഹീറോ ചിത്രവും ഫ്ലോട്ടിംഗ് കാർഡും -->
+                <!-- flot -->
                 <div class="lg:col-span-5 relative hidden lg:block">
                     <div class="relative mx-auto max-w-md">
                         <div class="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white relative">
@@ -290,7 +285,7 @@
         </div>
     </section>
 
-    <!-- എബൗട്ട് സെക്ഷൻ -->
+    <!-- about -->
     <section id="about" class="py-24 bg-white transition-colors duration-300 relative border-t border-b border-slate-100">
         <div class="max-w-7xl mx-auto px-6 md:px-12">
             <div class="grid lg:grid-cols-2 gap-16 items-center">
@@ -343,7 +338,7 @@
         </div>
     </section>
 
-    <!-- പ്രോഗ്രാം ഹൈലൈറ്റ്‌സ് -->
+    <!-- pr highlight -->
     <section id="programs" class="py-20 bg-brand-lightBg">
         <div class="max-w-7xl mx-auto px-6 md:px-12">
             <div class="text-center max-w-3xl mx-auto mb-16 reveal">
@@ -391,7 +386,7 @@
         </div>
     </section>
 
-    <!-- ഗാലറി സെക്ഷൻ (1 വരിയിൽ 2 ഫോട്ടോകൾ വീതം) -->
+    <!-- pr images -->
     <section id="gallery" class="py-24 bg-white border-t border-b border-slate-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
             <div class="text-center max-w-3xl mx-auto mb-16 reveal">
@@ -402,57 +397,56 @@
                 </p>
             </div>
 
-            <!-- grid-cols-2: എപ്പോഴും 1 വരിയിൽ 2 ഫോട്ടോകൾ -->
             <div class="grid grid-cols-2 gap-3 sm:gap-6 md:gap-8 max-w-5xl mx-auto reveal">
                 
-                <!-- ചിത്രം 1 -->
-                <div onclick="openModal('3276.jpg', 'Interactive Workshops')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
-                    <img src="3276.jpg" alt="Gallery Photo 1" class="w-full h-full object-cover img-zoom">
+                <!--  1 -->
+                <div onclick="openModal('1.jpeg', '')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                    <img src="1.jpeg" alt="Gallery Photo 1" class="w-full h-full object-cover img-zoom">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
                         <p class="text-white font-bold text-xs sm:text-base">Interactive Workshops</p>
                         <i class="ph ph-magnifying-glass-plus text-white text-lg sm:text-2xl"></i>
                     </div>
                 </div>
 
-                <!-- ചിത്രം 2 -->
-                <div onclick="openModal('3276.jpg', 'Team Collaboration')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
-                    <img src="3276.jpg" alt="Gallery Photo 2" class="w-full h-full object-cover img-zoom">
+                <!--  2 -->
+                <div onclick="openModal('2.jpeg', '')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                    <img src="2.jpeg" alt="Gallery Photo 2" class="w-full h-full object-cover img-zoom">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
                         <p class="text-white font-bold text-xs sm:text-base">Team Collaboration</p>
                         <i class="ph ph-magnifying-glass-plus text-white text-lg sm:text-2xl"></i>
                     </div>
                 </div>
 
-                <!-- ചിത്രം 3 -->
-                <div onclick="openModal('3276.jpg', 'Youth Mentorship')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
-                    <img src="3276.jpg" alt="Gallery Photo 3" class="w-full h-full object-cover img-zoom">
+                <!--  3 -->
+                <div onclick="openModal('3.jpeg', '')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                    <img src="3.jpeg" alt="Gallery Photo 3" class="w-full h-full object-cover img-zoom">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
                         <p class="text-white font-bold text-xs sm:text-base">Youth Mentorship</p>
                         <i class="ph ph-magnifying-glass-plus text-white text-lg sm:text-2xl"></i>
                     </div>
                 </div>
 
-                <!-- ചിത്രം 4 -->
-                <div onclick="openModal('3276.jpg', 'Student Presentations')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
-                    <img src="3276.jpg" alt="Gallery Photo 4" class="w-full h-full object-cover img-zoom">
+                <!--  4 -->
+                <div onclick="openModal('4.jpeg', '')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                    <img src="4.jpeg" alt="Gallery Photo 4" class="w-full h-full object-cover img-zoom">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
                         <p class="text-white font-bold text-xs sm:text-base">Student Presentations</p>
                         <i class="ph ph-magnifying-glass-plus text-white text-lg sm:text-2xl"></i>
                     </div>
                 </div>
 
-                <!-- ചിത്രം 5 (View More ക്ലിക്ക് ചെയ്യുമ്പോൾ തെളിയും) -->
-                <div onclick="openModal('3276.jpg', 'Creative Brainstorming')" class="extra-gallery-item hidden group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
-                    <img src="3276.jpg" alt="Gallery Photo 5" class="w-full h-full object-cover img-zoom">
+                <!--  5  -->
+                <div onclick="openModal('5.jpeg', '')" class="extra-gallery-item hidden group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                    <img src="5.jpeg" alt="Gallery Photo 5" class="w-full h-full object-cover img-zoom">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
                         <p class="text-white font-bold text-xs sm:text-base">Creative Brainstorming</p>
                         <i class="ph ph-magnifying-glass-plus text-white text-lg sm:text-2xl"></i>
                     </div>
                 </div>
 
-                <!-- ചിത്രം 6 (View More ക്ലിക്ക് ചെയ്യുമ്പോൾ തെളിയും) -->
-                <div onclick="openModal('3276.jpg', 'Leadership Summit')" class="extra-gallery-item hidden group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
-                    <img src="3276.jpg" alt="Gallery Photo 6" class="w-full h-full object-cover img-zoom">
+                <!--  6  -->
+                <div onclick="openModal('6.jpeg', '')" class="extra-gallery-item hidden group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                    <img src="6.jpeg" alt="Gallery Photo 6" class="w-full h-full object-cover img-zoom">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
                         <p class="text-white font-bold text-xs sm:text-base">Leadership Summit</p>
                         <i class="ph ph-magnifying-glass-plus text-white text-lg sm:text-2xl"></i>
@@ -461,7 +455,7 @@
 
             </div>
 
-            <!-- "View More Images" ബട്ടൺ -->
+            <!-- View More Images -->
             <div class="text-center mt-12 reveal">
                 <button id="view-more-btn" onclick="toggleGallery()" class="inline-flex items-center gap-2 sm:gap-3 px-8 py-3.5 rounded-full border-2 border-brand-pink text-brand-pink font-extrabold text-sm sm:text-base hover:bg-brand-pink hover:text-white transition-all duration-300 transform hover:-translate-y-1 shadow-sm">
                     <i class="ph ph-images text-lg sm:text-xl"></i>
@@ -471,8 +465,7 @@
         </div>
     </section>
 
-    <!-- കോൺടാക്ട് ഇൻഫോ സെക്ഷൻ -->
-    <section id="contact" class="py-24 bg-brand-lightBg transition-colors duration-300">
+<section id="contact" class="py-24 bg-brand-lightBg transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-6 md:px-12">
             <div class="text-center max-w-3xl mx-auto mb-16 reveal">
                 <span class="text-brand-pink font-extrabold tracking-wider uppercase text-xs px-3.5 py-1.5 rounded-full bg-brand-pink/10 inline-block mb-3">Get In Touch</span>
@@ -484,8 +477,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
                 
-                <!-- ഗൂഗിൾ മാപ്സ് ലൊക്കേഷൻ കാർഡ് -->
-                <a href="https://maps.google.com/?q=Mujahid+Centre+Wisdom+Office+Kozhikode+North+673620" target="_blank" rel="noopener noreferrer" class="bg-white p-8 rounded-3xl border border-slate-200/80 hover:border-brand-pink/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
+               <a href="https://maps.google.com/?q=Mujahid+Centre+Wisdom+Office+Kozhikode+North+673620" target="_blank" rel="noopener noreferrer" class="bg-white p-8 rounded-3xl border border-slate-200/80 hover:border-brand-pink/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
                     <div>
                         <div class="w-14 h-14 rounded-2xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-pink group-hover:text-white transition-colors duration-300 shadow-sm">
                             <i class="ph-fill ph-map-pin"></i>
@@ -500,8 +492,7 @@
                     </span>
                 </a>
 
-                <!-- വാട്ട്‌സ്ആപ്പ് കാർഡ് -->
-                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 hover:border-brand-blue/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
+    <div class="bg-white p-8 rounded-3xl border border-slate-200/80 hover:border-brand-blue/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
                     <div>
                         <div class="w-14 h-14 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300 shadow-sm">
                             <i class="ph-fill ph-whatsapp-logo"></i>
@@ -521,8 +512,7 @@
                     </span>
                 </div>
 
-                <!-- Mailto ഇമെയിൽ കാർഡ് -->
-                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 hover:border-brand-pink/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
+                  <div class="bg-white p-8 rounded-3xl border border-slate-200/80 hover:border-brand-pink/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
                     <div>
                         <div class="w-14 h-14 rounded-2xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-pink group-hover:text-white transition-colors duration-300 shadow-sm">
                             <i class="ph-fill ph-envelope-simple"></i>
@@ -546,7 +536,7 @@
         </div>
     </section>
 
-    <!-- FAQ സെക്ഷൻ -->
+    <!-- FAQ -->
     <section id="faq" class="py-20 bg-white border-t border-slate-100">
         <div class="max-w-4xl mx-auto px-6">
             <div class="text-center mb-12 reveal">
@@ -594,12 +584,12 @@
         </div>
     </section>
 
-    <!-- ഫൂട്ടർ -->
+    <!-- footer -->
     <footer class="bg-slate-900 text-white pt-20 pb-10">
         <div class="max-w-7xl mx-auto px-6 md:px-12">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16 reveal">
                 
-                <!-- ബ്രാൻഡ് വിവരം -->
+                <!-- brand-->
                 <div class="lg:col-span-1">
                     <div class="flex items-center gap-3 mb-6 bg-slate-800/80 p-3 rounded-xl w-fit">
                         <img src="0.png" alt="Teenspace Logo" class="h-7 w-auto">
@@ -616,7 +606,7 @@
                     </div>
                 </div>
 
-                <!-- ലിങ്കുകൾ 1 -->
+                <!-- link 1 -->
                 <div>
                     <h4 class="text-lg font-bold mb-6">Other Programs</h4>
                     <ul class="space-y-3 text-slate-400 text-sm">
@@ -627,7 +617,7 @@
                     </ul>
                 </div>
 
-                <!-- ലിങ്കുകൾ 2 -->
+                <!-- link 2 -->
                 <div>
                     <h4 class="text-lg font-bold mb-6">Quick Links</h4>
                     <ul class="space-y-3 text-slate-400 text-sm">
@@ -638,13 +628,13 @@
                     </ul>
                 </div>
 
-                <!-- കോൺടാക്ട് -->
+                <!-- contact -->
                 <div>
                     <h4 class="text-lg font-bold mb-6">Contact Us</h4>
                     <ul class="space-y-3 text-slate-400 text-sm">
                         <li class="flex items-center gap-3">
                             <i class="ph ph-instagram-logo text-lg text-brand-blue"></i>
-                            <a href="https://www.instagram.com/teenspace._/" target="_blank" class="hover:text-white transition-colors">teenspace._</a>
+                            <a href="https://www.instagram.com/wisdomkozhikodenorth/" target="_blank" class="hover:text-white transition-colors">wisdomkozhikodenorth</a>
                         </li>
                         <li class="flex items-center gap-3">
                             <i class="ph ph-whatsapp-logo text-lg text-green-400"></i>
@@ -665,17 +655,17 @@
 
             </div>
 
-            <!-- കോപ്പിറൈറ്റ് -->
+            <!-- copy right -->
             <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm reveal">
                 <p>&copy; 2026 Program Teenspace. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- ജാവാസ്ക്രിപ്റ്റ് Logic -->
+    <!-- js  Logic -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // മൊബൈൽ മെനു ടോഗിൾ
+            // mobile menu
             const btn = document.getElementById('mobile-menu-btn');
             const menu = document.getElementById('mobile-menu');
             const icon = btn.querySelector('i');
@@ -693,7 +683,7 @@
             btn.addEventListener('click', toggleMenu);
             mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
 
-            // നാവിഗേഷൻ സ്ക്രോൾ ഷാഡോ
+            // scrol show
             const navbar = document.getElementById('navbar');
             window.addEventListener('scroll', () => {
                 if (window.scrollY > 50) {
@@ -703,7 +693,7 @@
                 }
             });
 
-            // സ്ക്രോൾ റിവീൽ ആനിമേഷൻ
+            // reveal animation
             const revealElements = document.querySelectorAll('.reveal');
             const revealObserver = new IntersectionObserver((entries, observer) => {
                 entries.forEach(entry => {
@@ -725,7 +715,7 @@
             }, 100);
         });
 
-        /* ഗാലറി കാണിക്കാനുള്ള ബട്ടൺ ലോജിക് */
+       
         function toggleGallery() {
             const extraItems = document.querySelectorAll('.extra-gallery-item');
             const btnText = document.getElementById('view-more-text');
@@ -748,8 +738,7 @@
             }
         }
 
-        /* ഗാലറി ഫുൾ സ്ക്രീൻ പ്രിവ്യൂ മോഡൽ (Image Lightbox) */
-        function openModal(imgSrc, caption) {
+         function openModal(imgSrc, caption) {
             const modal = document.getElementById('image-modal');
             const modalImg = document.getElementById('modal-img');
             const modalCaption = document.getElementById('modal-caption');
@@ -762,8 +751,6 @@
         function closeModal() {
             document.getElementById('image-modal').classList.add('hidden');
         }
-
-        /* ക്ലിപ്പ്ബോർഡിലേക്ക് കോപ്പി ചെയ്യൽ (Toast UX) */
         function copyToClipboard(text) {
             const dummy = document.createElement('textarea');
             document.body.appendChild(dummy);
@@ -789,8 +776,7 @@
             }, 3000);
         }
 
-        /* കൗണ്ട്ഡൗൺ ടൈമർ */
-        const countDate = new Date("October 21, 2026 09:00:00").getTime();
+          const countDate = new Date("October 21, 2026 09:00:00").getTime();
         function updateCountdown() {
             const now = new Date().getTime();
             const gap = countDate - now;
