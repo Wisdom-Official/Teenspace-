@@ -92,7 +92,7 @@
                         <i class="ph ph-map-pin absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
                         <select id="loginZone" required class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-10 text-sm text-white focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer">
                             <option value="" disabled selected class="bg-black">-- Select Zone --</option>
-                            <option value="ALL" class="bg-black text-brand-pink font-bold">ALL ZONES (Main Admin)</option>
+                            <option value="ALL" class="bg-black text-brand-pink font-bold">Main Admin</option>
                             <option value="Payyoli" class="bg-black">Payyoli</option>
                             <option value="Koyilandi" class="bg-black">Koyilandi</option>
                             <option value="Perambra" class="bg-black">Perambra</option>
@@ -147,9 +147,9 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
                 <!-- Branding -->
                 <div class="flex items-center gap-3.5">
-                    <img src="3274.png" alt="Teenspace Logo" class="h-9 w-auto">
+                    <img src="0.png" alt="Teenspace Logo" class="h-9 w-auto">
                     <div>
-                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white">Dashboard</h1>
+                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white"></h1>
                         <p class="text-[11px] text-brand-blue font-semibold tracking-wide flex items-center gap-1 mt-0.5" id="activeZoneBadge">
                             <i class="ph ph-circle-wavy-check text-xs"></i> Zone: -
                         </p>
@@ -194,6 +194,16 @@
                 <div class="relative w-full md:w-80">
                     <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
                     <input type="text" id="searchInput" placeholder="Search name, phone, school..." class="w-full bg-brand-darkCard border border-white/10 rounded-2xl py-3 pl-11 pr-4 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-blue transition-all shadow-xl">
+                </div>
+            </div>
+
+            <!-- ZONE-WISE STATS GRID (Only Visible to Main Admin) -->
+            <div id="zoneStatsContainer" class="hidden mb-6">
+                <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <i class="ph ph-chart-bar text-brand-blue text-sm"></i> Zone Breakdown
+                </h4>
+                <div id="zoneStatsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                    <!-- Dynamic Zone Cards will be rendered here -->
                 </div>
             </div>
 
@@ -242,6 +252,7 @@
 
         let allStudentsData = [];
         let currentZone = null;
+        const allZonesList = ["Payyoli", "Koyilandi", "Perambra", "Vadakara", "Poonur", "Balussery", "Nadapuram"];
 
         const loginModal = document.getElementById('loginModal');
         const dashboardContent = document.getElementById('dashboardContent');
@@ -258,6 +269,8 @@
         const searchInput = document.getElementById('searchInput');
         const logoutBtn = document.getElementById('logoutBtn');
         const registerBioBtn = document.getElementById('registerBioBtn');
+        const zoneStatsContainer = document.getElementById('zoneStatsContainer');
+        const zoneStatsGrid = document.getElementById('zoneStatsGrid');
 
         function bufferToBase64(buffer) {
             return btoa(String.fromCharCode(...new Uint8Array(buffer)));
@@ -398,7 +411,7 @@
             scannerStatusBanner.classList.add('hidden');
             dashboardContent.classList.remove('hidden');
             dashboardContent.classList.add('flex');
-            activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-xs"></i> Zone: ${zone === 'ALL' ? 'All Zones (Main Admin)' : zone}`;
+            activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-xs"></i> Zone: ${zone === 'ALL' ? 'Main Admin' : zone}`;
             fetchData(zone);
         }
 
@@ -411,6 +424,7 @@
             bioLoginBtn.classList.add('hidden');
             bioDivider.classList.add('hidden');
             loginZoneSelect.value = '';
+            zoneStatsContainer.classList.add('hidden');
         });
 
         async function fetchData(zoneFilter) {
@@ -433,12 +447,49 @@
                     allStudentsData.push({ id: doc.id, ...doc.data() });
                 });
 
+                // Display zone breakdown if Main Admin (ALL ZONES)
+                if (zoneFilter === 'ALL') {
+                    renderZoneStats(allStudentsData);
+                    zoneStatsContainer.classList.remove('hidden');
+                } else {
+                    zoneStatsContainer.classList.add('hidden');
+                }
+
                 renderTable(allStudentsData);
 
             } catch (error) {
                 console.error("Data fetch error: ", error);
                 studentTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-12 text-rose-400">Failed to load data. Please check Firebase permissions.</td></tr>`;
             }
+        }
+
+        function renderZoneStats(dataList) {
+            zoneStatsGrid.innerHTML = '';
+            
+            // Calculate counts per zone
+            const zoneCounts = {};
+            allZonesList.forEach(z => zoneCounts[z] = 0);
+            
+            dataList.forEach(student => {
+                if (student.zone && zoneCounts[student.zone] !== undefined) {
+                    zoneCounts[student.zone]++;
+                }
+            });
+
+            // Render cards for each zone
+            allZonesList.forEach(zone => {
+                const count = zoneCounts[zone];
+                const card = document.createElement('div');
+                card.className = "bg-brand-darkCard border border-white/10 p-3 rounded-xl flex flex-col justify-between hover:border-brand-pink/30 transition-all shadow-md";
+                card.innerHTML = `
+                    <p class="text-[11px] font-semibold text-gray-400 truncate">${zone}</p>
+                    <h5 class="text-lg font-bold text-white mt-1 flex items-center justify-between">
+                        ${count}
+                        <span class="text-[10px] text-brand-blue bg-brand-blue/10 px-1.5 py-0.5 rounded font-normal">reg</span>
+                    </h5>
+                `;
+                zoneStatsGrid.appendChild(card);
+            });
         }
 
         function renderTable(dataList) {
