@@ -176,7 +176,7 @@
         <!-- DASHBOARD BODY -->
         <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8 w-full flex-grow">
             
-            <!-- Controls Bar (Stats + Search) -->
+            <!-- Controls Bar (Stats + Zone Selector + Search) -->
             <div class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4 mb-6">
                 
                 <!-- Stat Card -->
@@ -190,10 +190,29 @@
                     </div>
                 </div>
 
-                <!-- Search Input -->
-                <div class="relative w-full md:w-80">
-                    <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
-                    <input type="text" id="searchInput" placeholder="Search name, phone, school..." class="w-full bg-brand-darkCard border border-white/10 rounded-2xl py-3 pl-11 pr-4 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-blue transition-all shadow-xl">
+                <!-- Right Controls: Zone Filter & Search Input -->
+                <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+                    <!-- Dynamic Zone Filter (Only Enabled for Main Admin) -->
+                    <div id="dashboardZoneFilterWrapper" class="relative w-full sm:w-52 hidden">
+                        <i class="ph ph-funnel absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
+                        <select id="dashboardZoneFilter" class="w-full bg-brand-darkCard border border-white/10 rounded-2xl py-3 pl-11 pr-8 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer shadow-xl">
+                            <option value="ALL" class="bg-black text-brand-pink font-bold">ALL ZONES</option>
+                            <option value="Payyoli" class="bg-black">Payyoli</option>
+                            <option value="Koyilandi" class="bg-black">Koyilandi</option>
+                            <option value="Perambra" class="bg-black">Perambra</option>
+                            <option value="Vadakara" class="bg-black">Vadakara</option>
+                            <option value="Poonur" class="bg-black">Poonur</option>
+                            <option value="Balussery" class="bg-black">Balussery</option>
+                            <option value="Nadapuram" class="bg-black">Nadapuram</option>
+                        </select>
+                        <i class="ph ph-caret-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div class="relative w-full sm:w-64">
+                        <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
+                        <input type="text" id="searchInput" placeholder="Search name, phone, school..." class="w-full bg-brand-darkCard border border-white/10 rounded-2xl py-3 pl-11 pr-4 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-blue transition-all shadow-xl">
+                    </div>
                 </div>
             </div>
 
@@ -271,6 +290,8 @@
         const registerBioBtn = document.getElementById('registerBioBtn');
         const zoneStatsContainer = document.getElementById('zoneStatsContainer');
         const zoneStatsGrid = document.getElementById('zoneStatsGrid');
+        const dashboardZoneFilterWrapper = document.getElementById('dashboardZoneFilterWrapper');
+        const dashboardZoneFilter = document.getElementById('dashboardZoneFilter');
 
         function bufferToBase64(buffer) {
             return btoa(String.fromCharCode(...new Uint8Array(buffer)));
@@ -335,7 +356,7 @@
             if (!savedCred) return;
 
             loginError.classList.add('hidden');
-            scannerStatusBanner.classList.remove('hidden'); // Show scanner indicator
+            scannerStatusBanner.classList.remove('hidden');
 
             try {
                 const publicKeyRequestOptions = {
@@ -359,11 +380,11 @@
                 loginError.textContent = "Fingerprint verification cancelled or failed.";
                 loginError.classList.remove('hidden');
             } finally {
-                scannerStatusBanner.classList.add('hidden'); // Hide scanner indicator
+                scannerStatusBanner.classList.add('hidden');
             }
         });
 
-        // Register Fingerprint (Customized for Professional WebAuthn Prompt Text)
+        // Register Fingerprint
         registerBioBtn.addEventListener('click', async () => {
             if (!window.PublicKeyCredential) {
                 alert("Your device or browser doesn't support Biometric Authentication.");
@@ -373,8 +394,6 @@
             try {
                 const publicKeyCreationOptions = {
                     challenge: Uint8Array.from("teenspace_register_challenge_key", c => c.charCodeAt(0)),
-                    
-                    // Professional App & User Display Text for Phone Biometric Dialog
                     rp: { 
                         name: "Teenspace Admin Security Portal",
                         id: window.location.hostname
@@ -384,7 +403,6 @@
                         name: `admin.${currentZone.toLowerCase()}@teenspace.org`,
                         displayName: `Teenspace ${currentZone} Admin`
                     },
-                    
                     pubKeyCredParams: [{ alg: -7, type: "public-key" }, { alg: -257, type: "public-key" }],
                     authenticatorSelection: {
                         authenticatorAttachment: "platform",
@@ -411,8 +429,20 @@
             scannerStatusBanner.classList.add('hidden');
             dashboardContent.classList.remove('hidden');
             dashboardContent.classList.add('flex');
-            activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-xs"></i> Zone: ${zone === 'ALL' ? 'Main Admin' : zone}`;
+            
+            if (zone === 'ALL') {
+                dashboardZoneFilterWrapper.classList.remove('hidden');
+                dashboardZoneFilter.value = 'ALL';
+            } else {
+                dashboardZoneFilterWrapper.classList.add('hidden');
+            }
+
+            updateZoneBadge(zone);
             fetchData(zone);
+        }
+
+        function updateZoneBadge(zone) {
+            activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-xs"></i> Zone: ${zone === 'ALL' ? 'Main Admin' : zone}`;
         }
 
         logoutBtn.addEventListener('click', () => {
@@ -425,6 +455,7 @@
             bioDivider.classList.add('hidden');
             loginZoneSelect.value = '';
             zoneStatsContainer.classList.add('hidden');
+            dashboardZoneFilterWrapper.classList.add('hidden');
         });
 
         async function fetchData(zoneFilter) {
@@ -447,15 +478,14 @@
                     allStudentsData.push({ id: doc.id, ...doc.data() });
                 });
 
-                // Display zone breakdown if Main Admin (ALL ZONES)
-                if (zoneFilter === 'ALL') {
+                if (currentZone === 'ALL') {
                     renderZoneStats(allStudentsData);
                     zoneStatsContainer.classList.remove('hidden');
                 } else {
                     zoneStatsContainer.classList.add('hidden');
                 }
 
-                renderTable(allStudentsData);
+                applyCurrentFilters();
 
             } catch (error) {
                 console.error("Data fetch error: ", error);
@@ -466,7 +496,6 @@
         function renderZoneStats(dataList) {
             zoneStatsGrid.innerHTML = '';
             
-            // Calculate counts per zone
             const zoneCounts = {};
             allZonesList.forEach(z => zoneCounts[z] = 0);
             
@@ -476,11 +505,14 @@
                 }
             });
 
-            // Render cards for each zone
             allZonesList.forEach(zone => {
                 const count = zoneCounts[zone];
                 const card = document.createElement('div');
-                card.className = "bg-brand-darkCard border border-white/10 p-3 rounded-xl flex flex-col justify-between hover:border-brand-pink/30 transition-all shadow-md";
+                card.className = "bg-brand-darkCard border border-white/10 p-3 rounded-xl flex flex-col justify-between hover:border-brand-pink/30 transition-all shadow-md cursor-pointer";
+                card.onclick = () => {
+                    dashboardZoneFilter.value = zone;
+                    applyCurrentFilters();
+                };
                 card.innerHTML = `
                     <p class="text-[11px] font-semibold text-gray-400 truncate">${zone}</p>
                     <h5 class="text-lg font-bold text-white mt-1 flex items-center justify-between">
@@ -490,6 +522,31 @@
                 `;
                 zoneStatsGrid.appendChild(card);
             });
+        }
+
+        function applyCurrentFilters() {
+            const selectedZoneFilter = dashboardZoneFilter.value;
+            const searchVal = searchInput.value.toLowerCase();
+
+            let filtered = allStudentsData;
+
+            // Apply Zone Filter (if Main Admin selects a specific zone from dropdown)
+            if (currentZone === 'ALL' && selectedZoneFilter !== 'ALL') {
+                filtered = filtered.filter(item => item.zone === selectedZoneFilter);
+            }
+
+            // Apply Search Filter
+            if (searchVal) {
+                filtered = filtered.filter(item => 
+                    item.fullName?.toLowerCase().includes(searchVal) ||
+                    item.gender?.toLowerCase().includes(searchVal) ||
+                    item.institution?.toLowerCase().includes(searchVal) ||
+                    item.phone?.includes(searchVal) ||
+                    item.place?.toLowerCase().includes(searchVal)
+                );
+            }
+
+            renderTable(filtered);
         }
 
         function renderTable(dataList) {
@@ -550,17 +607,11 @@ Greetings from Program Teenspace! We received your registration.`
             });
         }
 
-        searchInput.addEventListener('input', (e) => {
-            const val = e.target.value.toLowerCase();
-            const filtered = allStudentsData.filter(item => 
-                item.fullName?.toLowerCase().includes(val) ||
-                item.gender?.toLowerCase().includes(val) ||
-                item.institution?.toLowerCase().includes(val) ||
-                item.phone?.includes(val) ||
-                item.place?.toLowerCase().includes(val)
-            );
-            renderTable(filtered);
-        });
+        // Search Input Listener
+        searchInput.addEventListener('input', applyCurrentFilters);
+
+        // Dashboard Zone Filter Listener
+        dashboardZoneFilter.addEventListener('change', applyCurrentFilters);
     </script>
 </body>
 </html>
