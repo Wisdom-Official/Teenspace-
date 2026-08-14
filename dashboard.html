@@ -92,7 +92,7 @@
                         <i class="ph ph-map-pin absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
                         <select id="loginZone" required class="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-11 pr-10 text-sm text-white focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer">
                             <option value="" disabled selected class="bg-black">-- Select Zone --</option>
-                            <option value="ALL" class="bg-black text-brand-pink font-bold">Main Admin</option>
+                            <option value="ALL" class="bg-black text-brand-pink font-bold">ALL ZONES (Main Admin)</option>
                             <option value="Payyoli" class="bg-black">Payyoli</option>
                             <option value="Koyilandi" class="bg-black">Koyilandi</option>
                             <option value="Perambra" class="bg-black">Perambra</option>
@@ -147,9 +147,9 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
                 <!-- Branding -->
                 <div class="flex items-center gap-3.5">
-                    <img src="0.png" alt="Teenspace Logo" class="h-9 w-auto">
+                    <img src="3274.png" alt="Teenspace Logo" class="h-9 w-auto">
                     <div>
-                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white"></h1>
+                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white">Dashboard</h1>
                         <p class="text-[11px] text-brand-blue font-semibold tracking-wide flex items-center gap-1 mt-0.5" id="activeZoneBadge">
                             <i class="ph ph-circle-wavy-check text-xs"></i> Zone: -
                         </p>
@@ -204,6 +204,7 @@
                         <thead class="bg-white/[0.03] border-b border-white/10 text-[11px] uppercase text-gray-400 font-semibold tracking-wider">
                             <tr>
                                 <th class="py-4 px-6">Student Name</th>
+                                <th class="py-4 px-6">Gender</th>
                                 <th class="py-4 px-6">Zone & Place</th>
                                 <th class="py-4 px-6 text-center">Direct Call</th>
                                 <th class="py-4 px-6 text-center">WhatsApp Chat</th>
@@ -213,7 +214,7 @@
                         </thead>
                         <tbody id="studentTableBody" class="divide-y divide-white/5">
                             <tr>
-                                <td colspan="6" class="text-center py-12 text-gray-500 font-medium">Loading registrations...</td>
+                                <td colspan="7" class="text-center py-12 text-gray-500 font-medium">Loading registrations...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -397,7 +398,7 @@
             scannerStatusBanner.classList.add('hidden');
             dashboardContent.classList.remove('hidden');
             dashboardContent.classList.add('flex');
-            activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-xs"></i> Zone: ${zone === 'ALL' ? 'Main Admin' : zone}`;
+            activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-xs"></i> Zone: ${zone === 'ALL' ? 'All Zones (Main Admin)' : zone}`;
             fetchData(zone);
         }
 
@@ -413,7 +414,7 @@
         });
 
         async function fetchData(zoneFilter) {
-            studentTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-400 font-medium"><i class="ph ph-spinner animate-spin text-2xl mb-2 block mx-auto text-brand-pink"></i> Fetching records from Firebase...</td></tr>`;
+            studentTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-12 text-gray-400 font-medium"><i class="ph ph-spinner animate-spin text-2xl mb-2 block mx-auto text-brand-pink"></i> Fetching records from Firebase...</td></tr>`;
 
             try {
                 let q;
@@ -436,7 +437,7 @@
 
             } catch (error) {
                 console.error("Data fetch error: ", error);
-                studentTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-rose-400">Failed to load data. Please check Firebase permissions.</td></tr>`;
+                studentTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-12 text-rose-400">Failed to load data. Please check Firebase permissions.</td></tr>`;
             }
         }
 
@@ -444,7 +445,7 @@
             totalCount.textContent = dataList.length;
 
             if (dataList.length === 0) {
-                studentTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-gray-500">No registrations found.</td></tr>`;
+                studentTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-12 text-gray-500">No registrations found.</td></tr>`;
                 return;
             }
 
@@ -454,16 +455,25 @@
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-white/[0.02] transition-colors";
 
-                   const defaultMsg = encodeURIComponent(
-  `السلام عليكم ورحمة الله وبركاته 
+                const defaultMsg = encodeURIComponent(
+  `السلام عليكم ورحمة الله وبركاته ✨
 *${student.fullName}*
 
 Greetings from Program Teenspace! We received your registration.`
 );
-                   const whatsappUrl = `https://wa.me/91${student.whatsapp}?text=${defaultMsg}`;
+                const whatsappUrl = `https://wa.me/91${student.whatsapp}?text=${defaultMsg}`;
 
                 tr.innerHTML = `
                     <td class="py-4 px-6 font-semibold text-white">${student.fullName}</td>
+                    <td class="py-4 px-6">
+                        <span class="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-semibold ${
+                            student.gender === 'Female' 
+                                ? 'bg-pink-500/15 text-pink-400 border border-pink-500/20' 
+                                : student.gender === 'Male'
+                                ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20'
+                                : 'bg-gray-500/15 text-gray-400 border border-gray-500/20'
+                        }">${student.gender || 'N/A'}</span>
+                    </td>
                     <td class="py-4 px-6">
                         <span class="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-brand-pink/15 text-brand-pink border border-brand-pink/20 mb-1">${student.zone}</span>
                         <p class="text-xs text-gray-400">${student.place}</p>
@@ -493,6 +503,7 @@ Greetings from Program Teenspace! We received your registration.`
             const val = e.target.value.toLowerCase();
             const filtered = allStudentsData.filter(item => 
                 item.fullName?.toLowerCase().includes(val) ||
+                item.gender?.toLowerCase().includes(val) ||
                 item.institution?.toLowerCase().includes(val) ||
                 item.phone?.includes(val) ||
                 item.place?.toLowerCase().includes(val)
