@@ -110,6 +110,20 @@
                     </div>
                 </div>
 
+                <!-- Gender Option -->
+                <div>
+                    <label for="gender" class="block text-sm font-medium text-gray-300 mb-1.5">Gender *</label>
+                    <div class="relative">
+                        <i class="ph ph-gender-intersex absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl"></i>
+                        <select id="gender" required class="w-full bg-[#1A1A1A] border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-white focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer">
+                            <option value="" disabled selected>-- Choose Gender --</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                           </select>
+                        <i class="ph ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
                 <!-- Age & Zone Grid -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <!-- Age -->
@@ -313,6 +327,7 @@
 
             // Gather Data
             const nameValue = document.getElementById('fullName').value.trim();
+            const genderValue = document.getElementById('gender').value;
             const zoneValue = document.getElementById('zone').value;
             const selectedStandard = standardSelect.value;
             
@@ -323,6 +338,7 @@
 
             const formData = {
                 fullName: nameValue,
+                gender: genderValue,
                 age: Number(document.getElementById('age').value),
                 zone: zoneValue,
                 place: document.getElementById('place').value.trim(),
