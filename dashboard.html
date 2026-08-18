@@ -149,7 +149,7 @@
                 <div class="flex items-center gap-3.5">
                     <img src="0.png" alt="Teenspace Logo" class="h-9 w-auto" onerror="this.onerror=null; this.src='https://via.placeholder.com/36?text=TS';">
                     <div>
-                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white">Teenspace Portal</h1>
+                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white"></h1>
                         <p class="text-[11px] text-brand-blue font-semibold tracking-wide flex items-center gap-1 mt-0.5" id="activeZoneBadge">
                             <i class="ph ph-circle-wavy-check text-xs"></i> Zone: -
                         </p>
@@ -270,11 +270,20 @@
     </div>
 
     <!-- THREE DOTS (⋮) POPUP ACTION MENU -->
-    <div id="globalActionDropdown" class="hidden fixed z-50 w-56 bg-[#121214] border border-white/15 rounded-2xl shadow-2xl overflow-hidden py-2 text-left text-xs backdrop-blur-xl animate-in fade-in zoom-in-95 duration-100">
-        <div class="px-3.5 py-1.5 border-b border-white/10 text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center justify-between">
-            <span>Select Status</span>
-            <i class="ph ph-sliders-horizontal text-brand-pink"></i>
-        </div>
+<!-- Trigger button (ഓരോ row/card ലും ഇത് വേണം) -->
+<button onclick="toggleActionDropdown(event, this)"
+        class="p-2 rounded-full hover:bg-white/10 transition">
+  <i class="ph ph-dots-three-vertical text-lg"></i>
+</button>
+
+<!-- Dropdown (നിങ്ങളുടെ existing markup) -->
+<div id="globalActionDropdown" class="hidden fixed z-50 w-56 bg-[#121214] border border-white/15 rounded-2xl shadow-2xl overflow-hidden py-2 text-left text-xs backdrop-blur-xl animate-in fade-in zoom-in-95 duration-100">
+    <div class="px-3.5 py-1.5 border-b border-white/10 text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center justify-between">
+        <span>Select Status</span>
+        <i class="ph ph-sliders-horizontal text-brand-pink"></i>
+    </div>
+    <!-- status options ivide -->
+</div>
         
         <!-- Status Options -->
         <button id="btnActionReady" class="w-full px-3.5 py-2.5 text-left hover:bg-emerald-500/10 text-emerald-400 font-medium flex items-center gap-2.5 transition-colors">
@@ -723,6 +732,45 @@
                     filtered = filtered.filter(item => item.status === selectedStatus);
                 }
             }
+
+            function toggleActionDropdown(event, btn) {
+  event.stopPropagation();
+  const dropdown = document.getElementById('globalActionDropdown');
+  const isHidden = dropdown.classList.contains('hidden');
+
+  // toggle
+  if (isHidden) {
+    // button ന്റെ position എടുത്ത് dropdown correct spot ൽ വെക്കുന്നു
+    const rect = btn.getBoundingClientRect();
+    dropdown.style.top = `${rect.bottom + 6}px`;
+
+    // right edge overflow ആയാൽ left ലേക്ക് align ചെയ്യും
+    const dropdownWidth = 224; // w-56 = 14rem = 224px
+    let left = rect.right - dropdownWidth;
+    if (left < 8) left = rect.left;
+    dropdown.style.left = `${left}px`;
+
+    dropdown.classList.remove('hidden');
+    dropdown.dataset.activeFor = btn.dataset.id || '';
+  } else {
+    dropdown.classList.add('hidden');
+  }
+}
+
+// പുറത്തു click ചെയ്താൽ close ആവാൻ
+document.addEventListener('click', (e) => {
+  const dropdown = document.getElementById('globalActionDropdown');
+  if (!dropdown.contains(e.target) && !e.target.closest('[onclick*="toggleActionDropdown"]')) {
+    dropdown.classList.add('hidden');
+  }
+});
+
+// Escape key ൽ close
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    document.getElementById('globalActionDropdown').classList.add('hidden');
+  }
+});
 
             // Apply Search Filter
             if (searchVal) {
