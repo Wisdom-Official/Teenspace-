@@ -52,10 +52,6 @@
         .animate-pulse-ring {
             animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
-        /* Dropdown custom transition */
-        .dropdown-menu {
-            transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
-        }
     </style>
 </head>
 <body class="bg-brand-dark text-gray-100 min-h-screen font-sans flex flex-col antialiased selection:bg-brand-pink selection:text-white">
@@ -76,7 +72,7 @@
                 <p class="text-gray-400 text-xs sm:text-sm mt-1" id="modalSubtitle">Select Zone & authenticate to continue</p>
             </div>
 
-            <!-- PRO SCANNER STATUS BANNER (Hidden by default) -->
+            <!-- PRO SCANNER STATUS BANNER -->
             <div id="scannerStatusBanner" class="hidden mb-6 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-center relative overflow-hidden">
                 <div class="flex items-center justify-center gap-3">
                     <span class="relative flex h-4 w-4">
@@ -162,13 +158,11 @@
 
                 <!-- Actions -->
                 <div class="flex items-center gap-2.5">
-                    <!-- Enable Fingerprint Button -->
                     <button id="registerBioBtn" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2.5 text-xs font-semibold rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all duration-300 shadow-sm">
                         <i class="ph ph-fingerprint text-base"></i>
                         <span class="hidden sm:inline">Enable Fingerprint</span>
                     </button>
 
-                    <!-- Logout Button -->
                     <button id="logoutBtn" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2.5 text-xs font-semibold rounded-xl bg-white/5 text-gray-300 border border-white/10 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-all duration-300">
                         <i class="ph ph-sign-out text-base"></i>
                         <span class="hidden sm:inline">Logout</span>
@@ -180,7 +174,7 @@
         <!-- DASHBOARD BODY -->
         <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8 w-full flex-grow">
             
-            <!-- Controls Bar (Stats + Zone Selector + Search + Status Filter) -->
+            <!-- Controls Bar -->
             <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 mb-6">
                 
                 <!-- Stat Card -->
@@ -194,12 +188,12 @@
                     </div>
                 </div>
 
-                <!-- Right Controls: Status Filter, Zone Filter & Search Input -->
+                <!-- Right Controls -->
                 <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                     
                     <!-- Status Filter Dropdown -->
                     <div class="relative w-full sm:w-48">
-                        <i class="ph ph-checks absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
+                        <i class="ph ph-funnel-simple absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
                         <select id="statusFilter" class="w-full bg-brand-darkCard border border-white/10 rounded-2xl py-3 pl-11 pr-8 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer shadow-xl">
                             <option value="ALL" class="bg-black text-white">All Statuses</option>
                             <option value="Ready" class="bg-black text-emerald-400">Ready (Confirmed)</option>
@@ -212,7 +206,7 @@
 
                     <!-- Dynamic Zone Filter (Only Enabled for Main Admin) -->
                     <div id="dashboardZoneFilterWrapper" class="relative w-full sm:w-48 hidden">
-                        <i class="ph ph-funnel absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
+                        <i class="ph ph-map-pin absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
                         <select id="dashboardZoneFilter" class="w-full bg-brand-darkCard border border-white/10 rounded-2xl py-3 pl-11 pr-8 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer shadow-xl">
                             <option value="ALL" class="bg-black text-brand-pink font-bold">ALL ZONES</option>
                             <option value="Payyoli" class="bg-black">Payyoli</option>
@@ -229,7 +223,7 @@
                     <!-- Search Input -->
                     <div class="relative w-full sm:w-60">
                         <i class="ph ph-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
-                        <input type="text" id="searchInput" placeholder="Search name, phone, school..." class="w-full bg-brand-darkCard border border-white/10 rounded-2xl py-3 pl-11 pr-4 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-blue transition-all shadow-xl">
+                        <input type="text" id="searchInput" placeholder="Search name, phone, place..." class="w-full bg-brand-darkCard border border-white/10 rounded-2xl py-3 pl-11 pr-4 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-blue transition-all shadow-xl">
                     </div>
                 </div>
             </div>
@@ -240,29 +234,31 @@
                     <i class="ph ph-chart-bar text-brand-blue text-sm"></i> Zone Breakdown
                 </h4>
                 <div id="zoneStatsGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
-                    <!-- Dynamic Zone Cards will be rendered here -->
+                    <!-- Dynamic Zone Cards -->
                 </div>
             </div>
 
             <!-- TABLE CONTAINER -->
-            <div class="bg-brand-darkCard border border-white/10 rounded-2xl overflow-visible shadow-2xl">
-                <div class="overflow-x-auto">
+            <div class="bg-brand-darkCard border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+                <div class="overflow-x-auto min-h-[380px]">
                     <table class="w-full text-left text-xs sm:text-sm text-gray-300">
                         <thead class="bg-white/[0.03] border-b border-white/10 text-[11px] uppercase text-gray-400 font-semibold tracking-wider">
                             <tr>
+                                <!-- ACTION COLUMN PLACED AT THE VERY FRONT -->
+                                <th class="py-4 px-4 text-center w-16">Action</th>
                                 <th class="py-4 px-6">Student Name</th>
-                                <th class="py-4 px-6">Gender</th>
                                 <th class="py-4 px-6">Confirmation Status</th>
+                                <th class="py-4 px-6">Gender</th>
                                 <th class="py-4 px-6">Zone & Place</th>
                                 <th class="py-4 px-6 text-center">Direct Call</th>
                                 <th class="py-4 px-6 text-center">WhatsApp Chat</th>
                                 <th class="py-4 px-6">School / Course</th>
-                                <th class="py-4 px-6 text-center">Actions</th>
+                                <th class="py-4 px-6">Age</th>
                             </tr>
                         </thead>
                         <tbody id="studentTableBody" class="divide-y divide-white/5">
                             <tr>
-                                <td colspan="8" class="text-center py-12 text-gray-500 font-medium">Loading registrations...</td>
+                                <td colspan="9" class="text-center py-12 text-gray-500 font-medium">Loading registrations...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -271,8 +267,40 @@
         </main>
     </div>
 
+    <!-- GLOBAL ACTION DROPDOWN POPUP (Floating Container for Guaranteed Display) -->
+    <div id="globalActionDropdown" class="hidden fixed z-50 w-52 bg-[#121214] border border-white/15 rounded-2xl shadow-2xl overflow-hidden py-2 text-left text-xs backdrop-blur-xl animate-in fade-in zoom-in-95 duration-100">
+        <div class="px-3.5 py-1.5 border-b border-white/10 text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center justify-between">
+            <span>Mark Status</span>
+            <i class="ph ph-sliders-horizontal text-brand-pink"></i>
+        </div>
+        
+        <button id="btnActionReady" class="w-full px-3.5 py-2.5 text-left hover:bg-emerald-500/10 text-emerald-400 font-medium flex items-center gap-2.5 transition-colors">
+            <i class="ph ph-check-circle text-base text-emerald-400"></i>
+            <span>Ready (Confirmed)</span>
+        </button>
+        <button id="btnActionMaybe" class="w-full px-3.5 py-2.5 text-left hover:bg-amber-500/10 text-amber-400 font-medium flex items-center gap-2.5 transition-colors">
+            <i class="ph ph-question text-base text-amber-400"></i>
+            <span>Maybe</span>
+        </button>
+        <button id="btnActionNo" class="w-full px-3.5 py-2.5 text-left hover:bg-rose-500/10 text-rose-400 font-medium flex items-center gap-2.5 transition-colors">
+            <i class="ph ph-x-circle text-base text-rose-400"></i>
+            <span>No (Not Attending)</span>
+        </button>
+
+        <div class="border-t border-white/10 my-1"></div>
+
+        <button id="btnActionEdit" class="w-full px-3.5 py-2.5 text-left hover:bg-white/5 text-gray-200 font-medium flex items-center gap-2.5 transition-colors">
+            <i class="ph ph-pencil-simple text-base text-brand-blue"></i>
+            <span>Edit Details</span>
+        </button>
+        <button id="btnActionDelete" class="w-full px-3.5 py-2.5 text-left hover:bg-rose-500/10 text-rose-400 font-medium flex items-center gap-2.5 transition-colors">
+            <i class="ph ph-trash text-base text-rose-500"></i>
+            <span>Delete Registration</span>
+        </button>
+    </div>
+
     <!-- EDIT STUDENT MODAL -->
-    <div id="editModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div id="editModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="bg-brand-darkCard border border-white/10 p-6 sm:p-8 rounded-3xl max-w-lg w-full shadow-2xl relative max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
                 <h3 class="text-xl font-bold text-white flex items-center gap-2">
@@ -354,7 +382,7 @@
     </div>
 
     <!-- DELETE CONFIRMATION MODAL -->
-    <div id="deleteModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div id="deleteModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="bg-brand-darkCard border border-white/10 p-6 sm:p-8 rounded-3xl max-w-md w-full shadow-2xl text-center">
             <div class="w-16 h-16 bg-rose-500/10 border border-rose-500/30 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4 text-3xl">
                 <i class="ph ph-trash"></i>
@@ -390,9 +418,11 @@
 
         let allStudentsData = [];
         let currentZone = null;
+        let activeTargetId = null;
         let activeDeleteId = null;
         const allZonesList = ["Payyoli", "Koyilandi", "Perambra", "Vadakara", "Poonur", "Balussery", "Nadapuram"];
 
+        // DOM Elements
         const loginModal = document.getElementById('loginModal');
         const dashboardContent = document.getElementById('dashboardContent');
         const loginForm = document.getElementById('loginForm');
@@ -414,6 +444,14 @@
         const dashboardZoneFilterWrapper = document.getElementById('dashboardZoneFilterWrapper');
         const dashboardZoneFilter = document.getElementById('dashboardZoneFilter');
 
+        // Floating Action Menu Elements
+        const globalActionDropdown = document.getElementById('globalActionDropdown');
+        const btnActionReady = document.getElementById('btnActionReady');
+        const btnActionMaybe = document.getElementById('btnActionMaybe');
+        const btnActionNo = document.getElementById('btnActionNo');
+        const btnActionEdit = document.getElementById('btnActionEdit');
+        const btnActionDelete = document.getElementById('btnActionDelete');
+
         // Edit Modal Elements
         const editModal = document.getElementById('editModal');
         const editForm = document.getElementById('editForm');
@@ -432,7 +470,7 @@
             return Uint8Array.from(atob(base64), c => c.charCodeAt(0)).buffer;
         }
 
-        // Zone selection listener
+        // Zone selection listener for Fingerprint check
         loginZoneSelect.addEventListener('change', () => {
             const selectedZone = loginZoneSelect.value;
             const savedCred = localStorage.getItem(`bio_cred_${selectedZone}`);
@@ -588,10 +626,11 @@
             loginZoneSelect.value = '';
             zoneStatsContainer.classList.add('hidden');
             dashboardZoneFilterWrapper.classList.add('hidden');
+            closeGlobalDropdown();
         });
 
         async function fetchData(zoneFilter) {
-            studentTableBody.innerHTML = `<tr><td colspan="8" class="text-center py-12 text-gray-400 font-medium"><i class="ph ph-spinner animate-spin text-2xl mb-2 block mx-auto text-brand-pink"></i> Fetching records from Firebase...</td></tr>`;
+            studentTableBody.innerHTML = `<tr><td colspan="9" class="text-center py-12 text-gray-400 font-medium"><i class="ph ph-spinner animate-spin text-2xl mb-2 block mx-auto text-brand-pink"></i> Fetching records from Firebase...</td></tr>`;
 
             try {
                 let q;
@@ -621,7 +660,7 @@
 
             } catch (error) {
                 console.error("Data fetch error: ", error);
-                studentTableBody.innerHTML = `<tr><td colspan="8" class="text-center py-12 text-rose-400">Failed to load data. Please check Firebase permissions.</td></tr>`;
+                studentTableBody.innerHTML = `<tr><td colspan="9" class="text-center py-12 text-rose-400">Failed to load data. Please check Firebase permissions.</td></tr>`;
             }
         }
 
@@ -657,6 +696,7 @@
         }
 
         function applyCurrentFilters() {
+            closeGlobalDropdown();
             const selectedZoneFilter = dashboardZoneFilter.value;
             const selectedStatus = statusFilter.value;
             const searchVal = searchInput.value.toLowerCase();
@@ -695,7 +735,7 @@
             totalCount.textContent = dataList.length;
 
             if (dataList.length === 0) {
-                studentTableBody.innerHTML = `<tr><td colspan="8" class="text-center py-12 text-gray-500">No registrations found.</td></tr>`;
+                studentTableBody.innerHTML = `<tr><td colspan="9" class="text-center py-12 text-gray-500 font-medium">No registrations found.</td></tr>`;
                 return;
             }
 
@@ -703,39 +743,49 @@
 
             dataList.forEach(student => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-white/[0.02] transition-colors relative group";
+                tr.className = "hover:bg-white/[0.02] transition-colors";
 
                 const defaultMsg = encodeURIComponent(
                     `السلام عليكم ورحمة الله وبركاته ✨\n*${student.fullName}*\n\nGreetings from Program Teenspace! We received your registration.`
                 );
                 const whatsappUrl = `https://wa.me/91${student.whatsapp}?text=${defaultMsg}`;
 
-                // Status Badge UI Logic
+                // Status Badge UI
                 let statusBadgeHTML = '';
                 const status = student.status || 'Pending';
 
                 if (status === 'Ready') {
-                    statusBadgeHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+                    statusBadgeHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
                         <i class="ph ph-check-circle text-xs"></i> Confirmed (Ready)
                     </span>`;
                 } else if (status === 'Maybe') {
-                    statusBadgeHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                    statusBadgeHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/30">
                         <i class="ph ph-question text-xs"></i> Maybe
                     </span>`;
                 } else if (status === 'No') {
-                    statusBadgeHTML = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                    statusBadgeHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30">
                         <i class="ph ph-x-circle text-xs"></i> Not Attending (No)
                     </span>`;
                 } else {
-                    statusBadgeHTML = `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-gray-500/15 text-gray-400 border border-gray-500/20">
+                    statusBadgeHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-gray-500/15 text-gray-400 border border-gray-500/20">
                         <i class="ph ph-clock text-xs"></i> Pending
                     </span>`;
                 }
 
                 tr.innerHTML = `
+                    <!-- 3 DOTS MENU BUTTON AT THE VERY FRONT -->
+                    <td class="py-4 px-4 text-center">
+                        <button onclick="openGlobalDropdown(event, '${student.id}')" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-brand-pink/20 border border-white/10 hover:border-brand-pink/40 text-gray-300 hover:text-white flex items-center justify-center mx-auto transition-all duration-200 shadow-sm">
+                            <i class="ph ph-dots-three-vertical-bold text-lg pointer-events-none"></i>
+                        </button>
+                    </td>
+
                     <td class="py-4 px-6 font-semibold text-white">
                         ${student.fullName}
                         <p class="text-[11px] text-gray-400 font-normal sm:hidden">${student.age || '-'} yrs • ${student.gender || '-'}</p>
+                    </td>
+                    <td class="py-4 px-6">
+                        ${statusBadgeHTML}
                     </td>
                     <td class="py-4 px-6">
                         <span class="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-semibold ${
@@ -745,9 +795,6 @@
                                 ? 'bg-blue-500/15 text-blue-400 border border-blue-500/20'
                                 : 'bg-gray-500/15 text-gray-400 border border-gray-500/20'
                         }">${student.gender || 'N/A'}</span>
-                    </td>
-                    <td class="py-4 px-6">
-                        ${statusBadgeHTML}
                     </td>
                     <td class="py-4 px-6">
                         <span class="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-brand-pink/15 text-brand-pink border border-brand-pink/20 mb-1">${student.zone}</span>
@@ -767,78 +814,66 @@
                         <p class="font-medium text-gray-200">${student.institution || '-'}</p>
                         <p class="text-xs text-gray-400">${student.standard || ''}</p>
                     </td>
-                    <td class="py-4 px-6 text-center relative">
-                        <!-- 3 DOTS MENU BUTTON -->
-                        <button onclick="toggleActionMenu(event, '${student.id}')" class="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white flex items-center justify-center mx-auto transition-all">
-                            <i class="ph ph-dots-three-vertical text-lg pointer-events-none"></i>
-                        </button>
-
-                        <!-- DROPDOWN MENU -->
-                        <div id="actionMenu-${student.id}" class="action-dropdown hidden fixed z-50 w-48 bg-[#18181B] border border-white/10 rounded-2xl shadow-2xl overflow-hidden py-1.5 text-left text-xs">
-                            <div class="px-3 py-1.5 border-b border-white/10 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                                Mark Status
-                            </div>
-                            
-                            <button onclick="updateStatus('${student.id}', 'Ready')" class="w-full px-3 py-2 text-left hover:bg-emerald-500/10 text-emerald-400 flex items-center gap-2 transition-colors">
-                                <i class="ph ph-check-circle text-base"></i> Ready (Confirmed)
-                            </button>
-                            <button onclick="updateStatus('${student.id}', 'Maybe')" class="w-full px-3 py-2 text-left hover:bg-amber-500/10 text-amber-400 flex items-center gap-2 transition-colors">
-                                <i class="ph ph-question text-base"></i> Maybe
-                            </button>
-                            <button onclick="updateStatus('${student.id}', 'No')" class="w-full px-3 py-2 text-left hover:bg-rose-500/10 text-rose-400 flex items-center gap-2 transition-colors">
-                                <i class="ph ph-x-circle text-base"></i> No (Not Attending)
-                            </button>
-
-                            <div class="border-t border-white/10 my-1"></div>
-
-                            <button onclick="openEditModal('${student.id}')" class="w-full px-3 py-2 text-left hover:bg-white/5 text-gray-200 flex items-center gap-2 transition-colors">
-                                <i class="ph ph-pencil-simple text-base text-brand-blue"></i> Edit Details
-                            </button>
-                            <button onclick="openDeleteModal('${student.id}')" class="w-full px-3 py-2 text-left hover:bg-rose-500/10 text-rose-400 flex items-center gap-2 transition-colors">
-                                <i class="ph ph-trash text-base"></i> Delete
-                            </button>
-                        </div>
-                    </td>
+                    <td class="py-4 px-6 text-gray-400 font-medium">${student.age || '-'} yrs</td>
                 `;
 
                 studentTableBody.appendChild(tr);
             });
         }
 
-        // Toggle 3-Dots Dropdown Menu with Positioning
-        window.toggleActionMenu = function(event, id) {
+        // GLOBAL FLOATING ACTION DROPDOWN POSITIONING
+        window.openGlobalDropdown = function(event, id) {
             event.stopPropagation();
-            
-            // Close other open menus
-            document.querySelectorAll('.action-dropdown').forEach(el => {
-                if(el.id !== `actionMenu-${id}`) el.classList.add('hidden');
-            });
+            activeTargetId = id;
 
-            const menu = document.getElementById(`actionMenu-${id}`);
             const btn = event.currentTarget;
-            
-            if (menu.classList.contains('hidden')) {
-                const rect = btn.getBoundingClientRect();
-                menu.style.top = `${rect.bottom + window.scrollY + 4}px`;
-                menu.style.left = `${rect.left + window.scrollX - 160}px`; // Shift left to keep inside viewport
-                menu.classList.remove('hidden');
-            } else {
-                menu.classList.add('hidden');
+            const rect = btn.getBoundingClientRect();
+
+            // Calculate position relative to screen
+            let topPos = rect.bottom + 6;
+            let leftPos = rect.left;
+
+            // Prevent overflowing right/bottom viewport
+            if (leftPos + 210 > window.innerWidth) {
+                leftPos = window.innerWidth - 220;
             }
+            if (topPos + 220 > window.innerHeight) {
+                topPos = rect.top - 210;
+            }
+
+            globalActionDropdown.style.top = `${topPos}px`;
+            globalActionDropdown.style.left = `${leftPos}px`;
+            globalActionDropdown.classList.remove('hidden');
         };
 
-        // Close dropdowns on outside click
-        document.addEventListener('click', () => {
-            document.querySelectorAll('.action-dropdown').forEach(el => el.classList.add('hidden'));
-        });
+        function closeGlobalDropdown() {
+            globalActionDropdown.classList.add('hidden');
+            activeTargetId = null;
+        }
 
-        // Update Confirmation Status (Ready, Maybe, No)
-        window.updateStatus = async function(id, statusValue) {
+        // Close Dropdown on outside click or scroll
+        document.addEventListener('click', (e) => {
+            if (!globalActionDropdown.contains(e.target)) {
+                closeGlobalDropdown();
+            }
+        });
+        window.addEventListener('scroll', closeGlobalDropdown, true);
+
+        // Action Handlers for Dropdown Buttons
+        btnActionReady.addEventListener('click', () => handleStatusChange('Ready'));
+        btnActionMaybe.addEventListener('click', () => handleStatusChange('Maybe'));
+        btnActionNo.addEventListener('click', () => handleStatusChange('No'));
+
+        async function handleStatusChange(statusValue) {
+            if (!activeTargetId) return;
+            const id = activeTargetId;
+            closeGlobalDropdown();
+
             try {
                 const docRef = doc(db, "registrations", id);
                 await updateDoc(docRef, { status: statusValue });
 
-                // Local state update
+                // Local State Update
                 const target = allStudentsData.find(item => item.id === id);
                 if (target) target.status = statusValue;
 
@@ -847,10 +882,14 @@
                 console.error("Status update error: ", err);
                 alert("Failed to update status. Please try again.");
             }
-        };
+        }
 
-        // Open Edit Modal
-        window.openEditModal = function(id) {
+        // Edit Action Handler
+        btnActionEdit.addEventListener('click', () => {
+            if (!activeTargetId) return;
+            const id = activeTargetId;
+            closeGlobalDropdown();
+
             const student = allStudentsData.find(item => item.id === id);
             if (!student) return;
 
@@ -866,15 +905,20 @@
             document.getElementById('editGender').value = student.gender || 'Male';
 
             editModal.classList.remove('hidden');
-        };
+        });
 
         closeEditModal.addEventListener('click', () => editModal.classList.add('hidden'));
         cancelEditBtn.addEventListener('click', () => editModal.classList.add('hidden'));
 
-        // Handle Edit Form Submit
+        // Submit Edit Form
         editForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('editStudentId').value;
+            const saveBtn = document.getElementById('saveEditBtn');
+
+            saveBtn.disabled = true;
+            saveBtn.innerHTML = `<i class="ph ph-spinner animate-spin"></i> Saving changes...`;
+
             const updatedData = {
                 fullName: document.getElementById('editFullName').value,
                 phone: document.getElementById('editPhone').value,
@@ -891,7 +935,6 @@
                 const docRef = doc(db, "registrations", id);
                 await updateDoc(docRef, updatedData);
 
-                // Local state update
                 const idx = allStudentsData.findIndex(item => item.id === id);
                 if (idx !== -1) {
                     allStudentsData[idx] = { ...allStudentsData[idx], ...updatedData };
@@ -901,29 +944,36 @@
                 applyCurrentFilters();
             } catch (err) {
                 console.error("Error updating record:", err);
-                alert("Failed to save changes. Please try again.");
+                alert("Failed to update record. Please try again.");
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = `<i class="ph ph-floppy-disk"></i> Save Changes`;
             }
         });
 
-        // Open Delete Modal
-        window.openDeleteModal = function(id) {
-            activeDeleteId = id;
+        // Delete Action Handler
+        btnActionDelete.addEventListener('click', () => {
+            if (!activeTargetId) return;
+            activeDeleteId = activeTargetId;
+            closeGlobalDropdown();
             deleteModal.classList.remove('hidden');
-        };
+        });
 
         cancelDeleteBtn.addEventListener('click', () => {
             activeDeleteId = null;
             deleteModal.classList.add('hidden');
         });
 
-        // Confirm Delete
+        // Confirm Delete Handler
         confirmDeleteBtn.addEventListener('click', async () => {
             if (!activeDeleteId) return;
+
+            confirmDeleteBtn.disabled = true;
+            confirmDeleteBtn.innerHTML = `<i class="ph ph-spinner animate-spin"></i> Deleting...`;
 
             try {
                 await deleteDoc(doc(db, "registrations", activeDeleteId));
 
-                // Local state update
                 allStudentsData = allStudentsData.filter(item => item.id !== activeDeleteId);
                 
                 deleteModal.classList.add('hidden');
@@ -936,10 +986,13 @@
             } catch (err) {
                 console.error("Delete error:", err);
                 alert("Failed to delete record. Please try again.");
+            } finally {
+                confirmDeleteBtn.disabled = false;
+                confirmDeleteBtn.innerHTML = `<i class="ph ph-trash-simple"></i> Delete`;
             }
         });
 
-        // Event Listeners for Filters
+        // Search & Filter Listeners
         searchInput.addEventListener('input', applyCurrentFilters);
         statusFilter.addEventListener('change', applyCurrentFilters);
         dashboardZoneFilter.addEventListener('change', applyCurrentFilters);
