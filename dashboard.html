@@ -149,7 +149,7 @@
                 <div class="flex items-center gap-3.5">
                     <img src="0.png" alt="Teenspace Logo" class="h-9 w-auto" onerror="this.onerror=null; this.src='https://via.placeholder.com/36?text=TS';">
                     <div>
-                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white">Teenspace Admin Portal</h1>
+                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white"></h1>
                         <p class="text-[11px] text-brand-blue font-semibold tracking-wide flex items-center gap-1 mt-0.5" id="activeZoneBadge">
                             <i class="ph ph-circle-wavy-check text-xs"></i> Zone: -
                         </p>
@@ -196,9 +196,9 @@
                         <i class="ph ph-funnel-simple absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-base"></i>
                         <select id="statusFilter" class="w-full bg-brand-darkCard border border-white/10 rounded-2xl py-3 pl-11 pr-8 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer shadow-xl">
                             <option value="ALL" class="bg-black text-white">All Statuses</option>
-                            <option value="Ready" class="bg-black text-emerald-400">Ready (Confirmed)</option>
+                            <option value="Ready" class="bg-black text-emerald-400">Confirmed</option>
                             <option value="Maybe" class="bg-black text-amber-400">Maybe</option>
-                            <option value="No" class="bg-black text-rose-400">No (Not Attending)</option>
+                            <option value="No" class="bg-black text-rose-400">Not Attending</option>
                             <option value="Pending" class="bg-black text-gray-400">Pending</option>
                         </select>
                         <i class="ph ph-caret-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
@@ -247,11 +247,11 @@
                                 <!-- ACTION COLUMN PLACED AT THE VERY FRONT -->
                                 <th class="py-4 px-4 text-center w-16">Action</th>
                                 <th class="py-4 px-6">Student Name</th>
-                                <th class="py-4 px-6">Confirmation Status</th>
+                                <th class="py-4 px-6">Confirmation</th>
                                 <th class="py-4 px-6">Gender</th>
                                 <th class="py-4 px-6">Zone & Place</th>
-                                <th class="py-4 px-6 text-center">Direct Call</th>
-                                <th class="py-4 px-6 text-center">WhatsApp Chat</th>
+                                <th class="py-4 px-6 text-center">Call</th>
+                                <th class="py-4 px-6 text-center">WhatsApp</th>
                                 <th class="py-4 px-6">School / Course</th>
                                 <th class="py-4 px-6">Age</th>
                             </tr>
@@ -276,7 +276,7 @@
         
         <button id="btnActionReady" class="w-full px-3.5 py-2.5 text-left hover:bg-emerald-500/10 text-emerald-400 font-medium flex items-center gap-2.5 transition-colors">
             <i class="ph ph-check-circle text-base text-emerald-400"></i>
-            <span>Ready (Confirmed)</span>
+            <span>Confirmed</span>
         </button>
         <button id="btnActionMaybe" class="w-full px-3.5 py-2.5 text-left hover:bg-amber-500/10 text-amber-400 font-medium flex items-center gap-2.5 transition-colors">
             <i class="ph ph-question text-base text-amber-400"></i>
@@ -284,7 +284,7 @@
         </button>
         <button id="btnActionNo" class="w-full px-3.5 py-2.5 text-left hover:bg-rose-500/10 text-rose-400 font-medium flex items-center gap-2.5 transition-colors">
             <i class="ph ph-x-circle text-base text-rose-400"></i>
-            <span>No (Not Attending)</span>
+            <span>Not Attending</span>
         </button>
 
         <div class="border-t border-white/10 my-1"></div>
