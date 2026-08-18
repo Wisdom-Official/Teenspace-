@@ -244,10 +244,8 @@
                     <table class="w-full text-left text-xs sm:text-sm text-gray-300">
                         <thead class="bg-white/[0.03] border-b border-white/10 text-[11px] uppercase text-gray-400 font-semibold tracking-wider">
                             <tr>
-                                <!-- ത്രീ ഡോട്ട് ബട്ടൺ കോളം (ACTION) -->
-                                <th class="py-4 px-4 text-center w-16">
-                                    <i class="ph ph-dots-three-vertical-bold text-lg text-brand-pink"></i>
-                                </th>
+                                <!-- ത്രീ ഡോട്ട് ബട്ടൺ കോളം -->
+                                <th class="py-4 px-4 text-center w-16">ഓപ്ഷൻ</th>
                                 <th class="py-4 px-6">വിദ്യാർത്ഥിയുടെ പേര്</th>
                                 <th class="py-4 px-6">സ്റ്റാറ്റസ്</th>
                                 <th class="py-4 px-6">ലിംഗഭേദം</th>
@@ -269,13 +267,14 @@
         </main>
     </div>
 
-    <!-- ത്രീ ഡോട്ട് ക്ലിക്ക് ചെയ്യുമ്പോൾ വരുന്ന ഫ്ലോട്ടിംഗ് ഡ്രോപ്ഡൗൺ മെനു -->
-    <div id="globalActionDropdown" class="hidden fixed z-50 w-52 bg-[#121214] border border-white/15 rounded-2xl shadow-2xl overflow-hidden py-2 text-left text-xs backdrop-blur-xl">
+    <!-- ത്രീ ഡോട്ട് (⋮) ബട്ടൺ അമർത്തുമ്പോൾ കാണിക്കുന്ന പോപ്പ്-അപ്പ് മെനു -->
+    <div id="globalActionDropdown" class="hidden fixed z-50 w-56 bg-[#121214] border border-white/15 rounded-2xl shadow-2xl overflow-hidden py-2 text-left text-xs backdrop-blur-xl animate-in fade-in zoom-in-95 duration-100">
         <div class="px-3.5 py-1.5 border-b border-white/10 text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center justify-between">
-            <span>സ്റ്റാറ്റസ് മാറ്റുക</span>
+            <span>സ്റ്റാറ്റസ് തിരഞ്ഞെടുക്കുക</span>
             <i class="ph ph-sliders-horizontal text-brand-pink"></i>
         </div>
         
+        <!-- സ്റ്റാറ്റസ് മാറ്റാനുള്ള ഓപ്ഷനുകൾ -->
         <button id="btnActionReady" class="w-full px-3.5 py-2.5 text-left hover:bg-emerald-500/10 text-emerald-400 font-medium flex items-center gap-2.5 transition-colors">
             <i class="ph ph-check-circle text-base text-emerald-400"></i>
             <span>ഉറപ്പിച്ചു (Confirmed)</span>
@@ -291,6 +290,7 @@
 
         <div class="border-t border-white/10 my-1"></div>
 
+        <!-- എഡിറ്റ് & ഡിലീറ്റ് ഓപ്ഷനുകൾ -->
         <button id="btnActionEdit" class="w-full px-3.5 py-2.5 text-left hover:bg-white/5 text-gray-200 font-medium flex items-center gap-2.5 transition-colors">
             <i class="ph ph-pencil-simple text-base text-brand-blue"></i>
             <span>വിവരങ്ങൾ തിരുത്തുക (Edit)</span>
@@ -472,7 +472,7 @@
             return Uint8Array.from(atob(base64), c => c.charCodeAt(0)).buffer;
         }
 
-        // സോൺ തിരഞ്ഞെടുക്കുമ്പോൾ ഫിംഗർപ്രിന്റ് ലഭ്യമാണോ എന്ന് പരിശോധിക്കുന്നു
+        // സോൺ തിരഞ്ഞെടുക്കുമ്പോൾ ഫിംഗർപ്രിന്റ് പരിശോധിക്കുന്നു
         loginZoneSelect.addEventListener('change', () => {
             const selectedZone = loginZoneSelect.value;
             const savedCred = localStorage.getItem(`bio_cred_${selectedZone}`);
@@ -778,9 +778,9 @@
                 }
 
                 tr.innerHTML = `
-                    <!-- 3 DOTS (ത്രീ ഡോട്ട്) ബട്ടൺ കോളം -->
+                    <!-- 3 DOTS (ത്രീ ഡോട്ട്) ബട്ടൺ - ഇത് ക്ലിക്ക് ചെയ്യുമ്പോൾ പോപ്പ് അപ്പ് മെനു വരും -->
                     <td class="py-4 px-4 text-center">
-                        <button onclick="window.openGlobalDropdown(event, '${student.id}')" title="കൂടുതൽ ഓപ്ഷനുകൾ" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-brand-pink/20 border border-white/10 hover:border-brand-pink/40 text-gray-300 hover:text-white flex items-center justify-center mx-auto transition-all duration-200 shadow-sm">
+                        <button onclick="window.openGlobalDropdown(event, '${student.id}')" title="ഓപ്ഷനുകൾ കാണുക" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-brand-pink/20 border border-white/10 hover:border-brand-pink/40 text-gray-300 hover:text-white flex items-center justify-center mx-auto transition-all duration-200 shadow-sm">
                             <i class="ph ph-dots-three-vertical-bold text-lg pointer-events-none"></i>
                         </button>
                     </td>
@@ -826,9 +826,16 @@
             });
         }
 
-        // ത്രീ ഡോട്ട് ക്ലിക്ക് ചെയ്യുമ്പോൾ പോപ്പ് അപ്പ് ഡ്രോപ്ഡൗൺ കാണിക്കുന്ന ഫംഗ്ഷൻ
+        // ത്രീ ഡോട്ട് അമർത്തുമ്പോൾ കൃത്യമായ സ്ഥലത്ത് ഡ്രോപ്ഡൗൺ കാണിക്കുന്ന ഫംഗ്ഷൻ
         window.openGlobalDropdown = function(event, id) {
             event.stopPropagation();
+            
+            // മുന്നേ തുറന്ന മെനു ഉണ്ടെങ്കിൽ അത് അടയ്ക്കുക
+            if (activeTargetId === id && !globalActionDropdown.classList.contains('hidden')) {
+                closeGlobalDropdown();
+                return;
+            }
+
             activeTargetId = id;
 
             const btn = event.currentTarget;
@@ -837,11 +844,12 @@
             let topPos = rect.bottom + 6;
             let leftPos = rect.left;
 
-            if (leftPos + 210 > window.innerWidth) {
-                leftPos = window.innerWidth - 220;
+            // സ്‌ക്രീനിന് പുറത്തേക്ക് പോകാതിരിക്കാനുള്ള അഡ്ജസ്റ്റ്‌മെന്റുകൾ
+            if (leftPos + 230 > window.innerWidth) {
+                leftPos = window.innerWidth - 240;
             }
-            if (topPos + 220 > window.innerHeight) {
-                topPos = rect.top - 210;
+            if (topPos + 230 > window.innerHeight) {
+                topPos = rect.top - 220;
             }
 
             globalActionDropdown.style.top = `${topPos}px`;
@@ -854,7 +862,7 @@
             activeTargetId = null;
         }
 
-        // പുറത്തു ക്ലിക്ക് ചെയ്യുമ്പോഴോ സ്ക്രോൾ ചെയ്യുമ്പോഴോ ഡ്രോപ്ഡൗൺ മറയ്ക്കുക
+        // പുറത്തു ക്ലിക്ക് ചെയ്യുമ്പോഴോ സ്‌ക്രോൾ ചെയ്യുമ്പോഴോ ഡ്രോപ്ഡൗൺ അടയ്ക്കുക
         document.addEventListener('click', (e) => {
             if (!globalActionDropdown.contains(e.target)) {
                 closeGlobalDropdown();
@@ -862,7 +870,7 @@
         });
         window.addEventListener('scroll', closeGlobalDropdown, true);
 
-        // ഡ്രോപ്ഡൗൺ ബട്ടൺ ആക്ഷനുകൾ
+        // ഡ്രോപ്ഡൗൺ ബട്ടൺ ആക്ഷനുകൾ (സ്റ്റാറ്റസ് മാറ്റൽ)
         btnActionReady.addEventListener('click', () => handleStatusChange('Ready'));
         btnActionMaybe.addEventListener('click', () => handleStatusChange('Maybe'));
         btnActionNo.addEventListener('click', () => handleStatusChange('No'));
@@ -876,7 +884,7 @@
                 const docRef = doc(db, "registrations", id);
                 await updateDoc(docRef, { status: statusValue });
 
-                // ലോക്കൽ അപ്ഡേറ്റ്
+                // ലോക്കൽ അപ്‌ഡേറ്റ്
                 const target = allStudentsData.find(item => item.id === id);
                 if (target) target.status = statusValue;
 
@@ -887,7 +895,7 @@
             }
         }
 
-        // എഡിറ്റ് ബട്ടൺ ആക്ഷൻ
+        // എഡിറ്റ് ഓപ്ഷൻ ക്ലിക്ക് ചെയ്യുമ്പോൾ
         btnActionEdit.addEventListener('click', () => {
             if (!activeTargetId) return;
             const id = activeTargetId;
@@ -954,7 +962,7 @@
             }
         });
 
-        // ഡിലീറ്റ് ആക്ഷൻ
+        // ഡിലീറ്റ് ഓപ്ഷൻ ക്ലിക്ക് ചെയ്യുമ്പോൾ
         btnActionDelete.addEventListener('click', () => {
             if (!activeTargetId) return;
             activeDeleteId = activeTargetId;
@@ -995,7 +1003,7 @@
             }
         });
 
-        // ഫിൽട്ടർ ലിസണേഴ്സ്
+        // ഫിൽട്ടറുകൾ ലിസൺ ചെയ്യൽ
         searchInput.addEventListener('input', applyCurrentFilters);
         statusFilter.addEventListener('change', applyCurrentFilters);
         dashboardZoneFilter.addEventListener('change', applyCurrentFilters);
