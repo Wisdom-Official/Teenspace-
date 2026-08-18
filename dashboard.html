@@ -149,7 +149,7 @@
                 <div class="flex items-center gap-3.5">
                     <img src="0.png" alt="Teenspace Logo" class="h-9 w-auto" onerror="this.onerror=null; this.src='https://via.placeholder.com/36?text=TS';">
                     <div>
-                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white"></h1>
+                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white">Teenspace Portal</h1>
                         <p class="text-[11px] text-brand-blue font-semibold tracking-wide flex items-center gap-1 mt-0.5" id="activeZoneBadge">
                             <i class="ph ph-circle-wavy-check text-xs"></i> Zone: -
                         </p>
@@ -246,7 +246,7 @@
                             <tr>
                                 <!-- THREE DOTS BUTTON COLUMN -->
                                 <th class="py-4 px-4 text-center w-16">
-                                    <i class="ph ph-dots-three-vertical-bold text-lg text-brand-pink"></i>
+                                    <span class="inline-block text-brand-pink font-bold text-base">⋮</span>
                                 </th>
                                 <th class="py-4 px-6">Student Name</th>
                                 <th class="py-4 px-6">Status</th>
@@ -270,16 +270,11 @@
     </div>
 
     <!-- THREE DOTS (⋮) POPUP ACTION MENU -->
-    <div class="relative flex items-center justify-between p-4 bg-[#121214] text-white rounded-xl">
-    <!-- Inline Content / Title -->
-    <span class="text-sm font-medium">Card or Row Item</span>
-
-    <!-- Three Dots Trigger Button -->
-    <button onclick="toggleDropdown(event)" class="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition-colors focus:outline-none">
-        <i class="ph ph-dots-three-vertical text-xl"></i>
-    </button>
-</div>
-
+    <div id="globalActionDropdown" class="hidden fixed z-50 w-56 bg-[#121214] border border-white/15 rounded-2xl shadow-2xl overflow-hidden py-2 text-left text-xs backdrop-blur-xl animate-in fade-in zoom-in-95 duration-100">
+        <div class="px-3.5 py-1.5 border-b border-white/10 text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center justify-between">
+            <span>Select Status</span>
+            <i class="ph ph-sliders-horizontal text-brand-pink"></i>
+        </div>
         
         <!-- Status Options -->
         <button id="btnActionReady" class="w-full px-3.5 py-2.5 text-left hover:bg-emerald-500/10 text-emerald-400 font-medium flex items-center gap-2.5 transition-colors">
@@ -785,10 +780,12 @@
                 }
 
                 tr.innerHTML = `
-                    <!-- THREE DOTS BUTTON (Triggers Options Popup Menu) -->
+                    <!-- GUARANTEED INLINE SVG THREE-DOTS (⋮) BUTTON -->
                     <td class="py-4 px-4 text-center">
-                        <button onclick="window.openGlobalDropdown(event, '${student.id}')" title="View Options" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-brand-pink/20 border border-white/10 hover:border-brand-pink/40 text-gray-300 hover:text-white flex items-center justify-center mx-auto transition-all duration-200 shadow-sm">
-                            <i class="ph ph-dots-three-vertical-bold text-lg pointer-events-none"></i>
+                        <button onclick="window.openGlobalDropdown(event, '${student.id}')" title="View Options" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-brand-pink/20 border border-white/10 hover:border-brand-pink/40 text-gray-300 hover:text-white flex items-center justify-center mx-auto transition-all duration-200 shadow-sm focus:outline-none">
+                            <svg class="w-5 h-5 pointer-events-none fill-current text-gray-300 hover:text-white" viewBox="0 0 256 256">
+                                <path d="M128,96a32,32,0,1,0-32-32A32,32,0,0,0,128,96Zm0,32a32,32,0,1,0,32,32A32,32,0,0,0,128,128Zm0,64a32,32,0,1,0,32,32A32,32,0,0,0,128,192Z"></path>
+                            </svg>
                         </button>
                     </td>
 
@@ -1014,28 +1011,6 @@
         searchInput.addEventListener('input', applyCurrentFilters);
         statusFilter.addEventListener('change', applyCurrentFilters);
         dashboardZoneFilter.addEventListener('change', applyCurrentFilters);
-
-        function toggleDropdown(event) {
-    event.stopPropagation();
-    const dropdown = document.getElementById('globalActionDropdown');
-    
-    // Dropdown toggle (Show/Hide)
-    dropdown.classList.toggle('hidden');
-
-    // Positioning the popup near the button
-    const buttonRect = event.currentTarget.getBoundingClientRect();
-    dropdown.style.top = `${buttonRect.bottom + 8}px`;
-    dropdown.style.left = `${buttonRect.right - 224}px`; // 224px is w-56
-}
-
-// Close dropdown when clicking outside
-window.addEventListener('click', (e) => {
-    const dropdown = document.getElementById('globalActionDropdown');
-    if (!dropdown.classList.contains('hidden')) {
-        dropdown.classList.add('hidden');
-    }
-});
-
     </script>
 </body>
 </html>
