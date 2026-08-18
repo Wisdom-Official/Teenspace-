@@ -149,7 +149,7 @@
                 <div class="flex items-center gap-3.5">
                     <img src="0.png" alt="Teenspace Logo" class="h-9 w-auto" onerror="this.onerror=null; this.src='https://via.placeholder.com/36?text=TS';">
                     <div>
-                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white"></h1>
+                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white">Teenspace Portal</h1>
                         <p class="text-[11px] text-brand-blue font-semibold tracking-wide flex items-center gap-1 mt-0.5" id="activeZoneBadge">
                             <i class="ph ph-circle-wavy-check text-xs"></i> Zone: -
                         </p>
@@ -258,7 +258,7 @@
                         </thead>
                         <tbody id="studentTableBody" class="divide-y divide-white/5">
                             <tr>
-                                <td colspan="9" class="text-center py-12 text-gray-500 font-medium">Loading registrations...</td>
+                                <td colspan="9" class="text-center py-12 text-gray-500 font-medium">Please login to view registrations.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -267,8 +267,8 @@
         </main>
     </div>
 
-    <!-- GLOBAL ACTION DROPDOWN POPUP (Floating Container for Guaranteed Display) -->
-    <div id="globalActionDropdown" class="hidden fixed z-50 w-52 bg-[#121214] border border-white/15 rounded-2xl shadow-2xl overflow-hidden py-2 text-left text-xs backdrop-blur-xl animate-in fade-in zoom-in-95 duration-100">
+    <!-- GLOBAL ACTION DROPDOWN POPUP -->
+    <div id="globalActionDropdown" class="hidden fixed z-50 w-52 bg-[#121214] border border-white/15 rounded-2xl shadow-2xl overflow-hidden py-2 text-left text-xs backdrop-blur-xl">
         <div class="px-3.5 py-1.5 border-b border-white/10 text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center justify-between">
             <span>Mark Status</span>
             <i class="ph ph-sliders-horizontal text-brand-pink"></i>
@@ -508,6 +508,9 @@
                         loginError.textContent = "Invalid Password! Please check and try again.";
                         loginError.classList.remove('hidden');
                     }
+                } else {
+                    loginError.textContent = "Configuration error. Passwords collection missing.";
+                    loginError.classList.remove('hidden');
                 }
             } catch (err) {
                 console.error("Auth error:", err);
@@ -660,7 +663,7 @@
 
             } catch (error) {
                 console.error("Data fetch error: ", error);
-                studentTableBody.innerHTML = `<tr><td colspan="9" class="text-center py-12 text-rose-400">Failed to load data. Please check Firebase permissions.</td></tr>`;
+                studentTableBody.innerHTML = `<tr><td colspan="9" class="text-center py-12 text-rose-400">Failed to load data. Please check Firebase permissions or index settings.</td></tr>`;
             }
         }
 
@@ -756,7 +759,7 @@
 
                 if (status === 'Ready') {
                     statusBadgeHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                        <i class="ph ph-check-circle text-xs"></i> Confirmed (Ready)
+                        <i class="ph ph-check-circle text-xs"></i> Confirmed
                     </span>`;
                 } else if (status === 'Maybe') {
                     statusBadgeHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-500/15 text-amber-400 border border-amber-500/30">
@@ -764,7 +767,7 @@
                     </span>`;
                 } else if (status === 'No') {
                     statusBadgeHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-500/15 text-rose-400 border border-rose-500/30">
-                        <i class="ph ph-x-circle text-xs"></i> Not Attending (No)
+                        <i class="ph ph-x-circle text-xs"></i> Not Attending
                     </span>`;
                 } else {
                     statusBadgeHTML = `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-gray-500/15 text-gray-400 border border-gray-500/20">
@@ -775,13 +778,13 @@
                 tr.innerHTML = `
                     <!-- 3 DOTS MENU BUTTON AT THE VERY FRONT -->
                     <td class="py-4 px-4 text-center">
-                        <button onclick="openGlobalDropdown(event, '${student.id}')" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-brand-pink/20 border border-white/10 hover:border-brand-pink/40 text-gray-300 hover:text-white flex items-center justify-center mx-auto transition-all duration-200 shadow-sm">
+                        <button onclick="window.openGlobalDropdown(event, '${student.id}')" class="w-8 h-8 rounded-xl bg-white/5 hover:bg-brand-pink/20 border border-white/10 hover:border-brand-pink/40 text-gray-300 hover:text-white flex items-center justify-center mx-auto transition-all duration-200 shadow-sm">
                             <i class="ph ph-dots-three-vertical-bold text-lg pointer-events-none"></i>
                         </button>
                     </td>
 
                     <td class="py-4 px-6 font-semibold text-white">
-                        ${student.fullName}
+                        ${student.fullName || '-'}
                         <p class="text-[11px] text-gray-400 font-normal sm:hidden">${student.age || '-'} yrs • ${student.gender || '-'}</p>
                     </td>
                     <td class="py-4 px-6">
@@ -797,12 +800,12 @@
                         }">${student.gender || 'N/A'}</span>
                     </td>
                     <td class="py-4 px-6">
-                        <span class="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-brand-pink/15 text-brand-pink border border-brand-pink/20 mb-1">${student.zone}</span>
+                        <span class="inline-block px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-brand-pink/15 text-brand-pink border border-brand-pink/20 mb-1">${student.zone || '-'}</span>
                         <p class="text-xs text-gray-400">${student.place || '-'}</p>
                     </td>
                     <td class="py-4 px-6 text-center">
                         <a href="tel:${student.phone}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 hover:bg-emerald-500/20 hover:border-emerald-500/40 transition-all">
-                            <i class="ph ph-phone-call text-sm"></i> Call (${student.phone})
+                            <i class="ph ph-phone-call text-sm"></i> Call (${student.phone || 'N/A'})
                         </a>
                     </td>
                     <td class="py-4 px-6 text-center">
@@ -821,7 +824,7 @@
             });
         }
 
-        // GLOBAL FLOATING ACTION DROPDOWN POSITIONING
+        // GLOBAL FLOATING ACTION DROPDOWN POSITIONING (Attached to window for inline onclick)
         window.openGlobalDropdown = function(event, id) {
             event.stopPropagation();
             activeTargetId = id;
@@ -829,11 +832,9 @@
             const btn = event.currentTarget;
             const rect = btn.getBoundingClientRect();
 
-            // Calculate position relative to screen
             let topPos = rect.bottom + 6;
             let leftPos = rect.left;
 
-            // Prevent overflowing right/bottom viewport
             if (leftPos + 210 > window.innerWidth) {
                 leftPos = window.innerWidth - 220;
             }
