@@ -197,7 +197,7 @@
                         <select id="typeFilter" class="w-full bg-brand-darkCard border border-white/10 rounded-2xl py-3 pl-11 pr-8 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer shadow-xl">
                             <option value="ALL" class="bg-black text-white">All Types</option>
                             <option value="self_registration" class="bg-black text-brand-blue">Self Registration</option>
-                            <option value="donated_contact" class="bg-black text-brand-pink font-bold">🎁 Donated Contacts</option>
+                            <option value="donated_contact" class="bg-black text-brand-pink font-bold">🎁</option>
                         </select>
                         <i class="ph ph-caret-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
                     </div>
@@ -808,7 +808,7 @@
                     <td class="py-4 px-6 font-semibold text-white">
                         <div class="flex items-center gap-2">
                             <span>${student.fullName || '-'}</span>
-                            ${isDonated ? '<span class="px-2 py-0.5 rounded text-[10px] bg-brand-pink/20 text-brand-pink border border-brand-pink/30 font-bold uppercase tracking-wider">🎁 Donated</span>' : ''}
+                            ${isDonated ? '<span class="px-2 py-0.5 rounded text-[10px] bg-brand-pink/20 text-brand-pink border border-brand-pink/30 font-bold uppercase tracking-wider">🎁</span>' : ''}
                         </div>
                         <p class="text-[11px] text-gray-400 font-normal sm:hidden">${student.age ? student.age + ' yrs • ' : ''}${student.gender || '-'}</p>
                     </td>
