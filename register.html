@@ -59,7 +59,6 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
-        /* Logo blend for dark/light themes */
         .logo-blend {
             mix-blend-mode: multiply;
         }
@@ -256,6 +255,112 @@
         </div>
     </section>
 
+    <!-- FLOATING "DONATE A CONTACT" WIDGET (BOTTOM RIGHT) -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button id="openDonateModalBtn" class="group flex items-center gap-3 bg-white dark:bg-brand-darkCard border border-brand-pink/30 hover:border-brand-pink text-gray-900 dark:text-white p-3 sm:px-5 sm:py-3.5 rounded-full shadow-2xl hover:shadow-[0_0_25px_rgba(240,45,125,0.4)] transition-all duration-300 transform hover:scale-105">
+            <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-white text-xl shadow-md group-hover:rotate-12 transition-transform">
+                <i class="ph ph-gift"></i>
+            </div>
+            <div class="hidden sm:block text-left pr-1">
+                <span class="block text-xs text-gray-500 dark:text-gray-400 font-medium">Help a friend join</span>
+                <span class="block text-sm font-extrabold gradient-text">Donate a Contact</span>
+            </div>
+        </button>
+    </div>
+
+    <!-- DONATE CONTACT MODAL / POPUP -->
+    <div id="donateModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden opacity-0 transition-opacity duration-300">
+        <div id="donateModalContent" class="bg-white dark:bg-brand-darkCard border border-gray-200 dark:border-white/10 rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl transform scale-95 transition-transform duration-300 relative">
+            
+            <!-- Close Button -->
+            <button id="closeDonateModalBtn" class="absolute top-5 right-5 text-gray-400 hover:text-gray-900 dark:hover:text-white p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+                <i class="ph ph-x text-xl"></i>
+            </button>
+
+            <!-- Header -->
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl gradient-bg flex items-center justify-center text-white text-2xl mx-auto mb-3 shadow-lg">
+                    <i class="ph ph-gift"></i>
+                </div>
+                <h3 class="text-2xl font-extrabold text-gray-900 dark:text-white">Donate a Contact</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm mt-1">
+                    Recommend someone for the Teenspace Conference! Choose their zone and fill details.
+                </p>
+            </div>
+
+            <!-- Donate Form -->
+            <form id="donateForm" class="space-y-4">
+                <!-- Name -->
+                <div>
+                    <label for="donateName" class="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Person Name *</label>
+                    <div class="relative">
+                        <i class="ph ph-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                        <input type="text" id="donateName" required placeholder="Enter person's name" 
+                            class="w-full bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-brand-pink transition-all">
+                    </div>
+                </div>
+
+                <!-- Zone Selection -->
+                <div>
+                    <label for="donateZone" class="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Choose Zone *</label>
+                    <div class="relative">
+                        <i class="ph ph-map-pin-line absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                        <select id="donateZone" required class="w-full bg-gray-50 dark:bg-[#1A1A1A] border border-gray-300 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer">
+                            <option value="" disabled selected class="text-gray-500 bg-white dark:bg-[#1A1A1A]">-- Select zone --</option>
+                            <option value="Payyoli" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Payyoli</option>
+                            <option value="Koyilandi" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Koyilandi</option>
+                            <option value="Perambra" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Perambra</option>
+                            <option value="Vadakara" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Vadakara</option>
+                            <option value="Poonur" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Poonur</option>
+                            <option value="Balussery" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Balussery</option>
+                            <option value="Nadapuram" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Nadapuram</option>
+                        </select>
+                        <i class="ph ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <!-- Phone -->
+                <div>
+                    <label for="donatePhone" class="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Phone Number *</label>
+                    <div class="relative">
+                        <i class="ph ph-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                        <input type="tel" id="donatePhone" pattern="[0-9]{10}" maxlength="10" required placeholder="10-digit mobile number" 
+                            class="w-full bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-brand-pink transition-all">
+                    </div>
+                </div>
+
+                <!-- WhatsApp -->
+                <div>
+                    <div class="flex items-center justify-between mb-1">
+                        <label for="donateWhatsapp" class="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400">WhatsApp Number *</label>
+                        <label class="inline-flex items-center gap-1.5 cursor-pointer text-[11px] text-brand-blue hover:underline font-medium">
+                            <input type="checkbox" id="donateSameAsPhone" class="rounded border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-white/10 text-brand-pink focus:ring-0">
+                            Same as Phone
+                        </label>
+                    </div>
+                    <div class="relative">
+                        <i class="ph ph-whatsapp-logo absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                        <input type="tel" id="donateWhatsapp" pattern="[0-9]{10}" maxlength="10" required placeholder="10-digit WhatsApp number" 
+                            class="w-full bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-brand-pink transition-all">
+                    </div>
+                </div>
+
+                <!-- Submit Donate Button -->
+                <button type="submit" id="donateSubmitBtn" class="w-full gradient-bg text-white py-3.5 rounded-xl font-bold text-sm hover:shadow-[0_0_20px_rgba(240,45,125,0.4)] transition-all duration-300 flex items-center justify-center gap-2 mt-4">
+                    <span>Submit Donated Contact</span>
+                    <i class="ph ph-paper-plane-right text-lg"></i>
+                </button>
+            </form>
+
+            <!-- Success Notice inside modal -->
+            <div id="donateSuccessMsg" class="hidden text-center py-6">
+                <i class="ph ph-check-circle text-5xl text-emerald-500 mb-2 mx-auto block animate-bounce"></i>
+                <h4 class="text-lg font-bold text-gray-900 dark:text-white">Contact Donated Successfully!</h4>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Thank you for sharing the contact.</p>
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer class="bg-gray-100 dark:bg-brand-dark text-gray-600 dark:text-gray-500 py-6 border-t border-gray-200 dark:border-white/10 text-center text-sm transition-colors duration-300">
         <p>&copy; 2026 Program Teenspace. All rights reserved.</p>
@@ -280,7 +385,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // UI Elements
+        // UI Elements - Main Registration
         const phoneInput = document.getElementById('phone');
         const whatsappInput = document.getElementById('whatsapp');
         const sameAsPhoneCheckbox = document.getElementById('sameAsPhone');
@@ -294,7 +399,7 @@
         const displayUserName = document.getElementById('displayUserName');
         const displayUserZone = document.getElementById('displayUserZone');
 
-        // Checkbox: "Same as Phone Number" Logic
+        // Checkbox: Main "Same as Phone Number" Logic
         sameAsPhoneCheckbox.addEventListener('change', () => {
             if (sameAsPhoneCheckbox.checked) {
                 whatsappInput.value = phoneInput.value;
@@ -319,30 +424,27 @@
             }
         });
 
-        // Form Submission Logic
+        // Main Form Submission Logic
         registrationForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Set Loading UI State
             submitBtn.disabled = true;
             submitBtn.innerHTML = `<i class="ph ph-spinner animate-spin text-xl"></i> Submitting...`;
             successMessage.classList.add('hidden');
             errorMessage.classList.add('hidden');
 
-            // Gather Data
             const nameValue = document.getElementById('fullName').value.trim();
-            const genderValue = document.getElementById('gender').value;
             const zoneValue = document.getElementById('zone').value;
             const selectedStandard = standardSelect.value;
             
-            // Format course name if 'Other' is selected
             const finalStandard = selectedStandard === 'Other' 
                 ? `Other (${otherCourseInput.value.trim()})` 
                 : selectedStandard;
 
             const formData = {
+                type: "self_registration",
                 fullName: nameValue,
-                gender: genderValue,
+                gender: document.getElementById('gender').value,
                 age: Number(document.getElementById('age').value),
                 zone: zoneValue,
                 place: document.getElementById('place').value.trim(),
@@ -354,30 +456,110 @@
             };
 
             try {
-                // Store in Firestore 'registrations' collection
                 await addDoc(collection(db, "registrations"), formData);
                 
-                // Set Success Name & Zone dynamically
                 displayUserName.textContent = nameValue;
                 displayUserZone.textContent = zoneValue;
 
-                // Show Success Card & Reset Form
                 successMessage.classList.remove('hidden');
                 registrationForm.reset();
                 sameAsPhoneCheckbox.checked = false;
                 otherCourseContainer.classList.add('hidden');
                 otherCourseInput.required = false;
 
-                // Smooth scroll to success message
                 successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
             } catch (error) {
                 console.error("Firebase Error: ", error);
                 errorMessage.classList.remove('hidden');
             } finally {
-                // Reset Button UI State
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = `<span>Submit Registration</span> <i class="ph ph-paper-plane-right text-xl"></i>`;
+            }
+        });
+
+        // --- Donate Contact Modal Logic ---
+        const openDonateModalBtn = document.getElementById('openDonateModalBtn');
+        const closeDonateModalBtn = document.getElementById('closeDonateModalBtn');
+        const donateModal = document.getElementById('donateModal');
+        const donateModalContent = document.getElementById('donateModalContent');
+        const donateForm = document.getElementById('donateForm');
+        const donatePhone = document.getElementById('donatePhone');
+        const donateWhatsapp = document.getElementById('donateWhatsapp');
+        const donateSameAsPhone = document.getElementById('donateSameAsPhone');
+        const donateSubmitBtn = document.getElementById('donateSubmitBtn');
+        const donateSuccessMsg = document.getElementById('donateSuccessMsg');
+
+        function openModal() {
+            donateModal.classList.remove('hidden');
+            setTimeout(() => {
+                donateModal.classList.remove('opacity-0');
+                donateModalContent.classList.remove('scale-95');
+                donateModalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            donateModal.classList.add('opacity-0');
+            donateModalContent.classList.remove('scale-100');
+            donateModalContent.classList.add('scale-95');
+            setTimeout(() => {
+                donateModal.classList.add('hidden');
+                donateForm.reset();
+                donateForm.style.display = 'block';
+                donateSuccessMsg.classList.add('hidden');
+                donateSameAsPhone.checked = false;
+            }, 300);
+        }
+
+        openDonateModalBtn.addEventListener('click', openModal);
+        closeDonateModalBtn.addEventListener('click', closeModal);
+        donateModal.addEventListener('click', (e) => {
+            if (e.target === donateModal) closeModal();
+        });
+
+        // Donate Same As Phone Logic
+        donateSameAsPhone.addEventListener('change', () => {
+            if (donateSameAsPhone.checked) {
+                donateWhatsapp.value = donatePhone.value;
+            }
+        });
+        donatePhone.addEventListener('input', () => {
+            if (donateSameAsPhone.checked) {
+                donateWhatsapp.value = donatePhone.value;
+            }
+        });
+
+        // Donate Form Submission
+        donateForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            donateSubmitBtn.disabled = true;
+            donateSubmitBtn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> Donating...`;
+
+            const donateData = {
+                type: "donated_contact",
+                fullName: document.getElementById('donateName').value.trim(),
+                zone: document.getElementById('donateZone').value,
+                phone: donatePhone.value.trim(),
+                whatsapp: donateWhatsapp.value.trim(),
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, "registrations"), donateData);
+                
+                donateForm.style.display = 'none';
+                donateSuccessMsg.classList.remove('hidden');
+
+                setTimeout(() => {
+                    closeModal();
+                }, 2000);
+            } catch (error) {
+                console.error("Firestore Error: ", error);
+                alert("An error occurred. Please try again.");
+            } finally {
+                donateSubmitBtn.disabled = false;
+                donateSubmitBtn.innerHTML = `<span>Submit Donated Contact</span> <i class="ph ph-paper-plane-right text-lg"></i>`;
             }
         });
     </script>
