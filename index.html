@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
-     <!-- Designed by Shadil NM -->
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,7 +30,7 @@
     <meta property="twitter:description" content="Calicut North Teenspace - Empowering youth through values and skills at Payyoli.">
     <meta property="twitter:image" content="https://teeen.space/3276.jpg">
 
-    <!-- Unified Favicon Setup (Using favicon.png for all icons) -->
+    <!-- Unified Favicon Setup -->
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="shortcut icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
@@ -51,9 +50,22 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Designed by Shadil NM -->
+    <!-- Device-based Dark Mode Script & Tailwind Config -->
     <script>
+        // Check and apply device theme preference instantly
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (e.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
@@ -90,13 +102,10 @@
         }
     </script>
 
-    <!-- Designed by Shadil NM -->
     <style>
         body {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            background-color: #FAFAFC;
-            color: #0F172A;
         }
         
         .gradient-text {
@@ -128,6 +137,13 @@
             border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
 
+        .dark .nav-glass-dark {
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
         .img-zoom {
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -138,10 +154,9 @@
     </style>
 </head>
 
-     <!-- Designed by Shadil NM -->
-<body class="bg-brand-lightBg text-brand-darkText transition-colors duration-300 overflow-x-hidden">
+<body class="bg-brand-lightBg dark:bg-slate-950 text-brand-darkText dark:text-slate-100 transition-colors duration-300 overflow-x-hidden">
 
-    <!-- (Toast Message) -->
+    <!-- Toast Message -->
     <div id="toast" class="fixed bottom-24 right-6 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl z-50 flex items-center gap-3 transition-all duration-300 opacity-0 translate-y-10 pointer-events-none">
         <i class="ph-fill ph-check-circle text-green-400 text-xl"></i>
         <span id="toast-message" class="text-sm font-semibold">Link copied to clipboard!</span>
@@ -155,7 +170,7 @@
         </span>
     </a>
 
-    <!--  (Image Lightbox Modal) -->
+    <!-- Image Lightbox Modal -->
     <div id="image-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md hidden flex items-center justify-center p-4 transition-all duration-300">
         <button onclick="closeModal()" class="absolute top-6 right-6 text-white text-3xl p-2 hover:text-brand-pink transition-colors">
             <i class="ph ph-x"></i>
@@ -165,20 +180,34 @@
             <p id="modal-caption" class="text-center text-white font-medium mt-4 text-base sm:text-lg"></p>
         </div>
     </div>
- <!-- Designed by Shadil NM -->
-    <!-- Navbar -->
-    <header class="fixed w-full top-0 z-40 nav-glass-light transition-all duration-300" id="navbar">
-        <div class="max-w-7xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between">
+
+    <!-- Navbar / Header with Professional UX, Device-based Logo & Back to Home Button -->
+    <header class="fixed w-full top-0 z-40 nav-glass-light dark:nav-glass-dark transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-6 md:px-12 h-20 flex items-center justify-between gap-4">
             
-            <!-- Logos -->
-            <a href="#" class="flex items-center gap-3 sm:gap-4 group">
-                <img src="3274.png" alt="Teenspace Logo" class="h-9 sm:h-10 w-auto group-hover:scale-105 transition-transform duration-300">
-                <span class="h-6 w-px bg-slate-300"></span>
-                <img src="Students Logo.png" alt="Wisdom Students Logo" class="h-7 sm:h-8 w-auto group-hover:scale-105 transition-transform duration-300">
-            </a>
+            <!-- Logos & Back to Home -->
+            <div class="flex items-center gap-3 sm:gap-4">
+                <!-- Back to Home Button -->
+                <a href="#" aria-label="Back to Home" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-brand-pink hover:text-white dark:hover:bg-brand-pink transition-all shadow-sm group">
+                    <i class="ph ph-house text-base group-hover:-translate-x-0.5 transition-transform"></i>
+                    <span class="hidden xs:inline">Home</span>
+                </a>
+                <span class="h-6 w-px bg-slate-300 dark:bg-slate-700"></span>
+
+                <!-- Logos with Device-based Light/Dark switching -->
+                <a href="#" class="flex items-center gap-3 group">
+                    <!-- Light Mode Logo (3274.png) -->
+                    <img src="3274.png" alt="Teenspace Logo" class="h-8 sm:h-9 w-auto dark:hidden group-hover:scale-105 transition-transform duration-300">
+                    <!-- Dark Mode Logo (0.png) -->
+                    <img src="0.png" alt="Teenspace Logo" class="h-8 sm:h-9 w-auto hidden dark:block group-hover:scale-105 transition-transform duration-300">
+                    
+                    <span class="h-5 w-px bg-slate-300 dark:bg-slate-700"></span>
+                    <img src="Students Logo.png" alt="Wisdom Students Logo" class="h-6 sm:h-7 w-auto dark:invert dark:brightness-200 group-hover:scale-105 transition-transform duration-300">
+                </a>
+            </div>
 
             <!-- Nav Links -->
-            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+            <nav class="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600 dark:text-slate-300">
                 <a href="#about" class="hover:text-brand-pink transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">About</a>
                 <a href="#gallery" class="hover:text-brand-pink transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">Gallery</a>
                 <a href="#programs" class="hover:text-brand-pink transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">Programs</a>
@@ -186,7 +215,7 @@
                 <a href="#faq" class="hover:text-brand-pink transition-colors py-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-brand-pink hover:after:w-full after:transition-all">FAQ</a>
             </nav>
 
-            <!-- (CTA Button) -->
+            <!-- CTA Button -->
             <div class="hidden md:block">
                 <a href="register.html" class="gradient-bg text-white px-7 py-3 rounded-full font-bold text-sm tracking-wide shadow-glow hover:shadow-[0_8px_25px_rgba(240,45,125,0.45)] transition-all duration-300 transform hover:-translate-y-0.5 inline-block">
                     Register Now <i class="ph ph-arrow-right ml-1"></i>
@@ -194,14 +223,15 @@
             </div>
 
             <!-- Mobile Menu Toggle -->
-            <button id="mobile-menu-btn" class="md:hidden text-slate-800 p-2 focus:outline-none" aria-label="Toggle Menu">
+            <button id="mobile-menu-btn" class="md:hidden text-slate-800 dark:text-slate-200 p-2 focus:outline-none" aria-label="Toggle Menu">
                 <i class="ph ph-list text-3xl"></i>
             </button>
-        </div> <!-- Designed by Shadil NM -->
+        </div>
 
         <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-white/95 backdrop-blur-xl border-b border-slate-200 overflow-hidden transition-all shadow-xl">
-            <div class="flex flex-col px-6 py-8 gap-5 text-center text-lg font-semibold text-slate-700">
+        <div id="mobile-menu" class="hidden md:hidden absolute w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 overflow-hidden transition-all shadow-xl">
+            <div class="flex flex-col px-6 py-8 gap-5 text-center text-lg font-semibold text-slate-700 dark:text-slate-200">
+                <a href="#" class="mobile-link text-brand-pink flex items-center justify-center gap-2"><i class="ph ph-house text-xl"></i> Back to Home</a>
                 <a href="#about" class="mobile-link hover:text-brand-pink transition-colors">About</a>
                 <a href="#gallery" class="mobile-link hover:text-brand-pink transition-colors">Gallery</a>
                 <a href="#programs" class="mobile-link hover:text-brand-pink transition-colors">Programs</a>
@@ -209,11 +239,11 @@
                 <a href="#faq" class="mobile-link hover:text-brand-pink transition-colors">FAQ</a>
                 <a href="register.html" class="mobile-link gradient-bg text-white px-6 py-3.5 rounded-full font-bold mt-2 w-full shadow-glow">Register Now</a>
             </div>
-        </div> <!-- Designed by Shadil NM -->
+        </div>
     </header>
 
-    <!-- HERO SECTION WITH TEENSPACE LOGO, DATE & LOCATION -->
-    <section class="relative pt-28 pb-16 lg:pt-36 lg:pb-28 bg-gradient-to-b from-slate-100/90 via-white to-brand-lightBg overflow-hidden flex items-center min-h-[92vh]">
+    <!-- HERO SECTION -->
+    <section class="relative pt-28 pb-16 lg:pt-36 lg:pb-28 bg-gradient-to-b from-slate-100/90 via-white to-brand-lightBg dark:from-slate-900 dark:via-slate-950 dark:to-slate-950 overflow-hidden flex items-center min-h-[92vh]">
         <!-- Glow accents -->
         <div class="absolute top-1/4 -left-20 w-96 h-96 bg-brand-pink/10 rounded-full filter blur-[100px] animate-pulse-slow"></div>
         <div class="absolute bottom-0 -right-20 w-96 h-96 bg-brand-blue/10 rounded-full filter blur-[100px] animate-pulse-slow" style="animation-delay: 2s;"></div>
@@ -224,25 +254,24 @@
                 <div class="lg:col-span-7 flex flex-col items-center lg:items-start text-center lg:text-left">
                     
                     <!-- Date & Location Badge Above Logo -->
-                    <div class="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200/80 shadow-sm mb-6">
+                    <div class="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-3 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md px-4 py-2 rounded-full border border-slate-200/80 dark:border-slate-800 shadow-sm mb-6">
                         <span class="flex items-center gap-1.5 text-brand-pink font-bold text-xs sm:text-sm">
                             <i class="ph-fill ph-calendar-blank text-base"></i>
                             October 21, 2026
                         </span>
-                        <span class="text-slate-300 font-bold">•</span>
+                        <span class="text-slate-300 dark:text-slate-700 font-bold">•</span>
                         <span class="flex items-center gap-1.5 text-brand-blue font-bold text-xs sm:text-sm">
                             <i class="ph-fill ph-map-pin text-base"></i>
                             Payyoli
                         </span>
                     </div>
 
-                    <!-- Teenspace Main Logo -->
+                    <!-- Teenspace Main Logo (Adapts to Device Mode) -->
                     <div class="w-full flex justify-center lg:justify-start items-center py-2 mb-2">
-                        <img  
-                            src="3274.png" 
-                            alt="Teenspace Logo" 
-                            class="h-20 sm:h-28 md:h-36 lg:h-44 w-auto max-w-full object-contain transform hover:scale-105 transition-transform duration-300 filter drop-shadow-md"
-                        />
+                        <!-- Light Mode Main Logo -->
+                        <img src="3274.png" alt="Teenspace Logo" class="h-20 sm:h-28 md:h-36 lg:h-44 w-auto max-w-full object-contain dark:hidden transform hover:scale-105 transition-transform duration-300 filter drop-shadow-md" />
+                        <!-- Dark Mode Main Logo -->
+                        <img src="0.png" alt="Teenspace Logo" class="h-20 sm:h-28 md:h-36 lg:h-44 w-auto max-w-full object-contain hidden dark:block transform hover:scale-105 transition-transform duration-300 filter drop-shadow-md" />
                     </div>
 
                     <!-- Event Sub-Banner Badges -->
@@ -251,12 +280,12 @@
                         <span class="text-xs sm:text-sm font-bold bg-brand-blue/10 text-brand-blue px-3 py-1 rounded-lg"><i class="ph-fill ph-map-pin inline mr-1"></i>Payyoli</span>
                     </div>
 
-                    <p class="text-base sm:text-lg md:text-xl text-slate-600 mb-8 max-w-2xl font-normal leading-relaxed">
+                    <p class="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-8 max-w-2xl font-normal leading-relaxed">
                         Program Teenspace is the ultimate hub for youth innovation. Connect with mentors, build real-world skills, and join a community that empowers your creative potential.
                     </p>
                     
                     <!-- Countdown Timer -->
-                    <div class="teenspace-countdown bg-white/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-soft border border-slate-200/80 mb-8 w-full max-w-md">
+                    <div class="teenspace-countdown bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl shadow-soft border border-slate-200/80 dark:border-slate-800 mb-8 w-full max-w-md">
                         <p class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 text-center lg:text-left">Event Starts In</p>
                         <div class="flex items-center justify-between gap-1 sm:gap-2">
                             <div class="countdown-item">
@@ -320,7 +349,7 @@
                             <span>Register Now</span>
                             <i class="ph ph-arrow-right text-lg"></i>
                         </a>
-                        <a href="#about" class="flex items-center justify-center gap-2 border-2 border-slate-200 bg-white/60 rounded-full px-6 py-4 text-slate-800 font-bold hover:bg-slate-100 hover:border-slate-300 transition-all shadow-sm">
+                        <a href="#about" class="flex items-center justify-center gap-2 border-2 border-slate-200 dark:border-slate-800 bg-white/60 dark:bg-slate-900/60 rounded-full px-6 py-4 text-slate-800 dark:text-slate-200 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-all shadow-sm">
                             <img src="3275.png" alt="Icon" class="w-5 h-5 object-contain">
                             <span>Learn More</span>
                         </a>
@@ -330,18 +359,18 @@
                 <!-- Hero Image -->
                 <div class="lg:col-span-5 relative hidden lg:block">
                     <div class="relative mx-auto max-w-md">
-                        <div class="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white relative">
+                        <div class="aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white dark:border-slate-800 relative">
                             <img src="3276.jpg" alt="Conference Students" class="w-full h-full object-cover">
                             <div class="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent"></div>
                         </div>
                         
-                        <div class="absolute -bottom-6 -left-6 bg-white/95 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-4 animate-float">
+                        <div class="absolute -bottom-6 -left-6 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 flex items-center gap-4 animate-float">
                             <div class="w-12 h-12 rounded-xl gradient-bg flex items-center justify-center text-white text-2xl shadow-md">
                                 <i class="ph-fill ph-users"></i>
                             </div>
                             <div>
                                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Expected Attendees</p>
-                                <p class="text-xl font-extrabold text-slate-900">1000+ Students</p>
+                                <p class="text-xl font-extrabold text-slate-900 dark:text-white">1000+ Students</p>
                             </div>
                         </div>
                     </div>
@@ -352,24 +381,24 @@
     </section>
 
     <!-- ABOUT SECTION -->
-    <section id="about" class="py-20 lg:py-24 bg-white transition-colors duration-300 relative border-t border-b border-slate-100">
+    <section id="about" class="py-20 lg:py-24 bg-white dark:bg-slate-900 transition-colors duration-300 relative border-t border-b border-slate-100 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-6 md:px-12">
             <div class="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center">
                 
                 <!-- Image Side -->
                 <div class="lg:col-span-5 order-2 lg:order-1 relative reveal">
-                    <div class="aspect-square rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden relative shadow-xl border border-slate-100 group">
+                    <div class="aspect-square rounded-[2.5rem] sm:rounded-[3rem] overflow-hidden relative shadow-xl border border-slate-100 dark:border-slate-800 group">
                         <div class="absolute inset-0 bg-gradient-to-br from-brand-pink/10 to-brand-blue/10 z-10 pointer-events-none"></div>
                         <img src="3276.jpg" alt="Teens collaborating" class="object-cover w-full h-full img-zoom">
                     </div>
-                    <div class="absolute -bottom-6 -right-6 md:bottom-10 md:-right-10 bg-white p-5 sm:p-6 rounded-2xl shadow-2xl border border-slate-100 max-w-xs reveal" style="transition-delay: 200ms;">
+                    <div class="absolute -bottom-6 -right-6 md:bottom-10 md:-right-10 bg-white dark:bg-slate-800 p-5 sm:p-6 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 max-w-xs reveal" style="transition-delay: 200ms;">
                         <div class="flex items-center gap-4 mb-2">
                             <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center text-white text-xl shadow-md">
                                 <i class="ph-fill ph-star"></i>
                             </div>
                             <div>
-                                <p class="font-bold text-slate-900 text-xl">1,000+</p>
-                                <p class="text-sm text-slate-500 font-medium">Teens Empowered</p>
+                                <p class="font-bold text-slate-900 dark:text-white text-xl">1,000+</p>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Teens Empowered</p>
                             </div>
                         </div>
                     </div>
@@ -378,34 +407,34 @@
                 <!-- Content Side -->
                 <div class="lg:col-span-7 order-1 lg:order-2 reveal">
                     <span class="text-brand-pink font-extrabold tracking-wider uppercase text-xs px-3.5 py-1.5 rounded-full bg-brand-pink/10 inline-block mb-4">About Teenspace</span>
-                    <h3 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 text-slate-900 leading-tight">Empowering Youth with Values & Purpose</h3>
-                    <p class="text-slate-600 text-base sm:text-lg mb-8 leading-relaxed font-medium">
+                    <h3 class="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-4 text-slate-900 dark:text-white leading-tight">Empowering Youth with Values & Purpose</h3>
+                    <p class="text-slate-600 dark:text-slate-300 text-base sm:text-lg mb-8 leading-relaxed font-medium">
                         A brief overview of the programme, its objective, and what we aim to deliver.
                     </p>
                     
                     <div class="space-y-6">
                         <!-- Moral & Islamic Focus -->
-                        <div class="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-brand-pink/30 transition-all shadow-sm">
+                        <div class="p-5 sm:p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 hover:border-brand-pink/30 transition-all shadow-sm">
                             <div class="flex items-center gap-3 mb-3">
                                 <div class="w-10 h-10 rounded-xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-xl shrink-0">
                                     <i class="ph-fill ph-compass"></i>
                                 </div>
-                                <h4 class="font-bold text-slate-900 text-lg sm:text-xl">Moral & Islamic Focus</h4>
+                                <h4 class="font-bold text-slate-900 dark:text-white text-lg sm:text-xl">Moral & Islamic Focus</h4>
                             </div>
-                            <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                            <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
                                 Teenspace integrates moral guidelines with a strong Islamic value system to foster character, integrity, and self-discipline. We help students develop ethical anchors, helping them build a strong moral identity and psychological resilience to navigate contemporary peer pressures, digital screen habits, and modern lifestyle dilemmas.
                             </p>
                         </div>
 
                         <!-- Career & Personality -->
-                        <div class="p-5 sm:p-6 rounded-2xl bg-slate-50 border border-slate-100 hover:border-brand-blue/30 transition-all shadow-sm">
+                        <div class="p-5 sm:p-6 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 hover:border-brand-blue/30 transition-all shadow-sm">
                             <div class="flex items-center gap-3 mb-3">
                                 <div class="w-10 h-10 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center text-xl shrink-0">
                                     <i class="ph-fill ph-trend-up"></i>
                                 </div>
-                                <h4 class="font-bold text-slate-900 text-lg sm:text-xl">Career & Personality</h4>
+                                <h4 class="font-bold text-slate-900 dark:text-white text-lg sm:text-xl">Career & Personality</h4>
                             </div>
-                            <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                            <p class="text-slate-600 dark:text-slate-300 text-sm sm:text-base leading-relaxed">
                                 Our high-energy training segments empower teens to understand their potential, improve societal behavior, and design successful academic trajectories. Guided by experts, students explore modern career opportunities, learn emotional intelligence, and understand how to become responsible, value-driven citizens.
                             </p>
                         </div>
@@ -417,46 +446,46 @@
     </section>
 
     <!-- PROGRAM HIGHLIGHTS -->
-    <section id="programs" class="py-20 bg-brand-lightBg">
+    <section id="programs" class="py-20 bg-brand-lightBg dark:bg-slate-950">
         <div class="max-w-7xl mx-auto px-6 md:px-12">
             <div class="text-center max-w-3xl mx-auto mb-16 reveal">
                 <span class="text-brand-blue font-extrabold tracking-wider uppercase text-xs px-3.5 py-1.5 rounded-full bg-brand-blue/10 inline-block mb-3">Key Highlights</span>
-                <h3 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">What To Expect</h3>
-                <p class="text-slate-600 text-base sm:text-lg">
+                <h3 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4">What To Expect</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg">
                     Discover sessions designed to inspire, build skills, and build lifelong connections.
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
                 <!-- Card 1 -->
-                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
                     <div class="w-14 h-14 rounded-2xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-pink group-hover:text-white transition-all">
                         <i class="ph-fill ph-chats-teardrop"></i>
                     </div>
-                    <h4 class="text-xl font-bold text-slate-900 mb-3">Keynote Sessions</h4>
-                    <p class="text-slate-600 text-sm leading-relaxed">
+                    <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Keynote Sessions</h4>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
                         Engaging talks from inspiring youth icons and industry leaders who share real-life lessons and advice.
                     </p>
                 </div>
 
                 <!-- Card 2 -->
-                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
                     <div class="w-14 h-14 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-blue group-hover:text-white transition-all">
                         <i class="ph-fill ph-code-block"></i>
                     </div>
-                    <h4 class="text-xl font-bold text-slate-900 mb-3">Skill Workshops</h4>
-                    <p class="text-slate-600 text-sm leading-relaxed">
+                    <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Skill Workshops</h4>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
                         Hands-on sessions covering technology, creative arts, leadership development, and future careers.
                     </p>
                 </div>
 
                 <!-- Card 3 -->
-                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group">
                     <div class="w-14 h-14 rounded-2xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-pink group-hover:text-white transition-all">
                         <i class="ph-fill ph-handshake"></i>
                     </div>
-                    <h4 class="text-xl font-bold text-slate-900 mb-3">Youth Networking</h4>
-                    <p class="text-slate-600 text-sm leading-relaxed">
+                    <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Youth Networking</h4>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
                         Connect with like-minded peers from higher secondary schools across the region and collaborate.
                     </p>
                 </div>
@@ -465,12 +494,12 @@
     </section>
 
     <!-- GALLERY SECTION -->
-    <section id="gallery" class="py-24 bg-white border-t border-b border-slate-100">
+    <section id="gallery" class="py-24 bg-white dark:bg-slate-900 border-t border-b border-slate-100 dark:border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
             <div class="text-center max-w-3xl mx-auto mb-16 reveal">
                 <span class="text-brand-pink font-extrabold tracking-wider uppercase text-xs px-3.5 py-1.5 rounded-full bg-brand-pink/10 inline-block mb-3">Event Highlights</span>
-                <h3 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">Gallery</h3>
-                <p class="text-slate-600 text-base sm:text-lg">
+                <h3 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4">Gallery</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg">
                     Check out some memorable moments and workshops. Click on any image for full view.
                 </p>
             </div>
@@ -478,7 +507,7 @@
             <div class="grid grid-cols-2 gap-3 sm:gap-6 md:gap-8 max-w-5xl mx-auto reveal">
                 
                 <!-- 1 -->
-                <div onclick="openModal('1.jpeg', '')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                <div onclick="openModal('1.jpeg', '')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200 dark:border-slate-800">
                     <img src="1.jpeg" alt="Gallery Photo 1" class="w-full h-full object-cover img-zoom">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
                         <p class="text-white font-bold text-xs sm:text-base">Interactive Workshops</p>
@@ -487,7 +516,7 @@
                 </div>
 
                 <!-- 2 -->
-                <div onclick="openModal('2.jpeg', '')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                <div onclick="openModal('2.jpeg', '')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200 dark:border-slate-800">
                     <img src="2.jpeg" alt="Gallery Photo 2" class="w-full h-full object-cover img-zoom">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
                         <p class="text-white font-bold text-xs sm:text-base">Team Collaboration</p>
@@ -496,7 +525,7 @@
                 </div>
 
                 <!-- 3 -->
-                <div onclick="openModal('3.jpeg', '')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                <div onclick="openModal('3.jpeg', '')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200 dark:border-slate-800">
                     <img src="3.jpeg" alt="Gallery Photo 3" class="w-full h-full object-cover img-zoom">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
                         <p class="text-white font-bold text-xs sm:text-base">Youth Mentorship</p>
@@ -505,7 +534,7 @@
                 </div>
 
                 <!-- 4 -->
-                <div onclick="openModal('4.jpeg', '')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                <div onclick="openModal('4.jpeg', '')" class="group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200 dark:border-slate-800">
                     <img src="4.jpeg" alt="Gallery Photo 4" class="w-full h-full object-cover img-zoom">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
                         <p class="text-white font-bold text-xs sm:text-base">Student Presentations</p>
@@ -514,7 +543,7 @@
                 </div>
 
                 <!-- 5 -->
-                <div onclick="openModal('5.jpeg', '')" class="extra-gallery-item hidden group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                <div onclick="openModal('5.jpeg', '')" class="extra-gallery-item hidden group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200 dark:border-slate-800">
                     <img src="5.jpeg" alt="Gallery Photo 5" class="w-full h-full object-cover img-zoom">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
                         <p class="text-white font-bold text-xs sm:text-base">Creative Brainstorming</p>
@@ -523,7 +552,7 @@
                 </div>
 
                 <!-- 6 -->
-                <div onclick="openModal('6.jpeg', '')" class="extra-gallery-item hidden group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200">
+                <div onclick="openModal('6.jpeg', '')" class="extra-gallery-item hidden group cursor-pointer relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] shadow-md hover:shadow-2xl transition-all duration-300 border border-slate-200 dark:border-slate-800">
                     <img src="6.jpeg" alt="Gallery Photo 6" class="w-full h-full object-cover img-zoom">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-between p-3 sm:p-6">
                         <p class="text-white font-bold text-xs sm:text-base">Leadership Summit</p>
@@ -544,12 +573,12 @@
     </section>
 
     <!-- CONTACT SECTION -->
-    <section id="contact" class="py-24 bg-brand-lightBg transition-colors duration-300">
+    <section id="contact" class="py-24 bg-brand-lightBg dark:bg-slate-950 transition-colors duration-300">
         <div class="max-w-7xl mx-auto px-6 md:px-12">
             <div class="text-center max-w-3xl mx-auto mb-16 reveal">
                 <span class="text-brand-pink font-extrabold tracking-wider uppercase text-xs px-3.5 py-1.5 rounded-full bg-brand-pink/10 inline-block mb-3">Get In Touch</span>
-                <h3 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">Contact Information</h3>
-                <p class="text-slate-600 text-base sm:text-lg">
+                <h3 class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-4">Contact Information</h3>
+                <p class="text-slate-600 dark:text-slate-400 text-base sm:text-lg">
                     Reach out to us directly via WhatsApp, Email, or visit our location in Payyoli.
                 </p>
             </div>
@@ -557,13 +586,13 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 reveal">
                 
                 <!-- Location Card -->
-               <a href="https://maps.google.com/?q=Payyoli+Wisdom+Office" target="_blank" rel="noopener noreferrer" class="bg-white p-8 rounded-3xl border border-slate-200/80 hover:border-brand-pink/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
+                <a href="https://maps.google.com/?q=Payyoli+Wisdom+Office" target="_blank" rel="noopener noreferrer" class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 hover:border-brand-pink/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
                     <div>
                         <div class="w-14 h-14 rounded-2xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-pink group-hover:text-white transition-colors duration-300 shadow-sm">
                             <i class="ph-fill ph-map-pin"></i>
                         </div>
-                        <h4 class="text-xl font-bold text-slate-900 mb-2">Venue Location</h4>
-                        <p class="text-slate-600 leading-relaxed font-normal text-sm sm:text-base">
+                        <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Venue Location</h4>
+                        <p class="text-slate-600 dark:text-slate-400 leading-relaxed font-normal text-sm sm:text-base">
                             Payyoli,<br>Kozhikode, Kerala
                         </p>
                     </div>
@@ -573,17 +602,17 @@
                 </a>
 
                 <!-- WhatsApp Card -->
-                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 hover:border-brand-blue/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 hover:border-brand-blue/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
                     <div>
                         <div class="w-14 h-14 rounded-2xl bg-brand-blue/10 text-brand-blue flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-blue group-hover:text-white transition-colors duration-300 shadow-sm">
                             <i class="ph-fill ph-whatsapp-logo"></i>
                         </div>
-                        <h4 class="text-xl font-bold text-slate-900 mb-3">Call / WhatsApp</h4>
+                        <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Call / WhatsApp</h4>
                         <div class="flex flex-col gap-3">
-                            <a href="https://wa.me/916282397438" target="_blank" class="text-slate-700 hover:text-brand-blue font-bold transition-colors inline-flex items-center gap-2.5 text-sm sm:text-base bg-slate-50 p-2.5 rounded-xl border border-slate-100 hover:border-brand-blue/30">
+                            <a href="https://wa.me/916282397438" target="_blank" class="text-slate-700 dark:text-slate-300 hover:text-brand-blue font-bold transition-colors inline-flex items-center gap-2.5 text-sm sm:text-base bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700 hover:border-brand-blue/30">
                                 <i class="ph-fill ph-whatsapp-logo text-green-500 text-xl"></i> +91 62823 97438
                             </a>
-                            <a href="https://wa.me/919567276017" target="_blank" class="text-slate-700 hover:text-brand-blue font-bold transition-colors inline-flex items-center gap-2.5 text-sm sm:text-base bg-slate-50 p-2.5 rounded-xl border border-slate-100 hover:border-brand-blue/30">
+                            <a href="https://wa.me/919567276017" target="_blank" class="text-slate-700 dark:text-slate-300 hover:text-brand-blue font-bold transition-colors inline-flex items-center gap-2.5 text-sm sm:text-base bg-slate-50 dark:bg-slate-800 p-2.5 rounded-xl border border-slate-100 dark:border-slate-700 hover:border-brand-blue/30">
                                 <i class="ph-fill ph-whatsapp-logo text-green-500 text-xl"></i> +91 95672 76017
                             </a>
                         </div>
@@ -594,13 +623,13 @@
                 </div>
 
                 <!-- Email Card -->
-                <div class="bg-white p-8 rounded-3xl border border-slate-200/80 hover:border-brand-pink/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
+                <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200/80 dark:border-slate-800 hover:border-brand-pink/50 transition-all duration-300 hover:-translate-y-2 group shadow-soft hover:shadow-2xl flex flex-col justify-between">
                     <div>
                         <div class="w-14 h-14 rounded-2xl bg-brand-pink/10 text-brand-pink flex items-center justify-center text-3xl mb-6 group-hover:bg-brand-pink group-hover:text-white transition-colors duration-300 shadow-sm">
                             <i class="ph-fill ph-envelope-simple"></i>
                         </div>
-                        <h4 class="text-xl font-bold text-slate-900 mb-2">Email Us</h4>
-                        <p class="text-slate-600 break-all leading-relaxed font-semibold text-sm mb-4">
+                        <h4 class="text-xl font-bold text-slate-900 dark:text-white mb-2">Email Us</h4>
+                        <p class="text-slate-600 dark:text-slate-400 break-all leading-relaxed font-semibold text-sm mb-4">
                             wisdomstudentskkdnorth@gmail.com
                         </p>
                     </div>
@@ -608,7 +637,7 @@
                         <a href="mailto:wisdomstudentskkdnorth@gmail.com" class="gradient-bg text-white px-5 py-2.5 rounded-xl font-bold text-xs inline-flex items-center gap-1.5 shadow-sm">
                             Send Email <i class="ph ph-paper-plane-tilt"></i>
                         </a>
-                        <button onclick="copyToClipboard('wisdomstudentskkdnorth@gmail.com')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-2.5 rounded-xl font-bold text-xs inline-flex items-center gap-1 transition-colors" title="Copy Email">
+                        <button onclick="copyToClipboard('wisdomstudentskkdnorth@gmail.com')" class="bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-3 py-2.5 rounded-xl font-bold text-xs inline-flex items-center gap-1 transition-colors" title="Copy Email">
                             <i class="ph ph-copy text-base"></i> Copy
                         </button>
                     </div>
@@ -619,46 +648,46 @@
     </section>
 
     <!-- FAQ SECTION -->
-    <section id="faq" class="py-20 bg-white border-t border-slate-100">
+    <section id="faq" class="py-20 bg-white dark:bg-slate-900 border-t border-slate-100 dark:border-slate-800">
         <div class="max-w-4xl mx-auto px-6">
             <div class="text-center mb-12 reveal">
                 <span class="text-brand-blue font-extrabold tracking-wider uppercase text-xs px-3.5 py-1.5 rounded-full bg-brand-blue/10 inline-block mb-3">Help Center</span>
-                <h3 class="text-3xl font-extrabold text-slate-900">Frequently Asked Questions</h3>
+                <h3 class="text-3xl font-extrabold text-slate-900 dark:text-white">Frequently Asked Questions</h3>
             </div>
 
             <div class="space-y-4 reveal">
-                <details class="group bg-slate-50 p-6 rounded-2xl border border-slate-200/80 [&_summary::-webkit-details-marker]:hidden">
-                    <summary class="flex items-center justify-between cursor-pointer font-bold text-slate-900 text-base sm:text-lg">
+                <details class="group bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="flex items-center justify-between cursor-pointer font-bold text-slate-900 dark:text-white text-base sm:text-lg">
                         <span>Who can attend Program Teenspace?</span>
                         <span class="transition group-open:rotate-180">
                             <i class="ph ph-caret-down text-xl text-brand-pink"></i>
                         </span>
                     </summary>
-                    <p class="mt-4 leading-relaxed text-slate-600 text-sm sm:text-base">
+                    <p class="mt-4 leading-relaxed text-slate-600 dark:text-slate-300 text-sm sm:text-base">
                         Program Teenspace is specially curated for Higher Secondary (Plus One & Plus Two) students looking to explore creativity, tech, leadership, and personal development.
                     </p>
                 </details>
 
-                <details class="group bg-slate-50 p-6 rounded-2xl border border-slate-200/80 [&_summary::-webkit-details-marker]:hidden">
-                    <summary class="flex items-center justify-between cursor-pointer font-bold text-slate-900 text-base sm:text-lg">
+                <details class="group bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="flex items-center justify-between cursor-pointer font-bold text-slate-900 dark:text-white text-base sm:text-lg">
                         <span>When and where is the conference taking place?</span>
                         <span class="transition group-open:rotate-180">
                             <i class="ph ph-caret-down text-xl text-brand-pink"></i>
                         </span>
                     </summary>
-                    <p class="mt-4 leading-relaxed text-slate-600 text-sm sm:text-base">
+                    <p class="mt-4 leading-relaxed text-slate-600 dark:text-slate-300 text-sm sm:text-base">
                         The event takes place on October 21, 2026 at Payyoli. You can click the location card above to navigate via Google Maps.
                     </p>
                 </details>
 
-                <details class="group bg-slate-50 p-6 rounded-2xl border border-slate-200/80 [&_summary::-webkit-details-marker]:hidden">
-                    <summary class="flex items-center justify-between cursor-pointer font-bold text-slate-900 text-base sm:text-lg">
+                <details class="group bg-slate-50 dark:bg-slate-800/50 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 [&_summary::-webkit-details-marker]:hidden">
+                    <summary class="flex items-center justify-between cursor-pointer font-bold text-slate-900 dark:text-white text-base sm:text-lg">
                         <span>How can I register for the conference?</span>
                         <span class="transition group-open:rotate-180">
                             <i class="ph ph-caret-down text-xl text-brand-pink"></i>
                         </span>
                     </summary>
-                    <p class="mt-4 leading-relaxed text-slate-600 text-sm sm:text-base">
+                    <p class="mt-4 leading-relaxed text-slate-600 dark:text-slate-300 text-sm sm:text-base">
                         Click on any "Register Now" button on this website, fill out the simple registration form, and submit your details.
                     </p>
                 </details>
@@ -876,7 +905,7 @@
             document.getElementById("seconds").innerText = String(Math.max(0, textSecond)).padStart(2, '0');
 
             if (gap < 0) {
-                document.querySelector(".teenspace-countdown").innerHTML = "<h4 class='text-slate-800 font-bold text-center'>Event Started!</h4>";
+                document.querySelector(".teenspace-countdown").innerHTML = "<h4 class='text-slate-800 dark:text-white font-bold text-center'>Event Started!</h4>";
             }
         }
         setInterval(updateCountdown, 1000);
