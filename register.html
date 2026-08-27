@@ -30,7 +30,7 @@
     <meta property="twitter:description" content="Join higher secondary students across Calicut North. Register today for Calicut Teenspace.">
     <meta property="twitter:image" content="https://teeen.space/3276.jpg">
 
-    <!-- Unified Favicon Setup (Using favicon.png for all icons) -->
+    <!-- Unified Favicon Setup -->
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="shortcut icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
@@ -66,7 +66,8 @@
                             blueHover: '#0288D1',
                             darkText: '#0F172A',
                             lightBg: '#FAFAFC',
-                            cardBg: '#FFFFFF'
+                            darkCard: '#121824',
+                            darkBg: '#0B0F17'
                         }
                     },
                     boxShadow: {
@@ -79,13 +80,14 @@
         }
     </script>
 
-    <!-- Designed by Shadil NM -->
+    <!-- Global Styles & Device System Dark Mode Handling -->
     <style>
         body {
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
             background-color: #FAFAFC;
             color: #0F172A;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .gradient-text {
@@ -99,17 +101,48 @@
             background: linear-gradient(135deg, #F02D7D 0%, #2EAEE5 100%);
         }
 
-        .nav-glass-light {
-            background: rgba(255, 255, 255, 0.92);
+        .nav-glass {
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid rgba(0, 0, 0, 0.06);
         }
+
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #0B0F17;
+                color: #F8FAFC;
+            }
+            .nav-glass {
+                background: rgba(11, 15, 23, 0.85);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            }
+        }
     </style>
 </head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- HEADER / NAVIGATION BAR -->
+    <header class="fixed top-0 left-0 right-0 z-50 nav-glass transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
+            <!-- Brand Logo Left (Swaps automatically based on device dark/light theme) -->
+            <a href="index.html" class="flex items-center gap-2 group transition-transform duration-300 hover:scale-[1.02]">
+                <!-- Light Mode Logo (Dark Text) -->
+                <img src="11028.png" alt="Teenspace Logo" class="h-8 sm:h-10 w-auto block dark:hidden object-contain">
+                <!-- Dark Mode Logo (White Text) -->
+                <img src="11018.png" alt="Teenspace Logo" class="h-8 sm:h-10 w-auto hidden dark:block object-contain">
+            </a>
+
+            <!-- Back to Home Button Right -->
+            <a href="index.html" class="inline-flex items-center gap-2 px-3.5 py-2 sm:px-4 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-xl text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-white/10 hover:bg-gray-200 dark:hover:bg-white/20 border border-gray-200 dark:border-white/10 transition-all duration-300 hover:shadow-md active:scale-95">
+                <i class="ph ph-arrow-left text-base sm:text-lg"></i>
+                <span>Back to Home</span>
+            </a>
+        </div>
+    </header>
 
     <!-- MAIN FORM SECTION -->
-    <section class="relative pt-32 pb-20 px-4 sm:px-6 flex-grow flex items-center justify-center">
+    <section class="relative pt-28 sm:pt-36 pb-20 px-4 sm:px-6 flex-grow flex items-center justify-center">
         <!-- Background Glows -->
         <div class="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-brand-pink/20 dark:bg-brand-pink/15 rounded-full filter blur-[120px] pointer-events-none"></div>
         <div class="absolute bottom-10 right-10 w-80 h-80 bg-brand-blue/20 dark:bg-brand-blue/15 rounded-full filter blur-[100px] pointer-events-none"></div>
@@ -386,7 +419,7 @@
     </div>
 
     <!-- FOOTER -->
-    <footer class="bg-gray-100 dark:bg-brand-dark text-gray-600 dark:text-gray-500 py-6 border-t border-gray-200 dark:border-white/10 text-center text-sm transition-colors duration-300">
+    <footer class="bg-gray-100 dark:bg-brand-darkBg text-gray-600 dark:text-gray-500 py-6 border-t border-gray-200 dark:border-white/10 text-center text-sm transition-colors duration-300">
         <p>&copy; 2026 Program Teenspace. All rights reserved.</p>
     </footer>
 
@@ -589,3 +622,4 @@
     </script>
 </body>
 </html>
+
