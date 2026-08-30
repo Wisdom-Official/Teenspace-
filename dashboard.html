@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -160,6 +159,12 @@
 
                 <!-- Actions -->
                 <div class="flex items-center gap-2.5">
+                    <!-- Refresh Data Button -->
+                    <button id="refreshDataBtn" title="Fetch Latest Data" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2.5 text-xs font-semibold rounded-xl bg-brand-blue/10 text-brand-blue border border-brand-blue/30 hover:bg-brand-blue/20 transition-all duration-300 shadow-sm">
+                        <i id="refreshIcon" class="ph ph-arrows-clockwise text-base"></i>
+                        <span class="hidden sm:inline">Refresh Data</span>
+                    </button>
+
                     <button id="registerBioBtn" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2.5 text-xs font-semibold rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all duration-300 shadow-sm">
                         <i class="ph ph-fingerprint text-base"></i>
                         <span class="hidden sm:inline">Enable Fingerprint</span>
@@ -464,6 +469,8 @@
         const genderFilter = document.getElementById('genderFilter');
         const typeFilter = document.getElementById('typeFilter');
         const logoutBtn = document.getElementById('logoutBtn');
+        const refreshDataBtn = document.getElementById('refreshDataBtn');
+        const refreshIcon = document.getElementById('refreshIcon');
         const registerBioBtn = document.getElementById('registerBioBtn');
         const zoneStatsContainer = document.getElementById('zoneStatsContainer');
         const zoneStatsGrid = document.getElementById('zoneStatsGrid');
@@ -639,6 +646,20 @@
         function updateZoneBadge(zone) {
             activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-xs"></i> Zone: ${zone === 'ALL' ? 'Main Admin' : zone}`;
         }
+
+        // Refresh Data Button Action (Without Logout/Re-login)
+        refreshDataBtn.addEventListener('click', async () => {
+            if (!currentZone) return;
+            refreshIcon.classList.add('animate-spin');
+            refreshDataBtn.disabled = true;
+            
+            await fetchData(currentZone);
+
+            setTimeout(() => {
+                refreshIcon.classList.remove('animate-spin');
+                refreshDataBtn.disabled = false;
+            }, 600);
+        });
 
         logoutBtn.addEventListener('click', () => {
             dashboardContent.classList.add('hidden');
