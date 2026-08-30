@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -37,10 +38,10 @@
     <style>
         body { -webkit-font-smoothing: antialiased; }
         .glass-panel {
-            background: rgba(15, 15, 16, 0.85);
+            background: rgba(15, 15, 16, 0.88);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         .gradient-glow {
             background: radial-gradient(circle, rgba(240, 45, 125, 0.15) 0%, rgba(5, 5, 5, 0) 70%);
@@ -143,35 +144,39 @@
     <!-- MAIN DASHBOARD APP -->
     <div id="dashboardContent" class="hidden flex-grow flex-col">
         
-        <!-- HEADER -->
+        <!-- HEADER (Enhanced Padding & Professional Spacing) -->
         <header class="glass-panel sticky top-0 z-40">
-            <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+            <div class="max-w-7xl mx-auto px-4 sm:px-8 py-4 sm:py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <!-- Branding -->
-                <div class="flex items-center gap-3.5">
-                    <img src="0.png" alt="Teenspace Logo" class="h-9 w-auto" onerror="this.onerror=null; this.src='https://via.placeholder.com/36?text=TS';">
-                    <div>
-                        <h1 class="font-bold text-base sm:text-lg leading-tight text-white"></h1>
-                        <p class="text-[11px] text-brand-blue font-semibold tracking-wide flex items-center gap-1 mt-0.5" id="activeZoneBadge">
-                            <i class="ph ph-circle-wavy-check text-xs"></i> Zone: -
-                        </p>
+                <div class="flex items-center gap-3.5 w-full sm:w-auto justify-between sm:justify-start">
+                    <div class="flex items-center gap-3.5">
+                        <img src="0.png" alt="Teenspace Logo" class="h-9 sm:h-10 w-auto" onerror="this.onerror=null; this.src='https://via.placeholder.com/36?text=TS';">
+                        <div>
+                            <h1 class="font-bold text-base sm:text-lg leading-tight text-white"></h1>
+                            <p class="text-xs text-brand-blue font-semibold tracking-wide flex items-center gap-1.5 mt-0.5" id="activeZoneBadge">
+                                <i class="ph ph-circle-wavy-check text-sm"></i> Zone: -
+                            </p>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center gap-2.5">
+                <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
                     <!-- Refresh Data Button -->
-                    <button id="refreshDataBtn" title="Fetch Latest Data" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2.5 text-xs font-semibold rounded-xl bg-brand-blue/10 text-brand-blue border border-brand-blue/30 hover:bg-brand-blue/20 transition-all duration-300 shadow-sm">
-                        <i id="refreshIcon" class="ph ph-arrows-clockwise text-base"></i>
-                        <span class="hidden sm:inline">Refresh Data</span>
+                    <button id="refreshDataBtn" title="Fetch Latest Data" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-brand-blue/10 text-brand-blue border border-brand-blue/30 hover:bg-brand-blue/20 transition-all duration-300 shadow-sm">
+                        <i id="refreshIcon" class="ph ph-arrows-clockwise text-base sm:text-lg"></i>
+                        <span class="inline">Refresh</span>
                     </button>
 
-                    <button id="registerBioBtn" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2.5 text-xs font-semibold rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all duration-300 shadow-sm">
-                        <i class="ph ph-fingerprint text-base"></i>
-                        <span class="hidden sm:inline">Enable Fingerprint</span>
+                    <!-- Fingerprint Register Button -->
+                    <button id="registerBioBtn" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition-all duration-300 shadow-sm">
+                        <i class="ph ph-fingerprint text-base sm:text-lg"></i>
+                        <span class="hidden sm:inline">Fingerprint</span>
                     </button>
 
-                    <button id="logoutBtn" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2.5 text-xs font-semibold rounded-xl bg-white/5 text-gray-300 border border-white/10 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-all duration-300">
-                        <i class="ph ph-sign-out text-base"></i>
+                    <!-- Logout Button -->
+                    <button id="logoutBtn" class="inline-flex items-center gap-2 px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold rounded-xl bg-white/5 text-gray-300 border border-white/10 hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 transition-all duration-300">
+                        <i class="ph ph-sign-out text-base sm:text-lg"></i>
                         <span class="hidden sm:inline">Logout</span>
                     </button>
                 </div>
@@ -644,7 +649,7 @@
         }
 
         function updateZoneBadge(zone) {
-            activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-xs"></i> Zone: ${zone === 'ALL' ? 'Main Admin' : zone}`;
+            activeZoneBadge.innerHTML = `<i class="ph ph-circle-wavy-check text-sm"></i> Zone: ${zone === 'ALL' ? 'Main Admin' : zone}`;
         }
 
         // Refresh Data Button Action (Without Logout/Re-login)
@@ -995,7 +1000,7 @@
                 place: document.getElementById('editPlace').value,
                 institution: document.getElementById('editInstitution').value,
                 standard: document.getElementById('editStandard').value,
-                age: document.getElementById('editAge').value,
+                age: document.getElementById('editAge.value') || document.getElementById('editAge').value,
                 gender: document.getElementById('editGender').value
             };
 
