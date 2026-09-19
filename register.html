@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
@@ -7,28 +8,18 @@
     <!-- Primary SEO Title for Registration -->
     <title>Register | Calicut Teenspace - Higher Secondary Students Conference</title>
     
-    <!-- Google Search Console Verification -->
-    <meta name="google-site-verification" content="YOUR_GOOGLE_CONSOLE_VERIFICATION_CODE_HERE" />
-
     <!-- Core SEO Meta Tags -->
     <meta name="description" content="Register now for Calicut Teenspace Conference at Payyoli. Join higher secondary students across Calicut North for tech guidance, career advice, and mentorship.">
-    <meta name="keywords" content="Calicut Teenspace Registration, Teenspace Register, Calicut North Teenspace Registration, Payyoli Conference Register">
+    <meta name="keywords" content="Calicut Teenspace Registration, Teenspace Register, Calicut North Teenspace Registration, Payyoli Conference Register, Volunteer Registration">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://teeen.space/register.html">
 
-    <!-- Social Media Previews (WhatsApp, Facebook, Open Graph) -->
+    <!-- Social Media Previews -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://teeen.space/register.html">
     <meta property="og:title" content="Register for Calicut Teenspace Conference">
-    <meta property="og:description" content="Secure your spot at the Calicut North Higher Secondary Students Conference at Payyoli. Register now!">
+    <meta property="og:description" content="Secure your spot or sign up as a volunteer for Calicut Teenspace Conference.">
     <meta property="og:image" content="https://teeen.space/3276.jpg">
-
-    <!-- Twitter Card Meta Tags -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://teeen.space/register.html">
-    <meta property="twitter:title" content="Register for Calicut Teenspace Conference">
-    <meta property="twitter:description" content="Join higher secondary students across Calicut North. Register today for Calicut Teenspace.">
-    <meta property="twitter:image" content="https://teeen.space/3276.jpg">
 
     <!-- Unified Favicon Setup -->
     <link rel="icon" type="image/png" href="favicon.png">
@@ -39,18 +30,15 @@
     <link rel="manifest" href="site.webmanifest">
     <meta name="theme-color" content="#F02D7D">
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts & Phosphor Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Designed by Shadil NM -->
     <script>
         tailwind.config = {
             theme: {
@@ -80,7 +68,7 @@
         }
     </script>
 
-    <!-- Global Styles & Device System Dark Mode Handling -->
+    <!-- Global Styles -->
     <style>
         body {
             -webkit-font-smoothing: antialiased;
@@ -125,11 +113,11 @@
     <!-- HEADER / NAVIGATION BAR -->
     <header class="fixed top-0 left-0 right-0 z-50 nav-glass transition-colors duration-300">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between">
-            <!-- Brand Logo Left (Swaps automatically based on device dark/light theme) -->
+            <!-- Brand Logo Left -->
             <a href="index.html" class="flex items-center gap-2 group transition-transform duration-300 hover:scale-[1.02]">
-                <!-- Light Mode Logo (Dark Text) -->
+                <!-- Light Mode Logo -->
                 <img src="3274.png" alt="Teenspace Logo" class="h-8 sm:h-10 w-auto block dark:hidden object-contain">
-                <!-- Dark Mode Logo (White Text) -->
+                <!-- Dark Mode Logo -->
                 <img src="0.png" alt="Teenspace Logo" class="h-8 sm:h-10 w-auto hidden dark:block object-contain">
             </a>
 
@@ -141,8 +129,25 @@
         </div>
     </header>
 
+    <!-- TOP BAR ACTION AREA (Right Below Header on Left) -->
+    <div class="pt-20 sm:pt-24 px-4 sm:px-6 max-w-6xl mx-auto w-full flex items-center justify-between mt-2">
+        <!-- Volunteer Register Button (Positioned Top Left below Header) -->
+        <button id="openVolunteerModalBtn" class="group relative inline-flex items-center gap-2.5 px-4 py-2.5 sm:px-5 sm:py-3 rounded-2xl bg-gradient-to-r from-brand-pink to-brand-blue text-white font-bold text-xs sm:text-sm shadow-lg shadow-brand-pink/25 hover:shadow-brand-pink/40 hover:scale-105 active:scale-95 transition-all duration-300">
+            <span class="relative flex h-3 w-3">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+            </span>
+            <i class="ph ph-hand-heart text-lg sm:text-xl"></i>
+            <span>Volunteer Register</span>
+        </button>
+
+        <span class="text-xs text-gray-500 dark:text-gray-400 font-medium hidden sm:inline-block">
+            Want to help organize? Join as a volunteer!
+        </span>
+    </div>
+
     <!-- MAIN FORM SECTION -->
-    <section class="relative pt-28 sm:pt-36 pb-20 px-4 sm:px-6 flex-grow flex items-center justify-center">
+    <section class="relative pt-6 pb-20 px-4 sm:px-6 flex-grow flex items-center justify-center">
         <!-- Background Glows -->
         <div class="absolute top-1/3 left-1/2 -translate-x-1/2 w-96 h-96 bg-brand-pink/20 dark:bg-brand-pink/15 rounded-full filter blur-[120px] pointer-events-none"></div>
         <div class="absolute bottom-10 right-10 w-80 h-80 bg-brand-blue/20 dark:bg-brand-blue/15 rounded-full filter blur-[100px] pointer-events-none"></div>
@@ -311,6 +316,131 @@
             </div>
         </div>
     </section>
+
+    <!-- VOLUNTEER REGISTRATION MODAL -->
+    <div id="volunteerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+        <div id="volunteerModalContent" class="bg-white dark:bg-brand-darkCard border border-gray-200 dark:border-white/10 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl transform scale-95 transition-transform duration-300 relative max-h-[90vh] overflow-y-auto">
+            
+            <!-- Close Button -->
+            <button id="closeVolunteerModalBtn" class="absolute top-5 right-5 text-gray-400 hover:text-gray-900 dark:hover:text-white p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+                <i class="ph ph-x text-xl"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-pink to-brand-blue flex items-center justify-center text-white text-3xl mx-auto mb-3 shadow-lg shadow-brand-pink/20">
+                    <i class="ph ph-hand-heart"></i>
+                </div>
+                <h3 class="text-2xl font-extrabold text-gray-900 dark:text-white">Volunteer Registration</h3>
+                <p class="text-gray-600 dark:text-gray-400 text-xs sm:text-sm mt-1">
+                    Fill out your details to sign up as an active volunteer for Teenspace.
+                </p>
+            </div>
+
+            <!-- Volunteer Form -->
+            <form id="volunteerForm" class="space-y-4">
+                
+                <!-- Full Name -->
+                <div>
+                    <label for="volunteerName" class="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Full Name *</label>
+                    <div class="relative">
+                        <i class="ph ph-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                        <input type="text" id="volunteerName" required placeholder="Enter your full name" 
+                            class="w-full bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-brand-pink transition-all">
+                    </div>
+                </div>
+
+                <!-- Mobile Number -->
+                <div>
+                    <label for="volunteerPhone" class="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Mobile Number *</label>
+                    <div class="relative">
+                        <i class="ph ph-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                        <input type="tel" id="volunteerPhone" pattern="[0-9]{10}" maxlength="10" required placeholder="10-digit mobile number" 
+                            class="w-full bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-brand-pink transition-all">
+                    </div>
+                </div>
+
+                <!-- Zone Selection -->
+                <div>
+                    <label for="volunteerZone" class="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-1">Select Zone *</label>
+                    <div class="relative">
+                        <i class="ph ph-map-pin-line absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                        <select id="volunteerZone" required class="w-full bg-gray-50 dark:bg-[#1A1A1A] border border-gray-300 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer">
+                            <option value="" disabled selected class="text-gray-500 bg-white dark:bg-[#1A1A1A]">-- Select Zone --</option>
+                            <option value="Payyoli" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Payyoli</option>
+                            <option value="Koyilandi" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Koyilandi</option>
+                            <option value="Perambra" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Perambra</option>
+                            <option value="Vadakara" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Vadakara</option>
+                            <option value="Poonoor" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Poonoor</option>
+                            <option value="Balussery" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Balussery</option>
+                            <option value="Nadapuram" class="text-gray-900 dark:text-white bg-white dark:bg-[#1A1A1A]">Nadapuram</option>
+                        </select>
+                        <i class="ph ph-caret-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <!-- Wing / Component Selection (5 Options) -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-gray-600 dark:text-gray-400 mb-2">Select Wing / Component *</label>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="volunteerWing" value="Students" required class="peer sr-only">
+                            <div class="p-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 peer-checked:border-brand-pink peer-checked:bg-brand-pink/10 text-center transition-all hover:bg-gray-100 dark:hover:bg-white/10">
+                                <i class="ph ph-student text-2xl text-brand-blue block mb-1"></i>
+                                <span class="text-xs font-bold text-gray-800 dark:text-gray-200">Students</span>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="volunteerWing" value="Girls" class="peer sr-only">
+                            <div class="p-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 peer-checked:border-brand-pink peer-checked:bg-brand-pink/10 text-center transition-all hover:bg-gray-100 dark:hover:bg-white/10">
+                                <i class="ph ph-gender-female text-2xl text-pink-400 block mb-1"></i>
+                                <span class="text-xs font-bold text-gray-800 dark:text-gray-200">Girls</span>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="volunteerWing" value="Women's" class="peer sr-only">
+                            <div class="p-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 peer-checked:border-brand-pink peer-checked:bg-brand-pink/10 text-center transition-all hover:bg-gray-100 dark:hover:bg-white/10">
+                                <i class="ph ph-users-three text-2xl text-purple-400 block mb-1"></i>
+                                <span class="text-xs font-bold text-gray-800 dark:text-gray-200">Women's</span>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer">
+                            <input type="radio" name="volunteerWing" value="Youth" class="peer sr-only">
+                            <div class="p-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 peer-checked:border-brand-pink peer-checked:bg-brand-pink/10 text-center transition-all hover:bg-gray-100 dark:hover:bg-white/10">
+                                <i class="ph ph-lightning text-2xl text-amber-400 block mb-1"></i>
+                                <span class="text-xs font-bold text-gray-800 dark:text-gray-200">Youth</span>
+                            </div>
+                        </label>
+
+                        <label class="cursor-pointer col-span-2 sm:col-span-1">
+                            <input type="radio" name="volunteerWing" value="Organization" class="peer sr-only">
+                            <div class="p-3 rounded-xl border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 peer-checked:border-brand-pink peer-checked:bg-brand-pink/10 text-center transition-all hover:bg-gray-100 dark:hover:bg-white/10">
+                                <i class="ph ph-buildings text-2xl text-emerald-400 block mb-1"></i>
+                                <span class="text-xs font-bold text-gray-800 dark:text-gray-200">Organization</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit Volunteer Button -->
+                <button type="submit" id="volunteerSubmitBtn" class="w-full gradient-bg text-white py-3.5 rounded-xl font-bold text-sm hover:shadow-[0_0_20px_rgba(240,45,125,0.4)] transition-all duration-300 flex items-center justify-center gap-2 mt-4">
+                    <span>Submit Volunteer Sign Up</span>
+                    <i class="ph ph-paper-plane-right text-lg"></i>
+                </button>
+            </form>
+
+            <!-- Volunteer Success Notice -->
+            <div id="volunteerSuccessMsg" class="hidden text-center py-6">
+                <i class="ph ph-check-circle text-5xl text-emerald-500 mb-2 mx-auto block animate-bounce"></i>
+                <h4 class="text-lg font-bold text-gray-900 dark:text-white">Volunteer Registered!</h4>
+                <p class="text-xs text-gray-600 dark:text-gray-400 mt-1">Thank you for joining as a volunteer. We will get in touch shortly.</p>
+            </div>
+        </div>
+    </div>
 
     <!-- FLOATING "DONATE A CONTACT" WIDGET (BOTTOM RIGHT) -->
     <div class="fixed bottom-6 right-6 z-40">
@@ -481,7 +611,7 @@
             }
         });
 
-        // Main Form Submission Logic
+        // Main Student Form Submission Logic
         registrationForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -534,7 +664,80 @@
             }
         });
 
-        // --- Donate Contact Modal Logic ---
+        // --- VOLUNTEER MODAL & SUBMISSION LOGIC ---
+        const openVolunteerModalBtn = document.getElementById('openVolunteerModalBtn');
+        const closeVolunteerModalBtn = document.getElementById('closeVolunteerModalBtn');
+        const volunteerModal = document.getElementById('volunteerModal');
+        const volunteerModalContent = document.getElementById('volunteerModalContent');
+        const volunteerForm = document.getElementById('volunteerForm');
+        const volunteerSubmitBtn = document.getElementById('volunteerSubmitBtn');
+        const volunteerSuccessMsg = document.getElementById('volunteerSuccessMsg');
+
+        function openVolModal() {
+            volunteerModal.classList.remove('hidden');
+            setTimeout(() => {
+                volunteerModal.classList.remove('opacity-0');
+                volunteerModalContent.classList.remove('scale-95');
+                volunteerModalContent.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeVolModal() {
+            volunteerModal.classList.add('opacity-0');
+            volunteerModalContent.classList.remove('scale-100');
+            volunteerModalContent.classList.add('scale-95');
+            setTimeout(() => {
+                volunteerModal.classList.add('hidden');
+                volunteerForm.reset();
+                volunteerForm.style.display = 'block';
+                volunteerSuccessMsg.classList.add('hidden');
+            }, 300);
+        }
+
+        openVolunteerModalBtn.addEventListener('click', openVolModal);
+        closeVolunteerModalBtn.addEventListener('click', closeVolModal);
+        volunteerModal.addEventListener('click', (e) => {
+            if (e.target === volunteerModal) closeVolModal();
+        });
+
+        volunteerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            volunteerSubmitBtn.disabled = true;
+            volunteerSubmitBtn.innerHTML = `<i class="ph ph-spinner animate-spin text-lg"></i> Registering Volunteer...`;
+
+            const selectedWing = document.querySelector('input[name="volunteerWing"]:checked')?.value || 'Students';
+            const volPhone = document.getElementById('volunteerPhone').value.trim();
+
+            const volData = {
+                type: "volunteer_registration",
+                fullName: document.getElementById('volunteerName').value.trim(),
+                phone: volPhone,
+                whatsapp: volPhone, // Default same as mobile
+                zone: document.getElementById('volunteerZone').value,
+                wing: selectedWing,
+                createdAt: serverTimestamp()
+            };
+
+            try {
+                await addDoc(collection(db, "registrations"), volData);
+                
+                volunteerForm.style.display = 'none';
+                volunteerSuccessMsg.classList.remove('hidden');
+
+                setTimeout(() => {
+                    closeVolModal();
+                }, 2200);
+            } catch (error) {
+                console.error("Firestore Volunteer Reg Error: ", error);
+                alert("Failed to submit volunteer registration. Please try again.");
+            } finally {
+                volunteerSubmitBtn.disabled = false;
+                volunteerSubmitBtn.innerHTML = `<span>Submit Volunteer Sign Up</span> <i class="ph ph-paper-plane-right text-lg"></i>`;
+            }
+        });
+
+        // --- DONATE CONTACT MODAL LOGIC ---
         const openDonateModalBtn = document.getElementById('openDonateModalBtn');
         const closeDonateModalBtn = document.getElementById('closeDonateModalBtn');
         const donateModal = document.getElementById('donateModal');
@@ -622,4 +825,3 @@
     </script>
 </body>
 </html>
-
