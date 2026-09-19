@@ -195,8 +195,8 @@
                         <select id="typeFilter" class="w-full bg-brand-darkCard border border-white/10 rounded-2xl py-3 pl-11 pr-8 text-xs sm:text-sm text-white focus:outline-none focus:border-brand-pink transition-all appearance-none cursor-pointer shadow-xl">
                             <option value="ALL" class="bg-black text-white">All Types</option>
                             <option value="self_registration" class="bg-black text-brand-blue">Direct Student</option>
-                            <option value="donated_contact" class="bg-black text-brand-pink font-bold">🎁 Gifted Contact</option>
-                            <option value="volunteer_registration" class="bg-black text-emerald-400 font-bold">🤝 Volunteer</option>
+                            <option value="donated_contact" class="bg-black text-brand-pink font-bold">🎁</option>
+                            <option value="volunteer_registration" class="bg-black text-emerald-400 font-bold">Vol</option>
                         </select>
                         <i class="ph ph-caret-down absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-xs"></i>
                     </div>
@@ -839,9 +839,9 @@
                 // Category Tag
                 let categoryBadge = '';
                 if (isVolunteer) {
-                    categoryBadge = '<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold uppercase tracking-wider">🤝 Volunteer</span>';
+                    categoryBadge = '<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold uppercase tracking-wider">Vol</span>';
                 } else if (isDonated) {
-                    categoryBadge = '<span class="px-2 py-0.5 rounded text-[10px] bg-brand-pink/20 text-brand-pink border border-brand-pink/30 font-bold uppercase tracking-wider">🎁 Gifted</span>';
+                    categoryBadge = '<span class="px-2 py-0.5 rounded text-[10px] bg-brand-pink/20 text-brand-pink border border-brand-pink/30 font-bold uppercase tracking-wider">🎁</span>';
                 }
 
                 tr.innerHTML = `
