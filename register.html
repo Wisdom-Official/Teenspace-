@@ -673,7 +673,12 @@
         const volunteerSubmitBtn = document.getElementById('volunteerSubmitBtn');
         const volunteerSuccessMsg = document.getElementById('volunteerSuccessMsg');
 
-        function openVolModal() {
+        // Open the volunteer modal and optionally keep #vol in the URL
+        function openVolModal(updateHash = true) {
+            if (updateHash && window.location.hash.toLowerCase() !== '#vol') {
+                history.replaceState(null, '', window.location.pathname + window.location.search + '#vol');
+            }
+
             volunteerModal.classList.remove('hidden');
             setTimeout(() => {
                 volunteerModal.classList.remove('opacity-0');
@@ -682,23 +687,52 @@
             }, 10);
         }
 
-        function closeVolModal() {
+        function closeVolModal(removeHash = true) {
             volunteerModal.classList.add('opacity-0');
             volunteerModalContent.classList.remove('scale-100');
             volunteerModalContent.classList.add('scale-95');
+
             setTimeout(() => {
                 volunteerModal.classList.add('hidden');
                 volunteerForm.reset();
                 volunteerForm.style.display = 'block';
                 volunteerSuccessMsg.classList.add('hidden');
+
+                if (removeHash && window.location.hash.toLowerCase() === '#vol') {
+                    history.replaceState(null, '', window.location.pathname + window.location.search);
+                }
             }, 300);
         }
 
-        openVolunteerModalBtn.addEventListener('click', openVolModal);
-        closeVolunteerModalBtn.addEventListener('click', closeVolModal);
+        // Normal button click: open volunteer modal and change URL to #vol
+        openVolunteerModalBtn.addEventListener('click', () => openVolModal(true));
+
+        closeVolunteerModalBtn.addEventListener('click', () => closeVolModal(true));
+
         volunteerModal.addEventListener('click', (e) => {
-            if (e.target === volunteerModal) closeVolModal();
+            if (e.target === volunteerModal) closeVolModal(true);
         });
+
+        // Deep-link support:
+        // https://teeen.space/register#vol
+        // /register#vol
+        // /register.html#vol
+        function openVolunteerFromHash() {
+            const hash = window.location.hash.toLowerCase();
+            if (hash === '#vol' || hash === '#volunteer') {
+                openVolModal(false);
+            }
+        }
+
+        // Open automatically when the page is loaded with #vol
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', openVolunteerFromHash);
+        } else {
+            openVolunteerFromHash();
+        }
+
+        // Also support navigating to #vol while the page is already open
+        window.addEventListener('hashchange', openVolunteerFromHash);
 
         volunteerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
