@@ -770,7 +770,7 @@
             // Apply Status Filter
             if (selectedStatus !== 'ALL') {
                 if (selectedStatus === 'Pending') {
-                    filtered = filtered.filter(item => !item.status || item.status === 'Pending');
+                    filtered = filter => !item.status || item.status === 'Pending';
                 } else {
                     filtered = filtered.filter(item => item.status === selectedStatus);
                 }
@@ -810,7 +810,7 @@
                 const isVolunteer = student.type === 'volunteer_registration';
 
                 const defaultMsg = encodeURIComponent(
-                    `السلام عليكم ورحمة الله وبركاته ✨\n*${student.fullName}*\n\nGreetings from Program Teenspace!`
+                    `السلام عليكم ورحمة الله وبركاته ✨\n\n*${student.fullName || ''}*\n\nRegistration Successfull\n\nFor more updates:\nFollow: https://whatsapp.com/channel/0029VbCYDHpFMqra8ltRmA1O\n\n> Team Teenspace !`
                 );
                 const whatsappUrl = `https://wa.me/91${student.whatsapp || student.phone}?text=${defaultMsg}`;
 
