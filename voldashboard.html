@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
@@ -41,9 +40,6 @@
         .glow-pink {
             box-shadow: 0 0 30px rgba(236, 72, 153, 0.15);
         }
-        .glow-cyan {
-            box-shadow: 0 0 30px rgba(6, 182, 212, 0.15);
-        }
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -59,7 +55,6 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between bg-[#050505] selection:bg-pink-500 selection:text-white">
 
-    <!-- Authentication Overlay Screen -->
     <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-[#050505] p-4">
         <div class="max-w-md w-full bg-zinc-900 border border-zinc-800 rounded-3xl p-8 shadow-2xl space-y-6 glow-pink relative overflow-hidden">
             <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl pointer-events-none"></div>
@@ -107,10 +102,6 @@
                 </div>
 
                 <div class="flex items-center gap-3">
-                    <button onclick="exportToCSV()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 transition-all text-xs font-semibold shadow-sm">
-                        <i class="fa-solid fa-file-excel text-sm"></i>
-                        <span class="hidden sm:inline">Export CSV</span>
-                    </button>
                     <button onclick="logout()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-900 border border-zinc-800 text-zinc-300 hover:text-white hover:border-zinc-700 transition-all text-xs font-semibold">
                         <i class="fa-solid fa-arrow-right-from-bracket text-pink-500"></i>
                         <span>Logout</span>
@@ -124,7 +115,7 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-zinc-800/60 pb-6">
                 <div>
                     <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">Volunteer Control Dashboard</h1>
-                    <p class="text-zinc-400 text-xs sm:text-sm mt-1">Real-time overview and management of registered volunteers for 2026.</p>
+                    <p class="text-zinc-400 text-xs sm:text-sm mt-1">Real-time overview and wing-wise categorized exports for Oct 20 & 21.</p>
                 </div>
                 <div class="flex items-center gap-2 text-xs text-zinc-400 bg-zinc-900/80 px-3.5 py-2 rounded-xl border border-zinc-800 self-start md:self-auto">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -132,7 +123,7 @@
                 </div>
             </div>
 
-            <!-- Metrics Grid -->
+            <!-- Stats Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-5 shadow-lg relative overflow-hidden">
                     <div class="flex items-center justify-between">
@@ -183,20 +174,21 @@
                 </div>
             </div>
 
-            <div class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4 sm:p-5 shadow-lg space-y-4">
-                <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+            <!-- Filters and Wing-wise Export Section -->
+            <div class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-5 shadow-lg space-y-4">
+                <div class="flex flex-col lg:flex-row gap-4 justify-between items-center">
                     
                     <!-- Search input -->
-                    <div class="relative w-full md:w-80">
+                    <div class="relative w-full lg:w-72">
                         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500 text-xs"></i>
                         <input type="text" id="search-input" oninput="applyFilters()" placeholder="Search by name or mobile..."
                             class="w-full bg-zinc-950 border border-zinc-800 rounded-xl pl-10 pr-4 py-2.5 text-white placeholder-zinc-600 focus:outline-none focus:border-pink-500 transition-all text-xs">
                     </div>
 
                     <!-- Dropdown Filters -->
-                    <div class="flex flex-wrap sm:flex-nowrap gap-3 w-full md:w-auto">
+                    <div class="flex flex-wrap sm:flex-nowrap gap-3 w-full lg:w-auto items-center">
                         <select id="filter-zone" onchange="applyFilters()" 
-                            class="w-full sm:w-40 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-white text-xs focus:outline-none focus:border-pink-500 capitalize cursor-pointer">
+                            class="w-full sm:w-36 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-white text-xs focus:outline-none focus:border-pink-500 capitalize cursor-pointer">
                             <option value="all">All Zones</option>
                             <option value="perambra">Perambra</option>
                             <option value="koyilandi">Koyilandi</option>
@@ -208,7 +200,7 @@
                         </select>
 
                         <select id="filter-wing" onchange="applyFilters()" 
-                            class="w-full sm:w-40 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500 capitalize cursor-pointer">
+                            class="w-full sm:w-36 bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2.5 text-white text-xs focus:outline-none focus:border-cyan-500 capitalize cursor-pointer">
                             <option value="all">All Wings</option>
                             <option value="students">Students</option>
                             <option value="girls">Girls</option>
@@ -217,13 +209,41 @@
                             <option value="organization">Organization</option>
                         </select>
 
-                        <button onclick="resetFilters()" class="px-3.5 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold transition-all">
+                        <button onclick="resetFilters()" class="px-3 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold transition-all">
                             Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Wing-wise Download Section -->
+                <div class="pt-4 border-t border-zinc-800/80 flex flex-wrap items-center justify-between gap-4">
+                    <div class="text-xs text-zinc-300 font-semibold flex items-center gap-2">
+                        <i class="fa-solid fa-file-excel text-emerald-400"></i> Download Categorized Excel/CSV Files by Wing:
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="exportWingCSV('students')" class="px-3 py-1.5 rounded-lg bg-pink-500/10 border border-pink-500/20 text-pink-400 hover:bg-pink-500/20 text-xs font-medium transition-all">
+                            Students Wing
+                        </button>
+                        <button onclick="exportWingCSV('girls')" class="px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20 text-purple-400 hover:bg-purple-500/20 text-xs font-medium transition-all">
+                            Girls Wing
+                        </button>
+                        <button onclick="exportWingCSV('womens')" class="px-3 py-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 text-xs font-medium transition-all">
+                            Womens Wing
+                        </button>
+                        <button onclick="exportWingCSV('youth')" class="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/20 text-xs font-medium transition-all">
+                            Youth Wing
+                        </button>
+                        <button onclick="exportWingCSV('organization')" class="px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 hover:bg-amber-500/20 text-xs font-medium transition-all">
+                            Organization
+                        </button>
+                        <button onclick="exportToCSV()" class="px-3.5 py-1.5 rounded-lg bg-emerald-500 text-white hover:opacity-90 text-xs font-bold transition-all shadow-md">
+                            Export All
                         </button>
                     </div>
                 </div>
             </div>
 
+            <!-- Table Section -->
             <div class="bg-zinc-900/90 border border-zinc-800 rounded-2xl shadow-xl overflow-hidden">
                 <div class="p-4 sm:p-5 border-b border-zinc-800/80 flex justify-between items-center">
                     <h2 class="text-base font-bold text-white flex items-center gap-2">
@@ -243,14 +263,14 @@
                                 <th class="py-3.5 px-4 font-semibold">Mobile</th>
                                 <th class="py-3.5 px-4 font-semibold">Zone</th>
                                 <th class="py-3.5 px-4 font-semibold">Wing</th>
+                                <th class="py-3.5 px-4 font-semibold">Availability (Oct 20 & 21)</th>
                                 <th class="py-3.5 px-4 font-semibold">Registered Date</th>
                                 <th class="py-3.5 px-4 font-semibold text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody id="volunteer-table-body" class="divide-y divide-zinc-800/60">
-                            <!-- Table rows will be rendered dynamically -->
                             <tr>
-                                <td colspan="7" class="py-12 text-center text-zinc-500">
+                                <td colspan="8" class="py-12 text-center text-zinc-500">
                                     <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-pink-500"></i>
                                     <p>Loading volunteer data...</p>
                                 </td>
@@ -293,7 +313,6 @@
         let allVolunteers = [];
         let filteredVolunteers = [];
 
-        // Check password session state
         document.addEventListener("DOMContentLoaded", () => {
             const isAuth = sessionStorage.getItem("ts_admin_authenticated");
             if (isAuth === "true") {
@@ -352,7 +371,6 @@
             }
         }
 
-        // Live Real-Time Data Sync from Firestore
         function listenToVolunteers() {
             const collectionPath = `artifacts/${appId}/public/data/volunteers`;
             
@@ -365,7 +383,6 @@
                     });
                 });
 
-                // Sort by newest first
                 allVolunteers.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
                 
                 updateStats();
@@ -420,7 +437,7 @@
             if (filteredVolunteers.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="py-12 text-center text-zinc-500">
+                        <td colspan="8" class="py-12 text-center text-zinc-500">
                             <i class="fa-solid fa-folder-open text-3xl mb-2 text-zinc-600"></i>
                             <p>No volunteer records found.</p>
                         </td>
@@ -450,6 +467,11 @@
                                 ${escapeHtml(v.wing || 'N/A')}
                             </span>
                         </td>
+                        <td class="py-3.5 px-4 text-zinc-300 text-xs">
+                            <span class="px-2.5 py-1 rounded-md bg-zinc-950 border border-zinc-800 text-zinc-300">
+                                ${escapeHtml(v.availability || 'Oct 20 & 21')}
+                            </span>
+                        </td>
                         <td class="py-3.5 px-4 text-zinc-400 text-xs">${formattedDate}</td>
                         <td class="py-3.5 px-4 text-right">
                             <button onclick="deleteVolunteer('${v.id}')" title="Delete Volunteer" class="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-all">
@@ -471,18 +493,20 @@
             }
         };
 
-        window.exportToCSV = function() {
-            if (filteredVolunteers.length === 0) {
-                alert("No data available to export.");
+        window.exportWingCSV = function(wingName) {
+            const wingVolunteers = allVolunteers.filter(v => (v.wing || '').toLowerCase() === wingName.toLowerCase());
+            if (wingVolunteers.length === 0) {
+                alert(`No records available for the ${wingName} wing.`);
                 return;
             }
 
-            const headers = ["Name", "Mobile", "Zone", "Wing", "Registration Date"];
-            const rows = filteredVolunteers.map(v => [
+            const headers = ["Name", "Mobile", "Zone", "Wing", "Availability", "Registration Date"];
+            const rows = wingVolunteers.map(v => [
                 `"${(v.name || '').replace(/"/g, '""')}"`,
                 `"${v.mobile || ''}"`,
                 `"${v.zone || ''}"`,
                 `"${v.wing || ''}"`,
+                `"${(v.availability || '').replace(/"/g, '""')}"`,
                 `"${v.createdAt || ''}"`
             ]);
 
@@ -490,7 +514,33 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `TeenSpace_Volunteers_${new Date().toISOString().split('T')[0]}.csv`);
+            link.setAttribute("download", `TeenSpace_Volunteers_${wingName}_Wing_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        };
+
+        window.exportToCSV = function() {
+            if (filteredVolunteers.length === 0) {
+                alert("No data available to export.");
+                return;
+            }
+
+            const headers = ["Name", "Mobile", "Zone", "Wing", "Availability", "Registration Date"];
+            const rows = filteredVolunteers.map(v => [
+                `"${(v.name || '').replace(/"/g, '""')}"`,
+                `"${v.mobile || ''}"`,
+                `"${v.zone || ''}"`,
+                `"${v.wing || ''}"`,
+                `"${(v.availability || '').replace(/"/g, '""')}"`,
+                `"${v.createdAt || ''}"`
+            ]);
+
+            const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `TeenSpace_All_Volunteers_${new Date().toISOString().split('T')[0]}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
