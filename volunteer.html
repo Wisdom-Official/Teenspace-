@@ -62,11 +62,21 @@
 <body class="min-h-screen flex flex-col justify-between bg-[#050505] selection:bg-pink-500 selection:text-white">
 
     <header class="w-full border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 h-24 flex items-center justify-center">
-            <div class="flex flex-col items-center">
-                <!-- Official teeen.space Logo Image -->
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 h-24 flex items-center justify-between relative">
+            <!-- Professional Back Button -->
+            <a href="https://teeen.space" 
+               class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-900/80 border border-zinc-800 text-zinc-300 hover:text-white hover:border-pink-500/50 hover:bg-zinc-800/80 transition-all duration-200 text-xs sm:text-sm font-medium group shadow-sm hover:shadow-pink-500/10">
+                <i class="fa-solid fa-arrow-left text-pink-500 group-hover:-translate-x-1 transition-transform duration-200"></i>
+                <span>Back</span>
+            </a>
+
+            <!-- Official teeen.space Logo Image -->
+            <div class="flex flex-col items-center absolute left-1/2 -translate-x-1/2">
                 <img src="teenspace.jpg" alt="teeen.space - Higher Secondary Students Conference" class="h-12 sm:h-14 w-auto object-contain" onerror="this.onerror=null; this.src='teenspace_2.jpg';">
             </div>
+
+            <!-- Spacer to keep layout centered -->
+            <div class="w-12 sm:w-28 invisible"></div>
         </div>
     </header>
 
