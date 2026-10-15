@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeenSpace - Volunteer Registration</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            pink: '#ec4899',
+                            cyan: '#06b6d4',
+                            dark: '#050505',
+                            card: '#121214',
+                            border: '#27272a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050505;
+            color: #f4f4f5;
+        }
+        .glow-pink {
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.2);
+        }
+        .logo-text span.pink {
+            color: #ec4899;
+        }
+        .logo-text span.cyan {
+            color: #06b6d4;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between bg-[#050505] selection:bg-pink-500 selection:text-white">
+
+    <header class="w-full border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 h-24 flex items-center justify-center">
+            <div class="flex flex-col items-center">
+                <!-- Official teeen.space Logo Image -->
+                <img src="teenspace.jpg" alt="teeen.space - Higher Secondary Students Conference" class="h-12 sm:h-14 w-auto object-contain" onerror="this.onerror=null; this.src='teenspace_2.jpg';">
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-2xl mx-auto px-4 sm:px-6 py-10 sm:py-16 w-full flex items-center justify-center">
+        
+        <div id="register-view" class="w-full space-y-8">
+            <div class="text-center space-y-3">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-semibold uppercase tracking-wider">
+                    <i class="fa-solid fa-star text-[10px]"></i> Volunteer Registration 2026
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                    Join The Movement
+                </h1>
+                <p class="text-zinc-400 max-w-md mx-auto text-sm sm:text-base">
+                    Fill in your details below to register as an official volunteer for TeenSpace.
+                </p>
+            </div>
+
+            <div class="bg-zinc-900/90 border border-zinc-800/90 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden glow-pink">
+                <div class="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 bg-pink-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 -mb-12 -ml-12 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <form id="volunteer-form" class="space-y-6 relative z-10" onsubmit="handleRegistration(event)">
+                    
+                    <!-- Full Name -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-zinc-300">
+                            <i class="fa-solid fa-user text-pink-500 mr-2"></i>Full Name <span class="text-pink-500">*</span>
+                        </label>
+                        <input type="text" id="volunteer-name" required placeholder="Enter your full name" 
+                            class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3.5 text-white placeholder-zinc-600 focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all text-sm">
+                    </div>
+
+                    <!-- Mobile Number -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-zinc-300">
+                            <i class="fa-solid fa-phone text-cyan-500 mr-2"></i>Mobile Number <span class="text-pink-500">*</span>
+                        </label>
+                        <input type="tel" id="volunteer-mobile" required pattern="[0-9]{10,}" placeholder="10-digit mobile number" 
+                            class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3.5 text-white placeholder-zinc-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm">
+                    </div>
+
+                    <!-- Zone Selection -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-zinc-300">
+                            <i class="fa-solid fa-map-location-dot text-pink-500 mr-2"></i>Select Zone <span class="text-pink-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <select id="volunteer-zone" required 
+                                class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3.5 text-white appearance-none focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition-all text-sm cursor-pointer capitalize">
+                                <option value="" disabled selected>Choose your zone</option>
+                                <option value="perambra">Perambra</option>
+                                <option value="koyilandi">Koyilandi</option>
+                                <option value="payyoli">Payyoli</option>
+                                <option value="Nadapuram">Nadapuram</option>
+                                <option value="poonoor">Poonoor</option>
+                                <option value="vadakara">Vadakara</option>
+                                <option value="Balushery">Balushery</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-zinc-400">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wing Selection -->
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-zinc-300">
+                            <i class="fa-solid fa-layer-group text-cyan-500 mr-2"></i>Select Wing <span class="text-pink-500">*</span>
+                        </label>
+                        <div class="relative">
+                            <select id="volunteer-wing" required 
+                                class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-3.5 text-white appearance-none focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all text-sm cursor-pointer capitalize">
+                                <option value="" disabled selected>Choose your wing</option>
+                                <option value="students">Students</option>
+                                <option value="Girls">Girls</option>
+                                <option value="Womens">Womens</option>
+                                <option value="youth">Youth</option>
+                                <option value="Organization">Organization</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-zinc-400">
+                                <i class="fa-solid fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="pt-4">
+                        <button type="submit" id="submit-btn" 
+                            class="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-pink-500 via-purple-600 to-cyan-500 shadow-lg hover:shadow-pink-500/25 transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center space-x-2 text-base">
+                            <i class="fa-solid fa-paper-plane"></i>
+                            <span>Complete Registration</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="custom-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden p-4">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 sm:p-8 text-center space-y-4 shadow-2xl relative">
+            <div id="modal-icon" class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 id="modal-title" class="text-xl font-bold text-white">Registration Successful!</h3>
+            <p id="modal-message" class="text-zinc-400 text-sm leading-relaxed">Thank you for registering as a volunteer for TeenSpace. Your details have been successfully saved.</p>
+            <div class="pt-2">
+                <button onclick="closeModal()" class="w-full py-3.5 bg-gradient-to-r from-pink-500 to-cyan-500 text-white font-semibold rounded-xl transition-all text-sm shadow-lg hover:opacity-95">
+                    Register Another Volunteer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="w-full border-t border-zinc-800/80 bg-zinc-950 py-6 text-center text-xs text-zinc-500">
+        <div class="max-w-4xl mx-auto px-4">
+            <p>&copy; 2026 TeenSpace. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAEhqBEPgVycF6QnQAI9_80dy2dfaUkq8Q",
+            authDomain: "roots-55c74.firebaseapp.com",
+            projectId: "roots-55c74",
+            storageBucket: "roots-55c74.firebasestorage.app",
+            messagingSenderId: "666185102473",
+            appId: "1:666185102473:web:143a9bb23aa1a1f1818258"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'teeen-space-volunteers';
+
+        async function initAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Auth error:", error);
+            }
+        }
+
+        window.handleRegistration = async function(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving to Firebase...`;
+
+            const name = document.getElementById('volunteer-name').value.trim();
+            const mobile = document.getElementById('volunteer-mobile').value.trim();
+            const zone = document.getElementById('volunteer-zone').value;
+            const wing = document.getElementById('volunteer-wing').value;
+
+            const newVolunteer = {
+                name,
+                mobile,
+                zone,
+                wing,
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                }
+                const collectionPath = `artifacts/${appId}/public/data/volunteers`;
+                await addDoc(collection(db, collectionPath), newVolunteer);
+
+                document.getElementById('volunteer-form').reset();
+                showModal('Registration Successful!', `Thank you <strong>${escapeHtml(name)}</strong>! You have been successfully registered under the <span class="text-cyan-400 capitalize">${escapeHtml(wing)}</span> wing in <span class="text-pink-400 capitalize">${escapeHtml(zone)}</span> zone.`);
+            } catch (err) {
+                console.error("Error adding document: ", err);
+                showModal('Registration Failed', 'Could not save data to Firebase. Please check your connection or try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane mr-2"></i> Complete Registration`;
+            }
+        };
+
+        window.showModal = function(title, message) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerHTML = message;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        };
+
+        window.closeModal = function() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        };
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        initAuth();
+    </script>
+</body>
+</html>
