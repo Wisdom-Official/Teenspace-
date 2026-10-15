@@ -233,7 +233,7 @@
             e.preventDefault();
             const submitBtn = document.getElementById('submit-btn');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving to Firebase...`;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-2"></i> Saving to Server...`;
 
             const name = document.getElementById('volunteer-name').value.trim();
             const mobile = document.getElementById('volunteer-mobile').value.trim();
@@ -259,7 +259,7 @@
                 showModal('Registration Successful!', `Thank you <strong>${escapeHtml(name)}</strong>! You have been successfully registered under the <span class="text-cyan-400 capitalize">${escapeHtml(wing)}</span> wing in <span class="text-pink-400 capitalize">${escapeHtml(zone)}</span> zone.`);
             } catch (err) {
                 console.error("Error adding document: ", err);
-                showModal('Registration Failed', 'Could not save data to Firebase. Please check your connection or try again.');
+                showModal('Registration Failed', 'Could not save data to Server. Please check your connection or try again.');
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane mr-2"></i> Complete Registration`;
