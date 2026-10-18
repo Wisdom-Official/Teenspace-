@@ -1,0 +1,416 @@
+
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Teenspace 2026 - Registration Desk & Tag Distribution</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            pink: '#EC4899',
+                            pinkDark: '#DB2777',
+                            cyan: '#06B6D4',
+                            cyanDark: '#0891B2',
+                            dark: '#0B0F19',
+                            card: '#1E293B',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0f19;
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .glow-pink {
+            box-shadow: 0 0 20px -3px rgba(236, 72, 153, 0.35);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 20px -3px rgba(6, 182, 212, 0.35);
+        }
+        .glow-emerald {
+            box-shadow: 0 0 20px -3px rgba(16, 185, 129, 0.4);
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white">
+
+    <!-- Header Section -->
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="index.html" class="flex items-center space-x-2">
+                <img src="0_2.png" onerror="this.onerror=null; this.src='0.png';" alt="Teenspace" class="h-8 sm:h-10 w-auto object-contain">
+            </a>
+
+            <div class="flex items-center space-x-2">
+                <a href="https://teen.space/register" target="_blank" class="bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold shadow glow-pink transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>New Registration</span>
+                </a>
+                <a href="volunteer.html" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold border border-slate-700/80 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-shield-halved text-cyan-400"></i>
+                    <span class="hidden sm:inline">Gate Scanner</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-6xl w-full mx-auto px-3 sm:px-6 py-4 sm:py-6 space-y-6">
+
+        <!-- Page Heading & Quick Action Banner -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-panel p-5 rounded-3xl border border-slate-800">
+            <div>
+                <div class="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-[11px] font-bold uppercase mb-1">
+                    <i class="fa-solid fa-clipboard-check"></i> Registration Desk & Tag Counter
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-black text-white">Delegates Verification & Tag Issue</h1>
+                <p class="text-xs sm:text-sm text-slate-400 mt-0.5">Manage arrived buses, verify pre-registrations, and confirm tag distribution.</p>
+            </div>
+
+            <!-- New Spot Registration Quick Link Button -->
+            <a href="https://teen.space/register" target="_blank" class="px-5 py-3.5 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-lg glow-cyan flex items-center justify-center gap-2 transition hover:scale-[1.02]">
+                <i class="fa-solid fa-arrow-up-right-from-square text-sm"></i>
+                <span>Open Teen.space Registration Page</span>
+            </a>
+        </div>
+
+        <!-- Summary Statistics Grid -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="glass-panel p-4 rounded-2xl border-slate-800">
+                <div class="text-slate-400 text-[10px] sm:text-xs font-bold uppercase"><i class="fa-solid fa-bus text-pink-400 mr-1"></i> Arrived at Gate</div>
+                <div id="statArrivedBuses" class="text-xl sm:text-2xl font-black text-white mt-1">0 Buses</div>
+            </div>
+
+            <div class="glass-panel p-4 rounded-2xl border-slate-800 border-amber-500/30 bg-amber-500/5">
+                <div class="text-amber-400 text-[10px] sm:text-xs font-bold uppercase"><i class="fa-solid fa-clock mr-1"></i> Desk Check-in Pending</div>
+                <div id="statPendingDesk" class="text-xl sm:text-2xl font-black text-amber-400 mt-1">0 Buses</div>
+            </div>
+
+            <div class="glass-panel p-4 rounded-2xl border-slate-800 border-emerald-500/30 bg-emerald-500/5">
+                <div class="text-emerald-400 text-[10px] sm:text-xs font-bold uppercase"><i class="fa-solid fa-circle-check mr-1"></i> Completed & Tagged</div>
+                <div id="statCompletedDesk" class="text-xl sm:text-2xl font-black text-emerald-400 mt-1">0 Buses</div>
+            </div>
+
+            <div class="glass-panel p-4 rounded-2xl border-slate-800">
+                <div class="text-slate-400 text-[10px] sm:text-xs font-bold uppercase"><i class="fa-solid fa-users text-cyan-400 mr-1"></i> Total Delegates</div>
+                <div id="statTotalStudents" class="text-xl sm:text-2xl font-black text-cyan-400 mt-1">0 Students</div>
+            </div>
+        </div>
+
+        <!-- Filter and Search Bar -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div class="relative w-full sm:w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-slate-500 text-xs"></i>
+                <input type="text" id="searchInput" oninput="filterBusList()" placeholder="Search Unit / Bus No / Leader..." class="w-full bg-slate-900 border border-slate-800 rounded-xl py-2.5 pl-9 pr-4 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-pink-500 transition-colors">
+            </div>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button onclick="setFilter('all')" id="btnFilterAll" class="flex-1 sm:flex-none px-3 py-2 rounded-xl text-xs font-bold bg-pink-500 text-white transition">All Arrived</button>
+                <button onclick="setFilter('pending')" id="btnFilterPending" class="flex-1 sm:flex-none px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white transition">Pending Tags</button>
+                <button onclick="setFilter('completed')" id="btnFilterCompleted" class="flex-1 sm:flex-none px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white transition">Completed</button>
+            </div>
+        </div>
+
+        <!-- ARRIVED BUSES REGISTRATION CARDS CONTAINER -->
+        <div id="busCardsContainer" class="space-y-4">
+            <!-- Dynamic Content loaded via JS -->
+            <div class="text-center py-12 glass-panel rounded-3xl border border-slate-800">
+                <i class="fa-solid fa-spinner animate-spin text-3xl text-pink-500 mb-3"></i>
+                <p class="text-slate-400 text-sm font-semibold">Loading Arrived Buses Data from Gate...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-4 text-center text-xs text-slate-500">
+        <div class="max-w-6xl mx-auto px-4 flex justify-between items-center text-[11px]">
+            <span class="font-bold text-slate-400">TEENSPACE 2026</span>
+            <span>Desk Registration & Tag Verification</span>
+        </div>
+    </footer>
+
+    <!-- Firebase and Dynamic Functionality Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, doc, updateDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Shared Firebase Configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyAKtP8lffDoHOX2X6fZCadGoHT-gs8i9As",
+          authDomain: "bus-8dd0f.firebaseapp.com",
+          projectId: "bus-8dd0f",
+          storageBucket: "bus-8dd0f.firebasestorage.app",
+          messagingSenderId: "414035681890",
+          appId: "1:414035681890:web:1fde90d3aefc3bc06de73b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let arrivedBuses = [];
+        let currentFilter = 'all';
+
+        // Listen for Real-Time Changes from Firebase
+        window.addEventListener('DOMContentLoaded', () => {
+            listenToArrivedBuses();
+        });
+
+        function listenToArrivedBuses() {
+            onSnapshot(collection(db, 'bus_registrations'), (snapshot) => {
+                const allDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                
+                // Filter only buses that have arrived at the Gate
+                arrivedBuses = allDocs.filter(b => b.arrived === true);
+                
+                updateStats();
+                renderBusCards();
+            });
+        }
+
+        function updateStats() {
+            const totalArrived = arrivedBuses.length;
+            const completed = arrivedBuses.filter(b => b.deskVerified === true && b.tagsIssued === true).length;
+            const pending = totalArrived - completed;
+            const totalStudents = arrivedBuses.reduce((acc, b) => acc + (parseInt(b.passengers) || 0) + (parseInt(b.unregisteredCount) || 0), 0);
+
+            document.getElementById('statArrivedBuses').innerText = `${totalArrived} Buses`;
+            document.getElementById('statPendingDesk').innerText = `${pending} Buses`;
+            document.getElementById('statCompletedDesk').innerText = `${completed} Buses`;
+            document.getElementById('statTotalStudents').innerText = `${totalStudents} Delegates`;
+        }
+
+        window.setFilter = function(filter) {
+            currentFilter = filter;
+            ['All', 'Pending', 'Completed'].forEach(f => {
+                const btn = document.getElementById(`btnFilter${f}`);
+                if (filter.toLowerCase() === f.toLowerCase()) {
+                    btn.className = "flex-1 sm:flex-none px-3 py-2 rounded-xl text-xs font-bold bg-pink-500 text-white transition";
+                } else {
+                    btn.className = "flex-1 sm:flex-none px-3 py-2 rounded-xl text-xs font-bold bg-slate-800 text-slate-400 hover:text-white transition";
+                }
+            });
+            renderBusCards();
+        };
+
+        window.filterBusList = function() {
+            renderBusCards();
+        };
+
+        function renderBusCards() {
+            const container = document.getElementById('busCardsContainer');
+            const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+            let filtered = arrivedBuses.filter(b => {
+                const matchSearch = (b.unitName && b.unitName.toLowerCase().includes(search)) ||
+                                    (b.busNumber && b.busNumber.toLowerCase().includes(search)) ||
+                                    (b.leaderName && b.leaderName.toLowerCase().includes(search));
+                
+                const isCompleted = b.deskVerified === true && b.tagsIssued === true;
+
+                if (currentFilter === 'pending') return matchSearch && !isCompleted;
+                if (currentFilter === 'completed') return matchSearch && isCompleted;
+                return matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 glass-panel rounded-3xl border border-slate-800">
+                        <div class="w-12 h-12 bg-slate-800 text-slate-500 rounded-2xl flex items-center justify-center mx-auto mb-3 text-xl">
+                            <i class="fa-solid fa-bus"></i>
+                        </div>
+                        <h3 class="text-white font-bold text-sm">No Arrived Buses Found</h3>
+                        <p class="text-slate-500 text-xs mt-1">Buses marked as arrived at the gate scanner will automatically appear here.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtered.map(bus => {
+                const isAllRegistered = bus.allPreRegistered !== false; // Default true if not set
+                const tagsIssued = bus.tagsIssued === true;
+                const unregisteredCount = bus.unregisteredCount || 0;
+                const isDeskVerified = bus.deskVerified === true;
+
+                return `
+                    <div class="glass-panel p-5 rounded-3xl border ${isDeskVerified && tagsIssued ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-slate-800'} transition-all">
+                        
+                        <!-- Top Row Info Header -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800/80 gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-2xl bg-pink-500/20 text-pink-400 border border-pink-500/30 flex items-center justify-center text-xl font-black flex-shrink-0">
+                                    <i class="fa-solid fa-bus"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 font-mono">${bus.busNumber || 'NO REG'}</span>
+                                        <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-md bg-slate-800 text-slate-300">#TS-${bus.id.substring(0,6).toUpperCase()}</span>
+                                    </div>
+                                    <h3 class="text-base sm:text-lg font-bold text-white mt-0.5">${bus.unitName || 'Unit / School Name'}</h3>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2">
+                                ${isDeskVerified && tagsIssued ? 
+                                    `<span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-bold flex items-center gap-1">
+                                        <i class="fa-solid fa-circle-check"></i> Registration Completed
+                                     </span>` : 
+                                    `<span class="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-bold flex items-center gap-1">
+                                        <i class="fa-solid fa-clock"></i> Desk Verification Pending
+                                     </span>`
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Leader Info & Passenger Count Row -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-4 text-xs">
+                            <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                                <span class="text-slate-500 block text-[10px] uppercase font-bold">In-Charge Leader</span>
+                                <span class="font-bold text-slate-200 truncate block mt-0.5">${bus.leaderName || 'N/A'}</span>
+                            </div>
+
+                            <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                                <span class="text-slate-500 block text-[10px] uppercase font-bold">Contact Phone</span>
+                                <span class="font-bold text-slate-200 truncate block mt-0.5"><i class="fa-solid fa-phone text-pink-400 mr-1"></i>${bus.phone || 'N/A'}</span>
+                            </div>
+
+                            <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                                <span class="text-slate-500 block text-[10px] uppercase font-bold">Expected Students</span>
+                                <span class="font-bold text-cyan-400 text-sm block mt-0.5">${bus.passengers || 0} Delegates</span>
+                            </div>
+
+                            <div class="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                                <span class="text-slate-500 block text-[10px] uppercase font-bold">Arrived Time</span>
+                                <span class="font-bold text-slate-300 block mt-0.5"><i class="fa-solid fa-clock text-emerald-400 mr-1"></i>${bus.arrivalTime || 'Arrived'}</span>
+                            </div>
+                        </div>
+
+                        <!-- Interactive Desk Action Form -->
+                        <div class="bg-slate-950/80 rounded-2xl p-4 border border-slate-800 space-y-4">
+                            
+                            <div class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center justify-between border-b border-slate-800 pb-2">
+                                <span><i class="fa-solid fa-list-check text-pink-400 mr-1.5"></i> Registration & Tag Checklist</span>
+                                <span class="text-[10px] text-slate-500 font-normal">Check and save status</span>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                                
+                                <!-- Checkbox 1: All Pre-Registered -->
+                                <div class="flex items-start gap-2.5 bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+                                    <input type="checkbox" id="chkReg_${bus.id}" ${isAllRegistered ? 'checked' : ''} onchange="toggleUnregisteredInput('${bus.id}')" class="w-4 h-4 mt-0.5 rounded text-pink-500 focus:ring-pink-500 focus:ring-offset-slate-900">
+                                    <div>
+                                        <label for="chkReg_${bus.id}" class="font-bold text-slate-200 block cursor-pointer">All delegates registered?</label>
+                                        <span class="text-[10px] text-slate-400">All kids in bus pre-registered on site.</span>
+                                    </div>
+                                </div>
+
+                                <!-- Unregistered Input & Redirect Link -->
+                                <div id="unregBox_${bus.id}" class="${isAllRegistered ? 'hidden' : 'block'} bg-slate-900/90 p-3 rounded-xl border border-amber-500/30">
+                                    <label class="block text-[10px] font-bold text-amber-400 uppercase mb-1">Unregistered Kids Count</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="inputUnreg_${bus.id}" value="${unregisteredCount}" min="1" placeholder="Qty" class="w-20 bg-slate-950 border border-slate-700 rounded-lg py-1 px-2 text-white text-xs font-bold focus:outline-none focus:border-amber-400">
+                                        <a href="https://teen.space/register" target="_blank" class="flex-grow text-[10px] font-bold bg-pink-500 hover:bg-pink-600 text-white px-2.5 py-1.5 rounded-lg transition text-center flex items-center justify-center gap-1">
+                                            <span>Register Now</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Checkbox 2: Tags Issued -->
+                                <div class="flex items-start gap-2.5 bg-slate-900/90 p-3 rounded-xl border border-slate-800">
+                                    <input type="checkbox" id="chkTags_${bus.id}" ${tagsIssued ? 'checked' : ''} class="w-4 h-4 mt-0.5 rounded text-emerald-500 focus:ring-emerald-500 focus:ring-offset-slate-900">
+                                    <div>
+                                        <label for="chkTags_${bus.id}" class="font-bold text-slate-200 block cursor-pointer">Tags / Badges Distributed?</label>
+                                        <span class="text-[10px] text-slate-400">Confirmed tag issue for all delegates.</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Save / Update Button -->
+                            <div class="flex justify-end pt-1">
+                                <button onclick="saveBusRegistrationStatus('${bus.id}')" id="btnSave_${bus.id}" class="py-2.5 px-6 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 text-white font-bold rounded-xl shadow glow-emerald transition text-xs flex items-center gap-2">
+                                    <i class="fa-solid fa-floppy-disk"></i>
+                                    <span>Save & Confirm Status</span>
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Toggle visibility of Unregistered Count field
+        window.toggleUnregisteredInput = function(busId) {
+            const chk = document.getElementById(`chkReg_${busId}`);
+            const box = document.getElementById(`unregBox_${busId}`);
+            if (chk.checked) {
+                box.classList.add('hidden');
+            } else {
+                box.classList.remove('hidden');
+            }
+        };
+
+        // Save Bus Registration Desk Verification Status to Firebase
+        window.saveBusRegistrationStatus = async function(busId) {
+            const chkReg = document.getElementById(`chkReg_${busId}`).checked;
+            const chkTags = document.getElementById(`chkTags_${busId}`).checked;
+            const inputUnreg = document.getElementById(`inputUnreg_${busId}`);
+            
+            const btn = document.getElementById(`btnSave_${busId}`);
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Saving...`;
+
+            let unregCount = 0;
+            if (!chkReg && inputUnreg) {
+                unregCount = parseInt(inputUnreg.value) || 0;
+            }
+
+            try {
+                const docRef = doc(db, 'bus_registrations', busId);
+                await updateDoc(docRef, {
+                    allPreRegistered: chkReg,
+                    unregisteredCount: unregCount,
+                    tagsIssued: chkTags,
+                    deskVerified: true
+                });
+
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> Saved Successfully`;
+                setTimeout(() => { btn.innerHTML = originalHTML; }, 2000);
+
+            } catch (err) {
+                console.error("Error updating desk status:", err);
+                alert("Failed to save registration status. Please try again.");
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        };
+
+    </script>
+</body>
+</html>
