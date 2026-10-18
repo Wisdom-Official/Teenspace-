@@ -1,0 +1,527 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teenspace 2026 - Gate Scanner & Parking Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- HTML5 QR Code Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            pink: '#EC4899',
+                            pinkDark: '#DB2777',
+                            cyan: '#06B6D4',
+                            cyanDark: '#0891B2',
+                            dark: '#0F172A',
+                            card: '#1E293B',
+                            lightBg: '#F8FAFC'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0f19;
+            color: #f8fafc;
+        }
+        .glow-pink {
+            box-shadow: 0 0 25px -5px rgba(236, 72, 153, 0.4);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.4);
+        }
+        .glow-emerald {
+            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.4);
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        #reader video {
+            border-radius: 1rem;
+            object-fit: cover;
+        }
+        #reader__dashboard_section_csr button {
+            background-color: #ec4899 !important;
+            color: white !important;
+            padding: 0.5rem 1rem !important;
+            border-radius: 0.5rem !important;
+            font-weight: 600 !important;
+            border: none !important;
+            margin-top: 0.5rem !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white">
+
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center py-1">
+                    <img src="0_2.png" onerror="this.onerror=null; this.src='0.png';" alt="Teenspace Logo" class="h-10 sm:h-12 w-auto object-contain max-w-[200px] sm:max-w-[260px]">
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 text-xs font-bold">
+                    <i class="fa-solid fa-shield-halved text-emerald-400"></i> GATE CONTROL
+                </span>
+                <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 transition flex items-center gap-1">
+                    <i class="fa-solid fa-house text-pink-400"></i> Main Portal
+                </a>
+                <button id="btnLogout" onclick="logoutVolunteer()" class="hidden bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 transition">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <div id="authScreen" class="max-w-md mx-auto my-12 glass-panel p-8 rounded-3xl shadow-2xl border border-slate-800 text-center">
+            <div class="w-16 h-16 bg-pink-500/20 text-pink-400 border border-pink-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <h2 class="text-2xl font-black text-white mb-2">Gate Volunteer Login</h2>
+            <p class="text-slate-400 text-xs mb-6">Enter password to access entry gate scanner & vehicle arrival check-in system.</p>
+
+            <form onsubmit="handleAuth(event)" class="space-y-4">
+                <div class="relative text-left">
+                    <label class="block text-xs font-bold uppercase text-slate-300 mb-2">Access Password</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-key absolute left-4 top-3.5 text-slate-500"></i>
+                        <input type="password" id="passwordInput" required placeholder="Enter password" class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-pink-500 transition-colors">
+                    </div>
+                </div>
+
+                <p id="authError" class="text-rose-400 text-xs font-semibold hidden"><i class="fa-solid fa-circle-exclamation mr-1"></i> Incorrect password. Please try again.</p>
+
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold rounded-xl shadow-lg glow-pink transition-all text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-unlock"></i> Unlock Gate Controller
+                </button>
+            </form>
+        </div>
+
+        <div id="dashboardScreen" class="hidden space-y-6">
+
+            <!-- Summary Stats Header -->
+            <div class="grid grid-cols-3 gap-3 sm:gap-4">
+                <div class="glass-panel p-4 rounded-2xl text-center border-slate-800">
+                    <div class="text-slate-400 text-[10px] sm:text-xs font-extrabold uppercase">Total Registered</div>
+                    <div id="statTotal" class="text-xl sm:text-3xl font-black text-white mt-1">0</div>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl text-center border-emerald-500/30 bg-emerald-500/5">
+                    <div class="text-emerald-400 text-[10px] sm:text-xs font-extrabold uppercase"><i class="fa-solid fa-circle-check"></i> Arrived</div>
+                    <div id="statArrived" class="text-xl sm:text-3xl font-black text-emerald-400 mt-1">0</div>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl text-center border-amber-500/30 bg-amber-500/5">
+                    <div class="text-amber-400 text-[10px] sm:text-xs font-extrabold uppercase"><i class="fa-solid fa-clock"></i> Pending</div>
+                    <div id="statPending" class="text-xl sm:text-3xl font-black text-amber-400 mt-1">0</div>
+                </div>
+            </div>
+
+            <!-- Scanner Control Tabs -->
+            <div class="glass-panel rounded-3xl p-6 shadow-2xl relative border-slate-800">
+                <div class="flex justify-between items-center pb-4 border-b border-slate-800 mb-6">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-qrcode text-pink-500"></i> Gate Check-In & Scanner
+                        </h2>
+                        <p class="text-slate-400 text-xs">Scan the pass on the arriving vehicle windshield or search by pass/vehicle number.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Left: QR Scanner Window -->
+                    <div class="flex flex-col items-center justify-center bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                        <div class="w-full text-center mb-3">
+                            <span class="text-xs font-bold text-slate-300 uppercase tracking-wider"><i class="fa-solid fa-camera mr-1 text-cyan-400"></i> QR Code Scanner</span>
+                        </div>
+                        
+                        <div id="reader" class="w-full max-w-xs overflow-hidden rounded-xl border-2 border-pink-500/40 bg-slate-950"></div>
+                        
+                        <div class="mt-3 flex gap-2">
+                            <button id="btnStartScan" onclick="startScanner()" class="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-camera"></i> Start Camera
+                            </button>
+                            <button id="btnStopScan" onclick="stopScanner()" class="hidden px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs rounded-xl border border-slate-700 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-video-slash"></i> Stop Camera
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Manual Lookup -->
+                    <div class="flex flex-col justify-between bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase text-slate-300 mb-2"><i class="fa-solid fa-magnifying-glass text-pink-400 mr-1"></i> Manual Pass / Vehicle Search</label>
+                            <p class="text-slate-400 text-xs mb-3">Enter Vehicle Reg. Number (e.g., KL-56-A-1234) or Pass ID (e.g., TS-A1B2C3)</p>
+                            <div class="relative">
+                                <input type="text" id="manualSearchInput" placeholder="Enter Vehicle No or Pass ID" class="w-full bg-slate-950 border border-slate-700 rounded-xl py-3.5 px-4 text-white uppercase text-sm font-bold tracking-wider focus:outline-none focus:border-cyan-400">
+                            </div>
+                        </div>
+
+                        <button onclick="performManualSearch()" class="w-full py-3.5 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 text-white font-bold rounded-xl text-sm transition shadow glow-cyan flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-search"></i> Search Vehicle Record
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="resultCard" class="hidden glass-panel rounded-3xl p-6 shadow-2xl border-2 border-slate-700 transition-all">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800 mb-4">
+                    <div class="flex items-center gap-3">
+                        <div id="resVehicleIcon" class="w-12 h-12 rounded-2xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-xl border border-pink-500/30">
+                            <i class="fa-solid fa-bus"></i>
+                        </div>
+                        <div>
+                            <span id="resBadgeType" class="text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30">BUS PERMIT</span>
+                            <h3 id="resTitle" class="text-lg font-black text-white mt-0.5">Koyilandy Sector Unit</h3>
+                        </div>
+                    </div>
+                    <div id="resStatusBadge" class="text-right">
+                        <!-- Dynamic Status -->
+                    </div>
+                </div>
+
+                <!-- Vehicle Details Grid -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6 text-xs">
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block font-semibold mb-0.5">Vehicle Reg. Number</span>
+                        <span id="resVehicleNo" class="text-base font-mono font-black text-cyan-400 uppercase">KL-56-A-1234</span>
+                    </div>
+
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block font-semibold mb-0.5">Pass ID</span>
+                        <span id="resPassId" class="text-base font-mono font-black text-white">#TS-123456</span>
+                    </div>
+
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block font-semibold mb-0.5">Contact Person</span>
+                        <span id="resContact" class="text-sm font-bold text-slate-200">Rahul (9876543210)</span>
+                    </div>
+
+                    <div id="resPassBox" class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block font-semibold mb-0.5">Expected Passengers</span>
+                        <span id="resPassengers" class="text-sm font-bold text-slate-200">50 Students</span>
+                    </div>
+
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block font-semibold mb-0.5">Expected Time / Place</span>
+                        <span id="resExtra" class="text-sm font-bold text-slate-200">08:30 AM</span>
+                    </div>
+
+                    <div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+                        <span class="text-slate-400 block font-semibold mb-0.5">Arrival Timestamp</span>
+                        <span id="resArrivedAt" class="text-sm font-bold text-emerald-400">Not arrived yet</span>
+                    </div>
+                </div>
+
+                <!-- Mark Arrival Action Button -->
+                <div class="flex gap-3">
+                    <button id="btnMarkArrival" onclick="markVehicleArrived()" class="flex-1 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 text-white font-extrabold rounded-xl shadow-lg glow-emerald transition text-base flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-check text-xl"></i>
+                        <span>MARK VEHICLE AS ARRIVED</span>
+                    </button>
+                    <button onclick="hideResultCard()" class="px-5 py-4 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl border border-slate-700 transition text-sm">
+                        Dismiss
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-slate-300">TEENSPACE 2026</span>
+                <span>•</span>
+                <span>Gate Control Volunteer Portal</span>
+            </div>
+            <p>© 2026 Higher Secondary Students Conference</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, doc, updateDoc, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Shared Firebase Configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyAKtP8lffDoHOX2X6fZCadGoHT-gs8i9As",
+          authDomain: "bus-8dd0f.firebaseapp.com",
+          projectId: "bus-8dd0f",
+          storageBucket: "bus-8dd0f.firebasestorage.app",
+          messagingSenderId: "414035681890",
+          appId: "1:414035681890:web:1fde90d3aefc3bc06de73b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const VALID_PASSWORD = "parkingcontroler";
+        let html5QrCode = null;
+        let currentRecord = null;
+        let allBusRecords = [];
+        let allIndivRecords = [];
+
+        // Check LocalStorage Session on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedAuth = localStorage.getItem('teenspace_volunteer_auth');
+            if (savedAuth === 'true') {
+                showDashboard();
+            }
+        });
+
+        // Handle Password Login
+        window.handleAuth = function(e) {
+            e.preventDefault();
+            const pass = document.getElementById('passwordInput').value.trim();
+            const errorEl = document.getElementById('authError');
+
+            if (pass === VALID_PASSWORD) {
+                errorEl.classList.add('hidden');
+                localStorage.setItem('teenspace_volunteer_auth', 'true');
+                showDashboard();
+            } else {
+                errorEl.classList.remove('hidden');
+            }
+        };
+
+        window.logoutVolunteer = function() {
+            localStorage.removeItem('teenspace_volunteer_auth');
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop();
+            }
+            document.getElementById('dashboardScreen').classList.add('hidden');
+            document.getElementById('btnLogout').classList.add('hidden');
+            document.getElementById('authScreen').classList.remove('hidden');
+            document.getElementById('passwordInput').value = '';
+        };
+
+        function showDashboard() {
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('dashboardScreen').classList.remove('hidden');
+            document.getElementById('btnLogout').classList.remove('hidden');
+            
+            // Listen to Firebase Collections in Real-Time
+            listenToData();
+        }
+
+        // Real-Time Listener to sync stats and search cache
+        function listenToData() {
+            // Bus Registrations
+            onSnapshot(collection(db, 'bus_registrations'), (snapshot) => {
+                allBusRecords = snapshot.docs.map(doc => ({ id: doc.id, collectionName: 'bus_registrations', ...doc.data() }));
+                updateStats();
+            });
+
+            // Individual Registrations
+            onSnapshot(collection(db, 'individual_registrations'), (snapshot) => {
+                allIndivRecords = snapshot.docs.map(doc => ({ id: doc.id, collectionName: 'individual_registrations', ...doc.data() }));
+                updateStats();
+            });
+        }
+
+        function updateStats() {
+            const combined = [...allBusRecords, ...allIndivRecords];
+            const total = combined.length;
+            const arrived = combined.filter(r => r.arrived === true).length;
+            const pending = total - arrived;
+
+            document.getElementById('statTotal').innerText = total;
+            document.getElementById('statArrived').innerText = arrived;
+            document.getElementById('statPending').innerText = pending;
+        }
+
+        // QR Code Scanner Control
+        window.startScanner = function() {
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("reader");
+            }
+
+            document.getElementById('btnStartScan').classList.add('hidden');
+            document.getElementById('btnStopScan').classList.remove('hidden');
+
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 220, height: 220 } },
+                (decodedText) => {
+                    // QR Code successfully scanned
+                    handleQrData(decodedText);
+                },
+                (errorMessage) => {
+                    // ignore scan failure frame
+                }
+            ).catch(err => {
+                console.error("Scanner start error:", err);
+                alert("Camera permission denied or camera unavailable.");
+                stopScanner();
+            });
+        };
+
+        window.stopScanner = function() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => {
+                    document.getElementById('btnStartScan').classList.remove('hidden');
+                    document.getElementById('btnStopScan').classList.add('hidden');
+                });
+            } else {
+                document.getElementById('btnStartScan').classList.remove('hidden');
+                document.getElementById('btnStopScan').classList.add('hidden');
+            }
+        };
+
+        function handleQrData(qrText) {
+            // Sample QR string format: TEENSPACE-PERMIT|ID:TS-123456|TYPE:BUS|VEH:KL-56-A-1234
+            let vehicleNo = '';
+            let passId = '';
+
+            if (qrText.includes('TEENSPACE-PERMIT')) {
+                const parts = qrText.split('|');
+                parts.forEach(p => {
+                    if (p.startsWith('ID:')) passId = p.replace('ID:', '').replace('#', '').trim();
+                    if (p.startsWith('VEH:')) vehicleNo = p.replace('VEH:', '').trim();
+                });
+            } else {
+                vehicleNo = qrText.trim();
+            }
+
+            searchAndDisplayRecord(vehicleNo, passId);
+        }
+
+        window.performManualSearch = function() {
+            const query = document.getElementById('manualSearchInput').value.trim();
+            if (!query) {
+                alert("Please enter a Vehicle Number or Pass ID.");
+                return;
+            }
+            searchAndDisplayRecord(query, query);
+        };
+
+        function searchAndDisplayRecord(vehicleNo, passId) {
+            const combined = [...allBusRecords, ...allIndivRecords];
+            
+            const match = combined.find(r => {
+                const matchVeh = r.busNumber === vehicleNo.toUpperCase() || r.vehicleNumber === vehicleNo.toUpperCase();
+                const shortId = 'TS-' + r.id.substring(0, 6).toUpperCase();
+                const matchId = shortId === passId.toUpperCase() || r.id === passId;
+                return matchVeh || matchId;
+            });
+
+            if (!match) {
+                alert(`No record found matching '${vehicleNo || passId}'. Please verify the vehicle permit.`);
+                return;
+            }
+
+            currentRecord = match;
+            renderResultCard(match);
+        }
+
+        function renderResultCard(rec) {
+            const shortId = 'TS-' + rec.id.substring(0, 6).toUpperCase();
+            const isBus = rec.type === 'BUS';
+
+            document.getElementById('resTitle').innerText = isBus ? rec.unitName : rec.name;
+            document.getElementById('resVehicleNo').innerText = isBus ? rec.busNumber : rec.vehicleNumber;
+            document.getElementById('resPassId').innerText = `#${shortId}`;
+            document.getElementById('resContact').innerText = `${rec.leaderName || rec.name} (${rec.phone})`;
+            
+            if (isBus) {
+                document.getElementById('resBadgeType').innerText = "BUS PERMIT";
+                document.getElementById('resBadgeType').className = "text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-pink-500/20 text-pink-400 border border-pink-500/30";
+                document.getElementById('resVehicleIcon').className = "w-12 h-12 rounded-2xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-xl border border-pink-500/30";
+                document.getElementById('resVehicleIcon').innerHTML = `<i class="fa-solid fa-bus"></i>`;
+                document.getElementById('resPassengers').innerText = `${rec.passengers} Delegates`;
+                document.getElementById('resExtra').innerText = `Arrival Time: ${rec.arrivalTime}`;
+            } else {
+                document.getElementById('resBadgeType').innerText = rec.vehicleType || "INDIVIDUAL";
+                document.getElementById('resBadgeType').className = "text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/30";
+                document.getElementById('resVehicleIcon').className = "w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-xl border border-cyan-500/30";
+                document.getElementById('resVehicleIcon').innerHTML = `<i class="fa-solid fa-car"></i>`;
+                document.getElementById('resPassengers').innerText = "N/A";
+                document.getElementById('resExtra').innerText = `Place: ${rec.place}`;
+            }
+
+            // Status Check
+            const btnMark = document.getElementById('btnMarkArrival');
+            const statusBadge = document.getElementById('resStatusBadge');
+            const arrivedAtEl = document.getElementById('resArrivedAt');
+
+            if (rec.arrived) {
+                statusBadge.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-black"><i class="fa-solid fa-circle-check"></i> ARRIVED</span>`;
+                
+                let timeStr = 'Recorded';
+                if (rec.arrivedAt && rec.arrivedAt.toDate) {
+                    timeStr = rec.arrivedAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                }
+                arrivedAtEl.innerText = timeStr;
+                arrivedAtEl.className = "text-sm font-bold text-emerald-400";
+
+                btnMark.disabled = true;
+                btnMark.className = "flex-1 py-4 bg-slate-800 text-slate-500 font-extrabold rounded-xl text-base flex items-center justify-center gap-2 cursor-not-allowed border border-slate-700";
+                btnMark.innerHTML = `<i class="fa-solid fa-check"></i> ALREADY CHECKED IN`;
+            } else {
+                statusBadge.innerHTML = `<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 text-xs font-black"><i class="fa-solid fa-clock"></i> PENDING ENTRY</span>`;
+                arrivedAtEl.innerText = "Not arrived yet";
+                arrivedAtEl.className = "text-sm font-bold text-amber-400";
+
+                btnMark.disabled = false;
+                btnMark.className = "flex-1 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 text-white font-extrabold rounded-xl shadow-lg glow-emerald transition text-base flex items-center justify-center gap-2";
+                btnMark.innerHTML = `<i class="fa-solid fa-circle-check text-xl"></i> <span>MARK VEHICLE AS ARRIVED</span>`;
+            }
+
+            document.getElementById('resultCard').classList.remove('hidden');
+            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        window.markVehicleArrived = async function() {
+            if (!currentRecord) return;
+
+            const btn = document.getElementById('btnMarkArrival');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Updating Firebase...`;
+
+            try {
+                const docRef = doc(db, currentRecord.collectionName, currentRecord.id);
+                await updateDoc(docRef, {
+                    arrived: true,
+                    arrivedAt: serverTimestamp()
+                });
+
+                currentRecord.arrived = true;
+                renderResultCard(currentRecord);
+
+            } catch (err) {
+                console.error("Error updating arrival status: ", err);
+                alert("Failed to update status in Firebase. Please check your internet connection.");
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-circle-check text-xl"></i> <span>MARK VEHICLE AS ARRIVED</span>`;
+            }
+        };
+
+        window.hideResultCard = function() {
+            document.getElementById('resultCard').classList.add('hidden');
+            currentRecord = null;
+        };
+    </script>
+</body>
+</html>
