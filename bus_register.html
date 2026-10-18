@@ -90,6 +90,10 @@
                 <span class="hidden md:inline text-slate-500">|</span>
                 <span class="hidden md:inline text-slate-300"><i class="fa-solid fa-location-dot mr-1 text-cyan-400"></i> Payyoli Peruma Auditorium</span>
             </div>
+            <!-- Link to Gate Scanner Portal -->
+            <a href="volunteer.html" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-semibold transition">
+                <i class="fa-solid fa-shield-halved text-pink-400"></i> Gate Entry
+            </a>
         </div>
     </header>
 
@@ -152,10 +156,10 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Unit *</label>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Unit / School Name *</label>
                         <div class="relative">
                             <i class="fa-solid fa-school absolute left-4 top-3.5 text-slate-500"></i>
-                            <input type="text" id="busUnitName" required placeholder="e.g. Koyilandy Unit" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-pink-500 transition-colors">
+                            <input type="text" id="busUnitName" required placeholder="e.g. Koyilandy Sector Unit" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-pink-500 transition-colors">
                         </div>
                     </div>
 
@@ -353,7 +357,11 @@
                 <span>•</span>
                 <span>Payyoli Peruma Auditorium</span>
             </div>
-            <p>© 2026 Higher Secondary Students Conference. All Rights Reserved.</p>
+            <div class="flex items-center gap-4">
+                <p>© 2026 Higher Secondary Students Conference</p>
+                <span>•</span>
+                <a href="volunteer.html" class="text-pink-400 hover:text-pink-300 font-semibold underline">Gate Control Portal</a>
+            </div>
         </div>
     </footer>
 
@@ -361,7 +369,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // User Provided Firebase Configuration
+        // Firebase Configuration (Synced across both pages)
         const firebaseConfig = {
           apiKey: "AIzaSyAKtP8lffDoHOX2X6fZCadGoHT-gs8i9As",
           authDomain: "bus-8dd0f.firebaseapp.com",
@@ -371,7 +379,6 @@
           appId: "1:414035681890:web:1fde90d3aefc3bc06de73b"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
@@ -418,6 +425,7 @@
                     passengers: parseInt(document.getElementById('busPassengers').value),
                     arrivalTime: document.getElementById('busArrivalTime').value,
                     type: 'BUS',
+                    arrived: false,
                     timestamp: serverTimestamp()
                 };
             } else {
@@ -432,6 +440,7 @@
                     vehicleNumber: document.getElementById('indivVehicleNo').value.toUpperCase(),
                     place: document.getElementById('indivPlace').value,
                     type: 'INDIVIDUAL',
+                    arrived: false,
                     timestamp: serverTimestamp()
                 };
             }
