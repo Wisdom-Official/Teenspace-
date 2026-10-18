@@ -1,0 +1,679 @@
+
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRE - Continuing Religious Education</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts & Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        creBlue: '#1a367c',
+                        creGreen: '#1b9241',
+                        creDark: '#0b132b',
+                        creAccent: '#2563eb'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    animation: {
+                        'float-slow': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2.5s infinite',
+                        'shimmer': 'shimmer 2.5s infinite linear',
+                        'spin-slow': 'spin 12s linear infinite'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-12px)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+                            '50%': { opacity: '0.85', transform: 'scale(1.02)' },
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% 0' },
+                            '100%': { backgroundPosition: '200% 0' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Modern Glassmorphism Card Style */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+        }
+
+        /* Card Hover Depth Effect */
+        .card-hover-effect {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card-hover-effect:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 22px 40px -12px rgba(27, 146, 65, 0.18), 0 12px 25px -8px rgba(26, 54, 124, 0.12);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #1a367c 0%, #1b9241 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Scroll Reveal Animation Classes */
+        .reveal-item {
+            opacity: 0;
+            transform: translateY(35px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: opacity, transform;
+        }
+        .reveal-item.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Center Tag Styling */
+        .center-chip {
+            transition: all 0.25s ease;
+        }
+        .center-chip:hover {
+            transform: translateY(-2px);
+            background-color: #1b9241;
+            color: #ffffff;
+            border-color: #1b9241;
+            box-shadow: 0 4px 12px rgba(27, 146, 65, 0.25);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1b9241;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-creGreen selection:text-white min-h-screen flex flex-col justify-between overflow-x-hidden">
+
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-xl border-b border-slate-200/80 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <img src="cre.jpg" alt="CRE Logo" class="h-12 sm:h-14 w-auto object-contain transition-transform duration-300 group-hover:scale-105">
+            </a>
+
+            <!-- Navigation Links & Organized By Tag -->
+            <div class="flex items-center gap-4 sm:gap-6">
+                <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-600">
+                    <a href="#about" class="hover:text-creGreen transition-colors">About</a>
+                    <a href="#district" class="hover:text-creGreen transition-colors">Leadership</a>
+                    <a href="#mandalams" class="hover:text-creGreen transition-colors">Zones & Centers</a>
+                </div>
+
+                <div class="h-8 w-px bg-slate-200 hidden sm:block"></div>
+
+                <!-- Wisdom Students Logo Header Badge -->
+                <div class="flex items-center gap-2.5 bg-slate-950 px-3.5 py-1.5 rounded-xl shadow-inner border border-slate-800 hover:border-slate-700 transition-colors">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 hidden lg:inline-block">Organized by</span>
+                    <img src="students.jpg" alt="Wisdom Students Logo" class="h-6 sm:h-7 w-auto object-contain">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <section id="about" class="relative pt-10 pb-16 lg:pt-16 lg:pb-24 overflow-hidden bg-gradient-to-b from-slate-100/90 via-white to-slate-50">
+            <!-- Background Radial Glow Orbs -->
+            <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 opacity-20 pointer-events-none">
+                <div class="absolute top-0 left-10 w-96 h-96 bg-creBlue rounded-full blur-[130px]"></div>
+                <div class="absolute bottom-0 right-10 w-96 h-96 bg-creGreen rounded-full blur-[130px]"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                <!-- Badge Tag -->
+                <div class="reveal-item inline-flex items-center gap-2 px-4 py-2 bg-emerald-50 text-creGreen font-bold text-xs sm:text-sm rounded-full border border-emerald-200/80 mb-6 shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-creGreen animate-ping"></span>
+                    Continuous Religious Education Program
+                </div>
+
+                <!-- Featured CRE Logo Showcase -->
+                <div class="reveal-item mb-10">
+                    <div class="inline-block p-6 sm:p-10 bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-200/90 animate-float-slow max-w-md sm:max-w-xl mx-auto relative group">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-creBlue to-creGreen rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
+                        <img src="cre.jpg" alt="CRE Main Emblem" class="relative h-32 sm:h-48 md:h-56 w-auto mx-auto object-contain drop-shadow-md">
+                    </div>
+                </div>
+
+                <!-- Main Heading -->
+                <div class="max-w-3xl mx-auto">
+                    <h1 class="reveal-item text-3xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-6">
+                        Empowering Knowledge & Faith Through <br class="hidden sm:inline">
+                        <span class="gradient-text">Structured Education</span>
+                    </h1>
+                    
+                    <p class="reveal-item text-slate-600 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto mb-8 font-medium">
+                        Explore our 7 Zones (Mandalams) and localized learning centers across the district. Connect with Zone Conveners directly for queries and admissions.
+                    </p>
+
+                    <!-- Quick Navigation Actions -->
+                    <div class="reveal-item flex flex-wrap items-center justify-center gap-4">
+                        <a href="#mandalams" class="inline-flex items-center gap-2.5 bg-creGreen hover:bg-emerald-600 text-white font-bold px-7 py-3.5 rounded-2xl shadow-lg hover:shadow-emerald-900/30 transition-all duration-300 transform active:scale-95">
+                            <i class="fa-solid fa-map-location-dot"></i>
+                            <span>Explore Zones & Centers</span>
+                            <i class="fa-solid fa-arrow-down text-xs ml-1"></i>
+                        </a>
+                        <a href="#district" class="inline-flex items-center gap-2.5 bg-slate-900 hover:bg-creBlue text-white font-bold px-7 py-3.5 rounded-2xl shadow-md transition-all duration-300 transform active:scale-95">
+                            <i class="fa-solid fa-user-shield"></i>
+                            <span>District Convener</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="district" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-20 mb-16">
+            <div class="reveal-item bg-gradient-to-r from-slate-950 via-creBlue to-slate-900 rounded-3xl shadow-2xl p-6 sm:p-10 text-white relative overflow-hidden border border-white/10">
+                <!-- Background Pattern Icon -->
+                <div class="absolute -right-10 -bottom-10 opacity-5 text-9xl text-white pointer-events-none">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                    <div class="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-emerald-400 text-3xl sm:text-4xl border border-white/20 shrink-0 shadow-lg">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/20 text-emerald-300 font-bold text-xs rounded-full border border-emerald-500/30 mb-2">
+                                <i class="fa-solid fa-star text-[10px]"></i> Central Leadership
+                            </div>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">District Convener</h2>
+                            <p class="text-emerald-300 font-bold text-xl sm:text-2xl mt-1 tracking-wide">Adhil</p>
+                        </div>
+                    </div>
+
+                    <!-- Direct Call Button -->
+                    <a href="tel:8075552613" class="w-full sm:w-auto inline-flex items-center justify-center gap-4 bg-creGreen hover:bg-emerald-500 text-white font-bold px-8 py-4 rounded-2xl shadow-xl hover:shadow-emerald-900/50 transition-all duration-300 transform active:scale-95 group">
+                        <div class="w-11 h-11 rounded-xl bg-white/20 flex items-center justify-center group-hover:rotate-12 transition-transform text-white shadow-inner">
+                            <i class="fa-solid fa-phone text-xl"></i>
+                        </div>
+                        <div class="text-left">
+                            <span class="block text-xs text-emerald-100 font-medium uppercase tracking-wider">Tap to Call Directly</span>
+                            <span class="text-lg sm:text-xl font-extrabold tracking-wider">8075552613</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="mandalams" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <!-- Header & Search Controls -->
+            <div class="reveal-item flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-slate-200 pb-8">
+                <div>
+                    <span class="text-creGreen font-bold text-xs uppercase tracking-widest block mb-1">Zone & Center Directory</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                        Zone Conveners & <span class="gradient-text">Centers</span>
+                    </h2>
+                    <p class="text-slate-500 mt-2 text-sm sm:text-base">Click the call button to contact zone conveners or explore sub-centers in each area.</p>
+                </div>
+
+                <!-- Instant Search Box -->
+                <div class="relative w-full md:w-80">
+                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input type="text" id="searchInput" placeholder="Search Zone, Center or Convener..." class="w-full pl-11 pr-4 py-3 bg-white rounded-2xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-creGreen focus:border-transparent shadow-sm text-sm transition-all">
+                </div>
+            </div>
+
+            <!-- Mandalams Grid -->
+            <div id="mandalamsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                
+                <!-- POONOOR ZONE -->
+                <div class="mandalam-card reveal-item glass-card rounded-3xl p-6 shadow-sm border border-slate-200/90 card-hover-effect flex flex-col justify-between" data-search="poonoor nihal 6282397438 kolikkal girls">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 bg-emerald-50 text-creGreen font-bold text-xs rounded-xl uppercase tracking-wider border border-emerald-100">
+                                Zone
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 text-emerald-600 text-xs font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-creGreen animate-ping"></span> Active
+                            </span>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tight">POONOOR</h3>
+                        
+                        <!-- Convener Details -->
+                        <div class="mt-4 flex items-center gap-4 bg-slate-50/90 p-3.5 rounded-2xl border border-slate-100">
+                            <div class="w-12 h-12 rounded-xl bg-creBlue/10 text-creBlue flex items-center justify-center font-bold text-xl shrink-0">
+                                <i class="fa-solid fa-user-gear"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Zone Convener</p>
+                                <p class="text-lg font-extrabold text-slate-800">Nihal</p>
+                            </div>
+                        </div>
+
+                        <!-- Sub Centers Section -->
+                        <div class="mt-5 border-t border-slate-100 pt-4">
+                            <p class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-creGreen"></i> Centers
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="center-chip px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    Poonoor
+                                </span>
+                                <span class="center-chip px-3 py-1.5 bg-pink-50 text-pink-700 text-xs font-bold rounded-xl border border-pink-200">
+                                    Kolikkal (Girls)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Call Button -->
+                    <a href="tel:6282397438" class="mt-6 flex items-center justify-between bg-slate-900 hover:bg-creGreen text-white font-semibold py-3.5 px-5 rounded-2xl transition-all duration-300 group shadow-md hover:shadow-emerald-900/20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-white/10 text-emerald-400 flex items-center justify-center group-hover:bg-white group-hover:text-creGreen transition-all">
+                                <i class="fa-solid fa-phone text-sm"></i>
+                            </div>
+                            <span class="font-bold text-base tracking-wider">62823 97438</span>
+                        </div>
+                        <i class="fa-solid fa-circle-arrow-right text-base text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all"></i>
+                    </a>
+                </div>
+
+                <!-- KOYILANDI ZONE -->
+                <div class="mandalam-card reveal-item glass-card rounded-3xl p-6 shadow-sm border border-slate-200/90 card-hover-effect flex flex-col justify-between" data-search="koyilandi fahad 9072775343 kollam kappad kattilpedika">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 bg-emerald-50 text-creGreen font-bold text-xs rounded-xl uppercase tracking-wider border border-emerald-100">
+                                Zone
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 text-emerald-600 text-xs font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-creGreen animate-ping"></span> Active
+                            </span>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tight">KOYILANDI</h3>
+                        
+                        <div class="mt-4 flex items-center gap-4 bg-slate-50/90 p-3.5 rounded-2xl border border-slate-100">
+                            <div class="w-12 h-12 rounded-xl bg-creBlue/10 text-creBlue flex items-center justify-center font-bold text-xl shrink-0">
+                                <i class="fa-solid fa-user-gear"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Zone Convener</p>
+                                <p class="text-lg font-extrabold text-slate-800">Fahad</p>
+                            </div>
+                        </div>
+
+                        <!-- Sub Centers Section -->
+                        <div class="mt-5 border-t border-slate-100 pt-4">
+                            <p class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-creGreen"></i> Centers
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="center-chip px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    Kollam
+                                </span>
+                                <span class="center-chip px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    Koyilandi
+                                </span>
+                                <span class="center-chip px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    Kappad
+                                </span>
+                                <span class="center-chip px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    Kattilpedika
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="tel:9072775343" class="mt-6 flex items-center justify-between bg-slate-900 hover:bg-creGreen text-white font-semibold py-3.5 px-5 rounded-2xl transition-all duration-300 group shadow-md hover:shadow-emerald-900/20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-white/10 text-emerald-400 flex items-center justify-center group-hover:bg-white group-hover:text-creGreen transition-all">
+                                <i class="fa-solid fa-phone text-sm"></i>
+                            </div>
+                            <span class="font-bold text-base tracking-wider">90727 75343</span>
+                        </div>
+                        <i class="fa-solid fa-circle-arrow-right text-base text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all"></i>
+                    </a>
+                </div>
+
+                <!-- PAYYOLI ZONE -->
+                <div class="mandalam-card reveal-item glass-card rounded-3xl p-6 shadow-sm border border-slate-200/90 card-hover-effect flex flex-col justify-between" data-search="payyoli ahammed 9778514690 thurayoor nandi">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 bg-emerald-50 text-creGreen font-bold text-xs rounded-xl uppercase tracking-wider border border-emerald-100">
+                                Zone
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 text-emerald-600 text-xs font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-creGreen animate-ping"></span> Active
+                            </span>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tight">PAYYOLI</h3>
+                        
+                        <div class="mt-4 flex items-center gap-4 bg-slate-50/90 p-3.5 rounded-2xl border border-slate-100">
+                            <div class="w-12 h-12 rounded-xl bg-creBlue/10 text-creBlue flex items-center justify-center font-bold text-xl shrink-0">
+                                <i class="fa-solid fa-user-gear"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Zone Convener</p>
+                                <p class="text-lg font-extrabold text-slate-800">Ahammed</p>
+                            </div>
+                        </div>
+
+                        <!-- Sub Centers Section -->
+                        <div class="mt-5 border-t border-slate-100 pt-4">
+                            <p class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-creGreen"></i> Centers
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="center-chip px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    Thurayoor
+                                </span>
+                                <span class="center-chip px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    Nandi
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="tel:9778514690" class="mt-6 flex items-center justify-between bg-slate-900 hover:bg-creGreen text-white font-semibold py-3.5 px-5 rounded-2xl transition-all duration-300 group shadow-md hover:shadow-emerald-900/20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-white/10 text-emerald-400 flex items-center justify-center group-hover:bg-white group-hover:text-creGreen transition-all">
+                                <i class="fa-solid fa-phone text-sm"></i>
+                            </div>
+                            <span class="font-bold text-base tracking-wider">97785 14690</span>
+                        </div>
+                        <i class="fa-solid fa-circle-arrow-right text-base text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all"></i>
+                    </a>
+                </div>
+
+                <!-- PERAMBRA ZONE -->
+                <div class="mandalam-card reveal-item glass-card rounded-3xl p-6 shadow-sm border border-slate-200/90 card-hover-effect flex flex-col justify-between" data-search="perambra althaf 9061576521">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 bg-emerald-50 text-creGreen font-bold text-xs rounded-xl uppercase tracking-wider border border-emerald-100">
+                                Zone
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 text-emerald-600 text-xs font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-creGreen animate-ping"></span> Active
+                            </span>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tight">PERAMBRA</h3>
+                        
+                        <div class="mt-4 flex items-center gap-4 bg-slate-50/90 p-3.5 rounded-2xl border border-slate-100">
+                            <div class="w-12 h-12 rounded-xl bg-creBlue/10 text-creBlue flex items-center justify-center font-bold text-xl shrink-0">
+                                <i class="fa-solid fa-user-gear"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Zone Convener</p>
+                                <p class="text-lg font-extrabold text-slate-800">Althaf</p>
+                            </div>
+                        </div>
+
+                        <!-- Sub Centers Section -->
+                        <div class="mt-5 border-t border-slate-100 pt-4">
+                            <p class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-creGreen"></i> Centers
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="center-chip px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    Perambra
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="tel:9061576521" class="mt-6 flex items-center justify-between bg-slate-900 hover:bg-creGreen text-white font-semibold py-3.5 px-5 rounded-2xl transition-all duration-300 group shadow-md hover:shadow-emerald-900/20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-white/10 text-emerald-400 flex items-center justify-center group-hover:bg-white group-hover:text-creGreen transition-all">
+                                <i class="fa-solid fa-phone text-sm"></i>
+                            </div>
+                            <span class="font-bold text-base tracking-wider">90615 76521</span>
+                        </div>
+                        <i class="fa-solid fa-circle-arrow-right text-base text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all"></i>
+                    </a>
+                </div>
+
+                <!-- BALUSSERY ZONE -->
+                <div class="mandalam-card reveal-item glass-card rounded-3xl p-6 shadow-sm border border-slate-200/90 card-hover-effect flex flex-col justify-between" data-search="balussery ahja 7907186259 boys">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 bg-emerald-50 text-creGreen font-bold text-xs rounded-xl uppercase tracking-wider border border-emerald-100">
+                                Zone
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 text-emerald-600 text-xs font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-creGreen animate-ping"></span> Active
+                            </span>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tight">BALUSSERY</h3>
+                        
+                        <div class="mt-4 flex items-center gap-4 bg-slate-50/90 p-3.5 rounded-2xl border border-slate-100">
+                            <div class="w-12 h-12 rounded-xl bg-creBlue/10 text-creBlue flex items-center justify-center font-bold text-xl shrink-0">
+                                <i class="fa-solid fa-user-gear"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Zone Convener</p>
+                                <p class="text-lg font-extrabold text-slate-800">Ahja</p>
+                            </div>
+                        </div>
+
+                        <!-- Sub Centers Section -->
+                        <div class="mt-5 border-t border-slate-100 pt-4">
+                            <p class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-creGreen"></i> Centers
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="center-chip px-3 py-1.5 bg-blue-50 text-blue-700 text-xs font-bold rounded-xl border border-blue-200">
+                                    Balussery (Boys)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="tel:7907186259" class="mt-6 flex items-center justify-between bg-slate-900 hover:bg-creGreen text-white font-semibold py-3.5 px-5 rounded-2xl transition-all duration-300 group shadow-md hover:shadow-emerald-900/20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-white/10 text-emerald-400 flex items-center justify-center group-hover:bg-white group-hover:text-creGreen transition-all">
+                                <i class="fa-solid fa-phone text-sm"></i>
+                            </div>
+                            <span class="font-bold text-base tracking-wider">79071 86259</span>
+                        </div>
+                        <i class="fa-solid fa-circle-arrow-right text-base text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all"></i>
+                    </a>
+                </div>
+
+                <!-- VADAKARA ZONE -->
+                <div class="mandalam-card reveal-item glass-card rounded-3xl p-6 shadow-sm border border-slate-200/90 card-hover-effect flex flex-col justify-between" data-search="vadakara zain 9072481059">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 bg-emerald-50 text-creGreen font-bold text-xs rounded-xl uppercase tracking-wider border border-emerald-100">
+                                Zone
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 text-emerald-600 text-xs font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-creGreen animate-ping"></span> Active
+                            </span>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tight">VADAKARA</h3>
+                        
+                        <div class="mt-4 flex items-center gap-4 bg-slate-50/90 p-3.5 rounded-2xl border border-slate-100">
+                            <div class="w-12 h-12 rounded-xl bg-creBlue/10 text-creBlue flex items-center justify-center font-bold text-xl shrink-0">
+                                <i class="fa-solid fa-user-gear"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Zone Convener</p>
+                                <p class="text-lg font-extrabold text-slate-800">Zain</p>
+                            </div>
+                        </div>
+
+                        <!-- Sub Centers Section -->
+                        <div class="mt-5 border-t border-slate-100 pt-4">
+                            <p class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-creGreen"></i> Centers
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="center-chip px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    Vadakara Main
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="tel:9072481059" class="mt-6 flex items-center justify-between bg-slate-900 hover:bg-creGreen text-white font-semibold py-3.5 px-5 rounded-2xl transition-all duration-300 group shadow-md hover:shadow-emerald-900/20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-white/10 text-emerald-400 flex items-center justify-center group-hover:bg-white group-hover:text-creGreen transition-all">
+                                <i class="fa-solid fa-phone text-sm"></i>
+                            </div>
+                            <span class="font-bold text-base tracking-wider">90724 81059</span>
+                        </div>
+                        <i class="fa-solid fa-circle-arrow-right text-base text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all"></i>
+                    </a>
+                </div>
+
+                <!-- NADAPURAM ZONE -->
+                <div class="mandalam-card reveal-item glass-card rounded-3xl p-6 shadow-sm border border-slate-200/90 card-hover-effect flex flex-col justify-between md:col-span-2 lg:col-span-1" data-search="nadapuram zayid 7306982764">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="px-3 py-1 bg-emerald-50 text-creGreen font-bold text-xs rounded-xl uppercase tracking-wider border border-emerald-100">
+                                Zone
+                            </span>
+                            <span class="inline-flex items-center gap-1.5 text-emerald-600 text-xs font-semibold">
+                                <span class="w-2 h-2 rounded-full bg-creGreen animate-ping"></span> Active
+                            </span>
+                        </div>
+                        <h3 class="text-2xl font-black text-slate-900 tracking-tight">NADAPURAM</h3>
+                        
+                        <div class="mt-4 flex items-center gap-4 bg-slate-50/90 p-3.5 rounded-2xl border border-slate-100">
+                            <div class="w-12 h-12 rounded-xl bg-creBlue/10 text-creBlue flex items-center justify-center font-bold text-xl shrink-0">
+                                <i class="fa-solid fa-user-gear"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Zone Convener</p>
+                                <p class="text-lg font-extrabold text-slate-800">Zayid</p>
+                            </div>
+                        </div>
+
+                        <!-- Sub Centers Section -->
+                        <div class="mt-5 border-t border-slate-100 pt-4">
+                            <p class="text-xs font-extrabold text-slate-500 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                                <i class="fa-solid fa-location-dot text-creGreen"></i> Centers
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="center-chip px-3 py-1.5 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl border border-slate-200">
+                                    Nadapuram Main
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="tel:7306982764" class="mt-6 flex items-center justify-between bg-slate-900 hover:bg-creGreen text-white font-semibold py-3.5 px-5 rounded-2xl transition-all duration-300 group shadow-md hover:shadow-emerald-900/20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-white/10 text-emerald-400 flex items-center justify-center group-hover:bg-white group-hover:text-creGreen transition-all">
+                                <i class="fa-solid fa-phone text-sm"></i>
+                            </div>
+                            <span class="font-bold text-base tracking-wider">73069 82764</span>
+                        </div>
+                        <i class="fa-solid fa-circle-arrow-right text-base text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-all"></i>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Empty Search State -->
+            <div id="noResults" class="hidden text-center py-16">
+                <i class="fa-solid fa-magnifying-glass-minus text-4xl text-slate-300 mb-3"></i>
+                <p class="text-slate-500 font-medium">No Zone, Center, or Convener found matching your search.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-950 text-white border-t border-slate-800/80 py-12 relative overflow-hidden mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-8 pb-8 border-b border-slate-800/80">
+                <!-- Footer Brand Logos -->
+                <div class="flex flex-wrap items-center justify-center md:justify-start gap-6">
+                    <img src="cre.jpg" alt="CRE Footer Logo" class="h-10 w-auto object-contain bg-white rounded-lg p-1.5 shadow-sm">
+                    <div class="h-6 w-px bg-slate-800 hidden sm:block"></div>
+                    <div class="bg-slate-900 px-3.5 py-1.5 rounded-xl border border-slate-800 flex items-center gap-2">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Organized by</span>
+                        <img src="students.jpg" alt="Wisdom Students Logo" class="h-6 w-auto object-contain">
+                    </div>
+                </div>
+
+                <p class="text-slate-400 text-sm font-medium text-center md:text-right">
+                    Continuous Religious Education &bull; Wisdom Students Initiative
+                </p>
+            </div>
+
+            <div class="pt-8 text-center text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p>&copy; CRE Program. All rights reserved.</p>
+                <p class="text-slate-500">Designed with modern responsive standards & micro-interactions.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Intersection Observer for Smooth Scroll Reveal Animation
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.12
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            const revealElements = document.querySelectorAll('.reveal-item');
+            revealElements.forEach(el => observer.observe(el));
+
+            // Instant Live Search Filter for Zones, Conveners, and Sub-Centers
+            const searchInput = document.getElementById('searchInput');
+            const mandalamCards = document.querySelectorAll('.mandalam-card');
+            const noResults = document.getElementById('noResults');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase().trim();
+                    let visibleCount = 0;
+
+                    mandalamCards.forEach(card => {
+                        const searchData = card.getAttribute('data-search') || '';
+                        if (searchData.toLowerCase().includes(query)) {
+                            card.style.display = 'flex';
+                            visibleCount++;
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+
+                    if (visibleCount === 0) {
+                        noResults.classList.remove('hidden');
+                    } else {
+                        noResults.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
