@@ -1,0 +1,556 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teenspace 2026 - Vehicle & Bus Registration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- QRCode library for generating dynamic QR pass codes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <!-- html2canvas library for downloading pass as Image -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            pink: '#EC4899',
+                            pinkDark: '#DB2777',
+                            cyan: '#06B6D4',
+                            cyanDark: '#0891B2',
+                            dark: '#0F172A',
+                            card: '#1E293B',
+                            lightBg: '#F8FAFC'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0f19;
+            color: #f8fafc;
+        }
+        .glow-pink {
+            box-shadow: 0 0 25px -5px rgba(236, 72, 153, 0.4);
+        }
+        .glow-cyan {
+            box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.4);
+        }
+        .tab-active-pink {
+            background: linear-gradient(135deg, #EC4899, #DB2777);
+            color: white;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+        }
+        .tab-active-cyan {
+            background: linear-gradient(135deg, #06B6D4, #0891B2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white">
+
+    <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+            <!-- Logo area mimicking the uploaded Teenspace logo design -->
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-1.5 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-700/50">
+                    <div class="w-7 h-7 bg-pink-500 rounded-lg flex items-center justify-center font-black text-white text-lg shadow-sm">
+                        <i class="fa-solid font-bold">t</i>
+                    </div>
+                    <div class="w-7 h-7 bg-cyan-500 rounded-lg flex items-center justify-center font-black text-white text-lg shadow-sm">
+                        <i class="fa-solid font-bold">p</i>
+                    </div>
+                    <div class="hidden sm:flex flex-col ml-1">
+                        <span class="text-xl font-extrabold tracking-tight text-white leading-none">teenspace</span>
+                        <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold mt-0.5">Higher Secondary Students Conference</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Details Pill -->
+            <div class="flex items-center space-x-2 bg-slate-800/60 border border-slate-700/60 px-3.5 py-1.5 rounded-full text-xs font-medium text-slate-300">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span class="text-white font-semibold"><i class="fa-regular fa-calendar-check mr-1 text-pink-400"></i> Oct 21</span>
+                <span class="hidden md:inline text-slate-500">|</span>
+                <span class="hidden md:inline text-slate-300"><i class="fa-solid fa-location-dot mr-1 text-cyan-400"></i> Payyoli Peruma Auditorium</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Hero Section -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-semibold mb-3">
+                <i class="fa-solid fa-square-parking"></i> Official Event Parking Portal
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight mb-3">
+                TEENSPACE <span class="bg-gradient-to-r from-pink-500 to-cyan-400 bg-clip-text text-transparent">PARKING PERMIT</span>
+            </h1>
+            <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
+                Higher Secondary Students Conference • Payyoli Peruma Auditorium
+            </p>
+        </div>
+
+        <!-- CRITICAL WARNING NOTICE -->
+        <div class="mb-8 rounded-2xl bg-amber-500/10 border-2 border-amber-500/40 p-4 sm:p-5 relative overflow-hidden backdrop-blur-sm">
+            <div class="flex items-start space-x-4">
+                <div class="p-3 bg-amber-500/20 text-amber-400 rounded-xl text-xl flex-shrink-0">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <h3 class="text-amber-300 font-bold text-base sm:text-lg flex items-center gap-2">
+                        IMPORTANT PARKING ANNOUNCEMENT
+                    </h3>
+                    <p class="text-amber-200/90 text-sm mt-1 leading-relaxed">
+                        Parking space at <strong>Payyoli Peruma Auditorium</strong> is strictly limited. <strong class="text-white underline decoration-amber-400">Only pre-registered vehicles with a valid pass will be allowed into the parking zone.</strong> Vehicles without prior registration will NOT be granted entry to the parking ground under any circumstances.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-center mb-8">
+            <div class="bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 flex w-full max-w-md shadow-inner">
+                <button id="tabBus" onclick="switchTab('bus')" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center justify-center space-x-2 tab-active-pink">
+                    <i class="fa-solid fa-bus text-lg"></i>
+                    <span>Bus Registration</span>
+                </button>
+                <button id="tabIndividual" onclick="switchTab('individual')" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm sm:text-base text-slate-400 hover:text-white transition-all duration-300 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-car text-lg"></i>
+                    <span>Individual Vehicle</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-3xl p-6 sm:p-8 shadow-2xl relative">
+            
+            <!-- BUS REGISTRATION FORM -->
+            <form id="busForm" onsubmit="handleRegistration(event, 'bus')" class="space-y-6">
+                <div class="border-b border-slate-800 pb-4 mb-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-bus-simple text-pink-500"></i> Group / Unit Bus Permit
+                    </h2>
+                    <p class="text-slate-400 text-xs sm:text-sm">Register buses carrying student delegates to secure a designated bus slot.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Unit / School Name *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-school absolute left-4 top-3.5 text-slate-500"></i>
+                            <input type="text" id="busUnitName" required placeholder="e.g. Koyilandy Sector Unit" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-pink-500 transition-colors">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Bus Registration Number *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-id-card absolute left-4 top-3.5 text-slate-500"></i>
+                            <input type="text" id="busNumber" required placeholder="e.g. KL-56-A-1234" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-pink-500 transition-colors uppercase">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">In-Charge Contact Person *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user-gear absolute left-4 top-3.5 text-slate-500"></i>
+                            <input type="text" id="busLeaderName" required placeholder="Coordinator / Leader Name" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-pink-500 transition-colors">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Phone Number *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-phone absolute left-4 top-3.5 text-slate-500"></i>
+                            <input type="tel" id="busPhone" required pattern="[0-9]{10}" placeholder="10-digit Mobile Number" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-pink-500 transition-colors">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Expected Student Count *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-users absolute left-4 top-3.5 text-slate-500"></i>
+                            <input type="number" id="busPassengers" min="1" required placeholder="e.g. 50" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-pink-500 transition-colors">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Estimated Arrival Time *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-clock absolute left-4 top-3.5 text-slate-500"></i>
+                            <input type="time" id="busArrivalTime" required class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-pink-500 transition-colors">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="btnSubmitBus" class="w-full py-4 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold rounded-xl shadow-lg glow-pink transition-all duration-300 flex items-center justify-center space-x-2 text-base">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Register Bus Parking Slot</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- INDIVIDUAL VEHICLE REGISTRATION FORM -->
+            <form id="individualForm" onsubmit="handleRegistration(event, 'individual')" class="space-y-6 hidden">
+                <div class="border-b border-slate-800 pb-4 mb-4">
+                    <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-car text-cyan-400"></i> Individual / Personal Vehicle Permit
+                    </h2>
+                    <p class="text-slate-400 text-xs sm:text-sm">For delegates arriving in private cars, two-wheelers, or light motor vehicles.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Full Name *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-user absolute left-4 top-3.5 text-slate-500"></i>
+                            <input type="text" id="indivName" required placeholder="Your full name" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-cyan-400 transition-colors">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Phone Number *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-phone absolute left-4 top-3.5 text-slate-500"></i>
+                            <input type="tel" id="indivPhone" required pattern="[0-9]{10}" placeholder="10-digit Mobile Number" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-cyan-400 transition-colors">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Vehicle Type *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-car-side absolute left-4 top-3.5 text-slate-500"></i>
+                            <select id="indivVehicleType" required class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-cyan-400 transition-colors appearance-none">
+                                <option value="">Select vehicle type</option>
+                                <option value="Car / SUV">Car / SUV</option>
+                                <option value="Two Wheeler (Bike/Scooter)">Two Wheeler (Bike/Scooter)</option>
+                                <option value="Traveller / Mini Bus">Traveller / Mini Bus</option>
+                                <option value="Auto Rickshaw">Auto Rickshaw</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Vehicle Registration Number *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-rectangle-list absolute left-4 top-3.5 text-slate-500"></i>
+                            <input type="text" id="indivVehicleNo" required placeholder="e.g. KL-11-BH-9999" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-cyan-400 transition-colors uppercase">
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold uppercase text-slate-300 mb-2">Place / Area Name *</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-location-dot absolute left-4 top-3.5 text-slate-500"></i>
+                            <input type="text" id="indivPlace" required placeholder="e.g. Vatakara / Quilandy / Calicut" class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl py-3 pl-11 pr-4 text-white text-sm focus:outline-none focus:border-cyan-400 transition-colors">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="btnSubmitIndiv" class="w-full py-4 bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-white font-bold rounded-xl shadow-lg glow-cyan transition-all duration-300 flex items-center justify-center space-x-2 text-base">
+                        <i class="fa-solid fa-parking"></i>
+                        <span>Reserve Individual Parking Spot</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- SUCCESS MODAL WITH PRINTABLE PERMIT STICKER -->
+        <div id="successModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden overflow-y-auto">
+            <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-center relative my-8">
+                
+                <div class="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto mb-3 text-2xl">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+
+                <h3 class="text-2xl font-black text-white mb-1">Registration Successful!</h3>
+                <p class="text-slate-400 text-xs mb-5">Please download & print this official parking pass sticker to place on your vehicle windshield.</p>
+
+                <!-- PRINTABLE STICKER PASS CARD (CAPTURED FOR IMAGE DOWNLOAD) -->
+                <div id="passSticker" class="bg-slate-950 border-2 border-slate-700 rounded-2xl p-5 text-left text-white shadow-2xl relative overflow-hidden mb-6">
+                    <!-- Decorative Background Accent Bar -->
+                    <div id="stickerHeaderBar" class="h-2.5 -mx-5 -mt-5 mb-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400"></div>
+
+                    <!-- Logo & Event Details Header -->
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                        <div class="flex items-center space-x-1.5">
+                            <div class="w-7 h-7 bg-pink-500 rounded-lg flex items-center justify-center font-black text-white text-base shadow-sm">
+                                <span class="font-bold">t</span>
+                            </div>
+                            <div class="w-7 h-7 bg-cyan-500 rounded-lg flex items-center justify-center font-black text-white text-base shadow-sm">
+                                <span class="font-bold">p</span>
+                            </div>
+                            <div class="ml-1">
+                                <div class="text-base font-extrabold tracking-tight text-white leading-none">teenspace</div>
+                                <div class="text-[8px] uppercase tracking-wider text-slate-400 font-semibold mt-0.5">Parking Permit</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-[10px] font-bold text-pink-400 uppercase tracking-widest">Oct 21, 2026</div>
+                            <div class="text-[9px] text-slate-400">Payyoli Peruma Auditorium</div>
+                        </div>
+                    </div>
+
+                    <!-- Pass Details + QR Code Layout -->
+                    <div class="grid grid-cols-3 gap-3 pt-3 items-center">
+                        <div class="col-span-2 space-y-1.5 text-xs">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block uppercase font-semibold">Pass ID</span>
+                                <span id="stickerPassId" class="font-mono text-base font-black text-white tracking-wider">#TS-0000</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 block uppercase font-semibold" id="stickerLabel1">Vehicle No</span>
+                                <span id="stickerVal1" class="font-mono text-sm font-bold text-cyan-400">KL-00-XX-0000</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 block uppercase font-semibold" id="stickerLabel2">Unit / Name</span>
+                                <span id="stickerVal2" class="font-semibold text-slate-200">Sample Name</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 block uppercase font-semibold">Contact</span>
+                                <span id="stickerVal3" class="text-slate-300">0000000000</span>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic QR Code Container -->
+                        <div class="flex flex-col items-center justify-center bg-white p-2 rounded-xl text-slate-900 text-center shadow-inner">
+                            <div id="qrcode" class="flex justify-center mb-1"></div>
+                            <span class="text-[8px] font-bold uppercase tracking-tighter text-slate-700">Scan at Entry</span>
+                        </div>
+                    </div>
+
+                    <!-- Windshield Instruction Banner -->
+                    <div class="mt-4 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[9px] text-slate-400">
+                        <span><i class="fa-solid fa-paste text-pink-400 mr-1"></i> Display on Vehicle Windshield / Glass</span>
+                        <span class="font-bold text-emerald-400"><i class="fa-solid fa-shield-check"></i> VERIFIED PASS</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <button onclick="downloadPassAsImage()" id="btnDownloadImg" class="py-3 px-4 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-lg flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-download"></i> Download Sticker Image
+                    </button>
+                    <button onclick="window.print()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-xs sm:text-sm transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-print"></i> Print Permit Pass
+                    </button>
+                </div>
+
+                <button onclick="closeModal()" class="w-full mt-3 py-2.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white font-semibold rounded-xl text-xs transition-colors">
+                    Close Window
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="border-t border-slate-800/80 bg-slate-950 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center space-x-2">
+                <span class="font-bold text-slate-300">TEENSPACE 2026</span>
+                <span>•</span>
+                <span>Payyoli Peruma Auditorium</span>
+            </div>
+            <p>© 2026 Higher Secondary Students Conference. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // User Provided Firebase Configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyAKtP8lffDoHOX2X6fZCadGoHT-gs8i9As",
+          authDomain: "bus-8dd0f.firebaseapp.com",
+          projectId: "bus-8dd0f",
+          storageBucket: "bus-8dd0f.firebasestorage.app",
+          messagingSenderId: "414035681890",
+          appId: "1:414035681890:web:1fde90d3aefc3bc06de73b"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Tab Switching Logic
+        window.switchTab = function(type) {
+            const tabBus = document.getElementById('tabBus');
+            const tabIndiv = document.getElementById('tabIndividual');
+            const formBus = document.getElementById('busForm');
+            const formIndiv = document.getElementById('individualForm');
+
+            if (type === 'bus') {
+                tabBus.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center justify-center space-x-2 tab-active-pink";
+                tabIndiv.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm sm:text-base text-slate-400 hover:text-white transition-all duration-300 flex items-center justify-center space-x-2";
+                formBus.classList.remove('hidden');
+                formIndiv.classList.add('hidden');
+            } else {
+                tabIndiv.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center justify-center space-x-2 tab-active-cyan";
+                tabBus.className = "flex-1 py-3 px-4 rounded-xl font-bold text-sm sm:text-base text-slate-400 hover:text-white transition-all duration-300 flex items-center justify-center space-x-2";
+                formIndiv.classList.remove('hidden');
+                formBus.classList.add('hidden');
+            }
+        };
+
+        // Registration Submission Handler
+        window.handleRegistration = async function(e, type) {
+            e.preventDefault();
+            
+            const btnBus = document.getElementById('btnSubmitBus');
+            const btnIndiv = document.getElementById('btnSubmitIndiv');
+            
+            let data = {};
+            let collectionName = '';
+
+            if (type === 'bus') {
+                btnBus.disabled = true;
+                btnBus.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Processing...`;
+                
+                collectionName = 'bus_registrations';
+                data = {
+                    unitName: document.getElementById('busUnitName').value,
+                    busNumber: document.getElementById('busNumber').value.toUpperCase(),
+                    leaderName: document.getElementById('busLeaderName').value,
+                    phone: document.getElementById('busPhone').value,
+                    passengers: parseInt(document.getElementById('busPassengers').value),
+                    arrivalTime: document.getElementById('busArrivalTime').value,
+                    type: 'BUS',
+                    timestamp: serverTimestamp()
+                };
+            } else {
+                btnIndiv.disabled = true;
+                btnIndiv.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Processing...`;
+
+                collectionName = 'individual_registrations';
+                data = {
+                    name: document.getElementById('indivName').value,
+                    phone: document.getElementById('indivPhone').value,
+                    vehicleType: document.getElementById('indivVehicleType').value,
+                    vehicleNumber: document.getElementById('indivVehicleNo').value.toUpperCase(),
+                    place: document.getElementById('indivPlace').value,
+                    type: 'INDIVIDUAL',
+                    timestamp: serverTimestamp()
+                };
+            }
+
+            try {
+                // Submit to Firestore
+                const docRef = await addDoc(collection(db, collectionName), data);
+                
+                // Show Digital Slip Modal
+                showPassModal(type, data, docRef.id);
+                
+                // Reset Forms
+                document.getElementById('busForm').reset();
+                document.getElementById('individualForm').reset();
+
+            } catch (error) {
+                console.error("Error submitting registration: ", error);
+                alert("Failed to submit registration. Please try again or check network connection.");
+            } finally {
+                btnBus.disabled = false;
+                btnBus.innerHTML = `<i class="fa-solid fa-circle-check"></i> Register Bus Parking Slot`;
+                btnIndiv.disabled = false;
+                btnIndiv.innerHTML = `<i class="fa-solid fa-parking"></i> Reserve Individual Parking Spot`;
+            }
+        };
+
+        function showPassModal(type, data, passId) {
+            const shortId = 'TS-' + passId.substring(0, 6).toUpperCase();
+            
+            // Populate Sticker Details
+            document.getElementById('stickerPassId').innerText = `#${shortId}`;
+            
+            if(type === 'bus') {
+                document.getElementById('stickerHeaderBar').className = "h-2.5 -mx-5 -mt-5 mb-4 bg-gradient-to-r from-pink-500 via-purple-500 to-pink-600";
+                document.getElementById('stickerLabel1').innerText = "Bus Reg. Number";
+                document.getElementById('stickerVal1').innerText = data.busNumber;
+                document.getElementById('stickerVal1').className = "font-mono text-sm font-bold text-pink-400";
+                
+                document.getElementById('stickerLabel2').innerText = "Unit / School";
+                document.getElementById('stickerVal2').innerText = data.unitName;
+                
+                document.getElementById('stickerVal3').innerText = `${data.leaderName} (${data.phone})`;
+            } else {
+                document.getElementById('stickerHeaderBar').className = "h-2.5 -mx-5 -mt-5 mb-4 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600";
+                document.getElementById('stickerLabel1').innerText = "Vehicle Reg. Number";
+                document.getElementById('stickerVal1').innerText = data.vehicleNumber;
+                document.getElementById('stickerVal1').className = "font-mono text-sm font-bold text-cyan-400";
+                
+                document.getElementById('stickerLabel2').innerText = "Driver / Delegate";
+                document.getElementById('stickerVal2').innerText = `${data.name} (${data.vehicleType})`;
+                
+                document.getElementById('stickerVal3').innerText = `${data.place} • ${data.phone}`;
+            }
+
+            // Generate QR Code
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = ''; // clear previous QR
+            
+            new QRCode(qrContainer, {
+                text: `TEENSPACE-PERMIT|ID:${shortId}|TYPE:${data.type}|VEH:${data.busNumber || data.vehicleNumber}`,
+                width: 70,
+                height: 70,
+                colorDark : "#000000",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
+            document.getElementById('successModal').classList.remove('hidden');
+        }
+
+        // Function to Download the Pass Card as PNG Image
+        window.downloadPassAsImage = function() {
+            const stickerElement = document.getElementById('passSticker');
+            const btn = document.getElementById('btnDownloadImg');
+            const originalText = btn.innerHTML;
+            
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Generating Image...`;
+            btn.disabled = true;
+
+            html2canvas(stickerElement, {
+                backgroundColor: '#020617',
+                scale: 2 // High Resolution output
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `TEENSPACE_PARKING_PASS_${Date.now()}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }).catch(err => {
+                console.error("Error generating image pass:", err);
+                alert("Failed to download image. You can use the Print button instead.");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        };
+
+        window.closeModal = function() {
+            document.getElementById('successModal').classList.add('hidden');
+        };
+    </script>
+</body>
+</html>
