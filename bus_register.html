@@ -73,16 +73,17 @@
                 visibility: visible !important;
             }
             #successModal {
-                position: absolute !important;
+                position: fixed !important;
                 left: 0 !important;
                 top: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
+                width: 100vw !important;
+                height: 100vh !important;
                 background: white !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: center !important;
                 padding: 0 !important;
+                margin: 0 !important;
             }
             .modal-content-box {
                 border: none !important;
@@ -90,24 +91,48 @@
                 background: white !important;
                 color: black !important;
                 width: 100% !important;
+                height: 100% !important;
                 max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
             }
             .no-print {
                 display: none !important;
             }
             #passSticker {
-                width: 180mm !important;
-                margin: 20mm auto !important;
-                border: 2px dashed #000 !important;
+                width: 100% !important;
+                height: 95vh !important;
+                margin: 0 auto !important;
+                border: 4px solid #000 !important;
                 box-shadow: none !important;
                 background-color: #0b0f19 !important;
                 color: white !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                padding: 2.5rem !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
+            #passSticker img {
+                height: 80px !important;
+            }
+            #stickerPassId {
+                font-size: 2.5rem !important;
+            }
+            #stickerVal1 {
+                font-size: 3.5rem !important;
+            }
+            #qrcode {
+                transform: scale(1.6);
+                margin: 20px 0;
+            }
             @page {
                 size: A4 portrait;
-                margin: 10mm;
+                margin: 0;
             }
         }
     </style>
@@ -116,28 +141,11 @@
 
     <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-            <!-- Official Teenspace Logo matching attachment -->
+            <!-- Official Teenspace Logo Image -->
             <div class="flex items-center space-x-3">
-                <div class="flex items-center space-x-2 py-1">
-                    <!-- SVG Logo Icon reproducing the attached logo design -->
-                    <svg class="h-8 sm:h-10 w-auto" viewBox="0 0 240 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <!-- Lowercase 't' accent -->
-                        <text x="5" y="48" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="40" opacity="0.15">t</text>
-                        <!-- Pink Icon Badge -->
-                        <g transform="translate(32, 10)">
-                            <rect x="0" y="0" width="30" height="34" rx="6" fill="#EC4899"/>
-                            <path d="M 6 22 Q 15 28 24 16 L 24 22 Q 15 32 6 22 Z" fill="#ffffff"/>
-                        </g>
-                        <!-- Cyan Icon Badge -->
-                        <g transform="translate(68, 10)">
-                            <rect x="0" y="0" width="30" height="34" rx="6" fill="#06B6D4"/>
-                            <path d="M 6 22 Q 15 28 24 16 L 24 22 Q 15 32 6 22 Z" fill="#ffffff"/>
-                        </g>
-                        <!-- 'eenspace' text -->
-                        <text x="104" y="44" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="34" letter-spacing="-1">eenspace</text>
-                        <!-- Subtitle Tagline -->
-                        <text x="5" y="64" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="11" letter-spacing="0.5">Higher Secondary Students Conference</text>
-                    </svg>
+                <div class="flex items-center py-1">
+                    <!-- Image Tag as requested using provided image file -->
+                    <img src="0.png" onerror="this.onerror=null; this.src='0.png';" alt="Teenspace Logo" class="h-10 sm:h-12 w-auto object-contain max-w-[220px] sm:max-w-[280px]">
                 </div>
             </div>
 
@@ -352,58 +360,38 @@
 
                     <!-- Logo & Event Details Header -->
                     <div class="flex items-center justify-between pb-4 border-b border-slate-800">
-                        <!-- Official Logo Embedded inside the sticker -->
+                        <!-- Logo Image Tag inside the printable sticker pass -->
                         <div>
-                            <svg class="h-8 w-auto" viewBox="0 0 240 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <text x="5" y="48" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="40" opacity="0.2">t</text>
-                                <g transform="translate(32, 10)">
-                                    <rect x="0" y="0" width="30" height="34" rx="6" fill="#EC4899"/>
-                                    <path d="M 6 22 Q 15 28 24 16 L 24 22 Q 15 32 6 22 Z" fill="#ffffff"/>
-                                </g>
-                                <g transform="translate(68, 10)">
-                                    <rect x="0" y="0" width="30" height="34" rx="6" fill="#06B6D4"/>
-                                    <path d="M 6 22 Q 15 28 24 16 L 24 22 Q 15 32 6 22 Z" fill="#ffffff"/>
-                                </g>
-                                <text x="104" y="44" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="34" letter-spacing="-1">eenspace</text>
-                                <text x="5" y="64" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="11" letter-spacing="0.5">Higher Secondary Students Conference</text>
-                            </svg>
+                            <img src="0_2.png" onerror="this.onerror=null; this.src='0.png';" alt="Teenspace" class="h-9 sm:h-11 w-auto object-contain max-w-[200px]">
                         </div>
                         <div class="text-right">
-                            <div class="text-xs font-black text-pink-400 uppercase tracking-wider">OFFICIAL PARKING PERMIT</div>
-                            <div class="text-[10px] text-slate-300 font-bold">Oct 21, 2026 • Payyoli Peruma</div>
+                            <div class="text-xs sm:text-sm font-black text-pink-400 uppercase tracking-wider">PARKING PERMIT</div>
+                            <div class="text-[10px] sm:text-xs text-slate-300 font-bold">Oct 21, 2026 • Payyoli Peruma</div>
                         </div>
                     </div>
 
                     <!-- Pass Details + QR Code Layout -->
-                    <div class="grid grid-cols-3 gap-4 pt-4 items-center">
-                        <div class="col-span-2 space-y-2 text-xs">
+                    <div class="grid grid-cols-3 gap-4 pt-4 items-center my-auto">
+                        <div class="col-span-2 space-y-4 text-xs">
                             <div>
-                                <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Pass ID</span>
-                                <span id="stickerPassId" class="font-mono text-lg font-black text-white tracking-widest">#TS-0000</span>
+                                <span class="text-[10px] sm:text-xs text-slate-400 block uppercase font-bold tracking-wider">Pass ID</span>
+                                <span id="stickerPassId" class="font-mono text-xl sm:text-2xl font-black text-white tracking-widest">#TS-0000</span>
                             </div>
                             <div>
-                                <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider" id="stickerLabel1">Vehicle No</span>
-                                <span id="stickerVal1" class="font-mono text-base font-extrabold text-cyan-400">KL-00-XX-0000</span>
-                            </div>
-                            <div>
-                                <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider" id="stickerLabel2">Unit / Name</span>
-                                <span id="stickerVal2" class="font-bold text-slate-100 text-sm">Sample Name</span>
-                            </div>
-                            <div>
-                                <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Contact / Details</span>
-                                <span id="stickerVal3" class="text-slate-300 font-medium">0000000000</span>
+                                <span class="text-[10px] sm:text-xs text-slate-400 block uppercase font-bold tracking-wider" id="stickerLabel1">Vehicle No</span>
+                                <span id="stickerVal1" class="font-mono text-2xl sm:text-3xl font-black text-cyan-400">KL-00-XX-0000</span>
                             </div>
                         </div>
 
                         <!-- Dynamic QR Code Container -->
                         <div class="flex flex-col items-center justify-center bg-white p-3 rounded-2xl text-slate-900 text-center shadow-lg border border-slate-300">
                             <div id="qrcode" class="flex justify-center mb-1"></div>
-                            <span class="text-[8px] font-black uppercase tracking-tighter text-slate-800">Scan at Entry Gate</span>
+                            <span class="text-[8px] sm:text-[10px] font-black uppercase tracking-tighter text-slate-800">Scan at Gate</span>
                         </div>
                     </div>
 
                     <!-- Windshield Instruction Banner -->
-                    <div class="mt-5 pt-3 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
+                    <div class="mt-6 pt-4 border-t border-slate-800 flex items-center justify-between text-[10px] sm:text-xs text-slate-400">
                         <span><i class="fa-solid fa-paste text-pink-400 mr-1.5"></i> Display clearly on Vehicle Glass / Windshield</span>
                         <span class="font-extrabold text-emerald-400 uppercase tracking-wider"><i class="fa-solid fa-circle-check mr-1"></i> AUTHORIZED ENTRY</span>
                     </div>
@@ -549,22 +537,12 @@
                 document.getElementById('stickerHeaderBar').className = "h-3 -mx-6 -mt-6 mb-5 bg-gradient-to-r from-pink-500 via-purple-500 to-pink-600";
                 document.getElementById('stickerLabel1').innerText = "Bus Reg. Number";
                 document.getElementById('stickerVal1').innerText = data.busNumber;
-                document.getElementById('stickerVal1').className = "font-mono text-base font-extrabold text-pink-400";
-                
-                document.getElementById('stickerLabel2').innerText = "Unit / School";
-                document.getElementById('stickerVal2').innerText = data.unitName;
-                
-                document.getElementById('stickerVal3').innerText = `${data.leaderName} • ${data.phone}`;
+                document.getElementById('stickerVal1').className = "font-mono text-2xl sm:text-3xl font-black text-pink-400";
             } else {
                 document.getElementById('stickerHeaderBar').className = "h-3 -mx-6 -mt-6 mb-5 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600";
                 document.getElementById('stickerLabel1').innerText = "Vehicle Reg. Number";
                 document.getElementById('stickerVal1').innerText = data.vehicleNumber;
-                document.getElementById('stickerVal1').className = "font-mono text-base font-extrabold text-cyan-400";
-                
-                document.getElementById('stickerLabel2').innerText = "Driver / Delegate";
-                document.getElementById('stickerVal2').innerText = `${data.name} (${data.vehicleType})`;
-                
-                document.getElementById('stickerVal3').innerText = `${data.place} • ${data.phone}`;
+                document.getElementById('stickerVal1').className = "font-mono text-2xl sm:text-3xl font-black text-cyan-400";
             }
 
             // Generate QR Code
@@ -573,8 +551,8 @@
             
             new QRCode(qrContainer, {
                 text: `TEENSPACE-PERMIT|ID:${shortId}|TYPE:${data.type}|VEH:${data.busNumber || data.vehicleNumber}`,
-                width: 80,
-                height: 80,
+                width: 90,
+                height: 90,
                 colorDark : "#000000",
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.H
