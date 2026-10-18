@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teenspace 2026 - Vehicle & Bus Registration</title>
+    <title>Teenspace 2026 - Vehicle & Bus Parking Permit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -63,25 +63,81 @@
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+
+        /* A4 PRINT LAYOUT STYLING */
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #successModal, #successModal * {
+                visibility: visible !important;
+            }
+            #successModal {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                background: white !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                padding: 0 !important;
+            }
+            .modal-content-box {
+                border: none !important;
+                box-shadow: none !important;
+                background: white !important;
+                color: black !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            .no-print {
+                display: none !important;
+            }
+            #passSticker {
+                width: 180mm !important;
+                margin: 20mm auto !important;
+                border: 2px dashed #000 !important;
+                box-shadow: none !important;
+                background-color: #0b0f19 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-pink-500 selection:text-white">
 
     <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-            <!-- Logo area mimicking the uploaded Teenspace logo design -->
+            <!-- Official Teenspace Logo matching attachment -->
             <div class="flex items-center space-x-3">
-                <div class="flex items-center space-x-1.5 bg-slate-900/80 px-3 py-1.5 rounded-xl border border-slate-700/50">
-                    <div class="w-7 h-7 bg-pink-500 rounded-lg flex items-center justify-center font-black text-white text-lg shadow-sm">
-                        <i class="fa-solid font-bold">t</i>
-                    </div>
-                    <div class="w-7 h-7 bg-cyan-500 rounded-lg flex items-center justify-center font-black text-white text-lg shadow-sm">
-                        <i class="fa-solid font-bold">p</i>
-                    </div>
-                    <div class="hidden sm:flex flex-col ml-1">
-                        <span class="text-xl font-extrabold tracking-tight text-white leading-none">teenspace</span>
-                        <span class="text-[9px] uppercase tracking-wider text-slate-400 font-semibold mt-0.5">Higher Secondary Students Conference</span>
-                    </div>
+                <div class="flex items-center space-x-2 py-1">
+                    <!-- SVG Logo Icon reproducing the attached logo design -->
+                    <svg class="h-8 sm:h-10 w-auto" viewBox="0 0 240 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Lowercase 't' accent -->
+                        <text x="5" y="48" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="40" opacity="0.15">t</text>
+                        <!-- Pink Icon Badge -->
+                        <g transform="translate(32, 10)">
+                            <rect x="0" y="0" width="30" height="34" rx="6" fill="#EC4899"/>
+                            <path d="M 6 22 Q 15 28 24 16 L 24 22 Q 15 32 6 22 Z" fill="#ffffff"/>
+                        </g>
+                        <!-- Cyan Icon Badge -->
+                        <g transform="translate(68, 10)">
+                            <rect x="0" y="0" width="30" height="34" rx="6" fill="#06B6D4"/>
+                            <path d="M 6 22 Q 15 28 24 16 L 24 22 Q 15 32 6 22 Z" fill="#ffffff"/>
+                        </g>
+                        <!-- 'eenspace' text -->
+                        <text x="104" y="44" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="34" letter-spacing="-1">eenspace</text>
+                        <!-- Subtitle Tagline -->
+                        <text x="5" y="64" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="11" letter-spacing="0.5">Higher Secondary Students Conference</text>
+                    </svg>
                 </div>
             </div>
 
@@ -100,13 +156,13 @@
         <!-- Hero Section -->
         <div class="text-center mb-8">
             <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/20 text-pink-400 text-xs font-semibold mb-3">
-                <i class="fa-solid fa-square-parking"></i> Official Event Parking Portal
+                <i class="fa-solid fa-square-parking"></i> Official Event Parking Registration
             </div>
             <h1 class="text-3xl sm:text-5xl font-black text-white tracking-tight mb-3">
                 TEENSPACE <span class="bg-gradient-to-r from-pink-500 to-cyan-400 bg-clip-text text-transparent">PARKING PERMIT</span>
             </h1>
             <p class="text-slate-400 text-sm sm:text-base max-w-2xl mx-auto">
-                Higher Secondary Students Conference • Payyoli Peruma Auditorium
+                Higher Secondary Students Conference • Payyoli Peruma Auditorium • Oct 21
             </p>
         </div>
 
@@ -121,12 +177,13 @@
                         IMPORTANT PARKING ANNOUNCEMENT
                     </h3>
                     <p class="text-amber-200/90 text-sm mt-1 leading-relaxed">
-                        Parking space at <strong>Payyoli Peruma Auditorium</strong> is strictly limited. <strong class="text-white underline decoration-amber-400">Only pre-registered vehicles with a valid pass will be allowed into the parking zone.</strong> Vehicles without prior registration will NOT be granted entry to the parking ground under any circumstances.
+                        Parking space at <strong>Payyoli Peruma Auditorium</strong> is strictly limited. <strong class="text-white underline decoration-amber-400">Only pre-registered vehicles with a valid downloaded pass will be allowed into the parking zone.</strong> Vehicles without prior registration will NOT be granted entry to the parking ground under any circumstances.
                     </p>
                 </div>
             </div>
         </div>
 
+        <!-- Registration Tabs -->
         <div class="flex justify-center mb-8">
             <div class="bg-slate-900/90 p-1.5 rounded-2xl border border-slate-800 flex w-full max-w-md shadow-inner">
                 <button id="tabBus" onclick="switchTab('bus')" class="flex-1 py-3 px-4 rounded-xl font-bold text-sm sm:text-base transition-all duration-300 flex items-center justify-center space-x-2 tab-active-pink">
@@ -275,88 +332,94 @@
             </form>
         </div>
 
-        <!-- SUCCESS MODAL WITH PRINTABLE PERMIT STICKER -->
-        <div id="successModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden overflow-y-auto">
-            <div class="bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl text-center relative my-8">
+        <!-- SUCCESS MODAL WITH A4 PRINTABLE PERMIT STICKER -->
+        <div id="successModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden overflow-y-auto">
+            <div class="modal-content-box bg-slate-900 border border-slate-700 rounded-3xl p-6 sm:p-8 max-w-xl w-full shadow-2xl text-center relative my-8">
                 
-                <div class="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto mb-3 text-2xl">
-                    <i class="fa-solid fa-circle-check"></i>
+                <div class="no-print">
+                    <div class="w-14 h-14 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center mx-auto mb-3 text-2xl">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+
+                    <h3 class="text-2xl font-black text-white mb-1">Registration Successful!</h3>
+                    <p class="text-slate-400 text-xs mb-5">Please download or print this official permit pass to display on your vehicle windshield.</p>
                 </div>
 
-                <h3 class="text-2xl font-black text-white mb-1">Registration Successful!</h3>
-                <p class="text-slate-400 text-xs mb-5">Please download & print this official parking pass sticker to place on your vehicle windshield.</p>
-
-                <!-- PRINTABLE STICKER PASS CARD (CAPTURED FOR IMAGE DOWNLOAD) -->
-                <div id="passSticker" class="bg-slate-950 border-2 border-slate-700 rounded-2xl p-5 text-left text-white shadow-2xl relative overflow-hidden mb-6">
-                    <!-- Decorative Background Accent Bar -->
-                    <div id="stickerHeaderBar" class="h-2.5 -mx-5 -mt-5 mb-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400"></div>
+                <!-- PRINTABLE A4 PERMIT PASS STICKER -->
+                <div id="passSticker" class="bg-slate-950 border-2 border-slate-700 rounded-2xl p-6 text-left text-white shadow-2xl relative overflow-hidden mb-6">
+                    <!-- Decorative Top Header Accent Bar -->
+                    <div id="stickerHeaderBar" class="h-3 -mx-6 -mt-6 mb-5 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-400"></div>
 
                     <!-- Logo & Event Details Header -->
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                        <div class="flex items-center space-x-1.5">
-                            <div class="w-7 h-7 bg-pink-500 rounded-lg flex items-center justify-center font-black text-white text-base shadow-sm">
-                                <span class="font-bold">t</span>
-                            </div>
-                            <div class="w-7 h-7 bg-cyan-500 rounded-lg flex items-center justify-center font-black text-white text-base shadow-sm">
-                                <span class="font-bold">p</span>
-                            </div>
-                            <div class="ml-1">
-                                <div class="text-base font-extrabold tracking-tight text-white leading-none">teenspace</div>
-                                <div class="text-[8px] uppercase tracking-wider text-slate-400 font-semibold mt-0.5">Parking Permit</div>
-                            </div>
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                        <!-- Official Logo Embedded inside the sticker -->
+                        <div>
+                            <svg class="h-8 w-auto" viewBox="0 0 240 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <text x="5" y="48" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="40" opacity="0.2">t</text>
+                                <g transform="translate(32, 10)">
+                                    <rect x="0" y="0" width="30" height="34" rx="6" fill="#EC4899"/>
+                                    <path d="M 6 22 Q 15 28 24 16 L 24 22 Q 15 32 6 22 Z" fill="#ffffff"/>
+                                </g>
+                                <g transform="translate(68, 10)">
+                                    <rect x="0" y="0" width="30" height="34" rx="6" fill="#06B6D4"/>
+                                    <path d="M 6 22 Q 15 28 24 16 L 24 22 Q 15 32 6 22 Z" fill="#ffffff"/>
+                                </g>
+                                <text x="104" y="44" fill="#ffffff" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="34" letter-spacing="-1">eenspace</text>
+                                <text x="5" y="64" fill="#94A3B8" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="11" letter-spacing="0.5">Higher Secondary Students Conference</text>
+                            </svg>
                         </div>
                         <div class="text-right">
-                            <div class="text-[10px] font-bold text-pink-400 uppercase tracking-widest">Oct 21, 2026</div>
-                            <div class="text-[9px] text-slate-400">Payyoli Peruma Auditorium</div>
+                            <div class="text-xs font-black text-pink-400 uppercase tracking-wider">OFFICIAL PARKING PERMIT</div>
+                            <div class="text-[10px] text-slate-300 font-bold">Oct 21, 2026 • Payyoli Peruma</div>
                         </div>
                     </div>
 
                     <!-- Pass Details + QR Code Layout -->
-                    <div class="grid grid-cols-3 gap-3 pt-3 items-center">
-                        <div class="col-span-2 space-y-1.5 text-xs">
+                    <div class="grid grid-cols-3 gap-4 pt-4 items-center">
+                        <div class="col-span-2 space-y-2 text-xs">
                             <div>
-                                <span class="text-[10px] text-slate-400 block uppercase font-semibold">Pass ID</span>
-                                <span id="stickerPassId" class="font-mono text-base font-black text-white tracking-wider">#TS-0000</span>
+                                <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Pass ID</span>
+                                <span id="stickerPassId" class="font-mono text-lg font-black text-white tracking-widest">#TS-0000</span>
                             </div>
                             <div>
-                                <span class="text-[10px] text-slate-400 block uppercase font-semibold" id="stickerLabel1">Vehicle No</span>
-                                <span id="stickerVal1" class="font-mono text-sm font-bold text-cyan-400">KL-00-XX-0000</span>
+                                <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider" id="stickerLabel1">Vehicle No</span>
+                                <span id="stickerVal1" class="font-mono text-base font-extrabold text-cyan-400">KL-00-XX-0000</span>
                             </div>
                             <div>
-                                <span class="text-[10px] text-slate-400 block uppercase font-semibold" id="stickerLabel2">Unit / Name</span>
-                                <span id="stickerVal2" class="font-semibold text-slate-200">Sample Name</span>
+                                <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider" id="stickerLabel2">Unit / Name</span>
+                                <span id="stickerVal2" class="font-bold text-slate-100 text-sm">Sample Name</span>
                             </div>
                             <div>
-                                <span class="text-[10px] text-slate-400 block uppercase font-semibold">Contact</span>
-                                <span id="stickerVal3" class="text-slate-300">0000000000</span>
+                                <span class="text-[10px] text-slate-400 block uppercase font-bold tracking-wider">Contact / Details</span>
+                                <span id="stickerVal3" class="text-slate-300 font-medium">0000000000</span>
                             </div>
                         </div>
 
                         <!-- Dynamic QR Code Container -->
-                        <div class="flex flex-col items-center justify-center bg-white p-2 rounded-xl text-slate-900 text-center shadow-inner">
+                        <div class="flex flex-col items-center justify-center bg-white p-3 rounded-2xl text-slate-900 text-center shadow-lg border border-slate-300">
                             <div id="qrcode" class="flex justify-center mb-1"></div>
-                            <span class="text-[8px] font-bold uppercase tracking-tighter text-slate-700">Scan at Entry</span>
+                            <span class="text-[8px] font-black uppercase tracking-tighter text-slate-800">Scan at Entry Gate</span>
                         </div>
                     </div>
 
                     <!-- Windshield Instruction Banner -->
-                    <div class="mt-4 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[9px] text-slate-400">
-                        <span><i class="fa-solid fa-paste text-pink-400 mr-1"></i> Display on Vehicle Windshield / Glass</span>
-                        <span class="font-bold text-emerald-400"><i class="fa-solid fa-shield-check"></i> VERIFIED PASS</span>
+                    <div class="mt-5 pt-3 border-t border-slate-800 flex items-center justify-between text-[10px] text-slate-400">
+                        <span><i class="fa-solid fa-paste text-pink-400 mr-1.5"></i> Display clearly on Vehicle Glass / Windshield</span>
+                        <span class="font-extrabold text-emerald-400 uppercase tracking-wider"><i class="fa-solid fa-circle-check mr-1"></i> AUTHORIZED ENTRY</span>
                     </div>
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <button onclick="downloadPassAsImage()" id="btnDownloadImg" class="py-3 px-4 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-lg flex items-center justify-center gap-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 no-print">
+                    <button onclick="downloadPassAsImage()" id="btnDownloadImg" class="py-3.5 px-4 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-lg flex items-center justify-center gap-2">
                         <i class="fa-solid fa-download"></i> Download Sticker Image
                     </button>
-                    <button onclick="window.print()" class="py-3 px-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-xs sm:text-sm transition-colors flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-print"></i> Print Permit Pass
+                    <button onclick="window.print()" class="py-3.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-semibold rounded-xl text-xs sm:text-sm transition-colors flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-print"></i> Print A4 Permit Pass
                     </button>
                 </div>
 
-                <button onclick="closeModal()" class="w-full mt-3 py-2.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white font-semibold rounded-xl text-xs transition-colors">
+                <button onclick="closeModal()" class="w-full mt-3 py-2.5 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-400 hover:text-white font-semibold rounded-xl text-xs transition-colors no-print">
                     Close Window
                 </button>
             </div>
@@ -425,7 +488,7 @@
 
             if (type === 'bus') {
                 btnBus.disabled = true;
-                btnBus.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Processing...`;
+                btnBus.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Registering Bus...`;
                 
                 collectionName = 'bus_registrations';
                 data = {
@@ -440,7 +503,7 @@
                 };
             } else {
                 btnIndiv.disabled = true;
-                btnIndiv.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Processing...`;
+                btnIndiv.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Reserving Slot...`;
 
                 collectionName = 'individual_registrations';
                 data = {
@@ -458,7 +521,7 @@
                 // Submit to Firestore
                 const docRef = await addDoc(collection(db, collectionName), data);
                 
-                // Show Digital Slip Modal
+                // Show Digital Pass Modal with Printable Pass
                 showPassModal(type, data, docRef.id);
                 
                 // Reset Forms
@@ -467,7 +530,7 @@
 
             } catch (error) {
                 console.error("Error submitting registration: ", error);
-                alert("Failed to submit registration. Please try again or check network connection.");
+                alert("Failed to submit registration. Please check network connection.");
             } finally {
                 btnBus.disabled = false;
                 btnBus.innerHTML = `<i class="fa-solid fa-circle-check"></i> Register Bus Parking Slot`;
@@ -483,20 +546,20 @@
             document.getElementById('stickerPassId').innerText = `#${shortId}`;
             
             if(type === 'bus') {
-                document.getElementById('stickerHeaderBar').className = "h-2.5 -mx-5 -mt-5 mb-4 bg-gradient-to-r from-pink-500 via-purple-500 to-pink-600";
+                document.getElementById('stickerHeaderBar').className = "h-3 -mx-6 -mt-6 mb-5 bg-gradient-to-r from-pink-500 via-purple-500 to-pink-600";
                 document.getElementById('stickerLabel1').innerText = "Bus Reg. Number";
                 document.getElementById('stickerVal1').innerText = data.busNumber;
-                document.getElementById('stickerVal1').className = "font-mono text-sm font-bold text-pink-400";
+                document.getElementById('stickerVal1').className = "font-mono text-base font-extrabold text-pink-400";
                 
                 document.getElementById('stickerLabel2').innerText = "Unit / School";
                 document.getElementById('stickerVal2').innerText = data.unitName;
                 
-                document.getElementById('stickerVal3').innerText = `${data.leaderName} (${data.phone})`;
+                document.getElementById('stickerVal3').innerText = `${data.leaderName} • ${data.phone}`;
             } else {
-                document.getElementById('stickerHeaderBar').className = "h-2.5 -mx-5 -mt-5 mb-4 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600";
+                document.getElementById('stickerHeaderBar').className = "h-3 -mx-6 -mt-6 mb-5 bg-gradient-to-r from-cyan-400 via-blue-500 to-cyan-600";
                 document.getElementById('stickerLabel1').innerText = "Vehicle Reg. Number";
                 document.getElementById('stickerVal1').innerText = data.vehicleNumber;
-                document.getElementById('stickerVal1').className = "font-mono text-sm font-bold text-cyan-400";
+                document.getElementById('stickerVal1').className = "font-mono text-base font-extrabold text-cyan-400";
                 
                 document.getElementById('stickerLabel2').innerText = "Driver / Delegate";
                 document.getElementById('stickerVal2').innerText = `${data.name} (${data.vehicleType})`;
@@ -506,12 +569,12 @@
 
             // Generate QR Code
             const qrContainer = document.getElementById('qrcode');
-            qrContainer.innerHTML = ''; // clear previous QR
+            qrContainer.innerHTML = ''; // Clear previous QR
             
             new QRCode(qrContainer, {
                 text: `TEENSPACE-PERMIT|ID:${shortId}|TYPE:${data.type}|VEH:${data.busNumber || data.vehicleNumber}`,
-                width: 70,
-                height: 70,
+                width: 80,
+                height: 80,
                 colorDark : "#000000",
                 colorLight : "#ffffff",
                 correctLevel : QRCode.CorrectLevel.H
@@ -531,10 +594,10 @@
 
             html2canvas(stickerElement, {
                 backgroundColor: '#020617',
-                scale: 2 // High Resolution output
+                scale: 3 // High Resolution output for clear printing
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = `TEENSPACE_PARKING_PASS_${Date.now()}.png`;
+                link.download = `TEENSPACE_PERMIT_${Date.now()}.png`;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
 
