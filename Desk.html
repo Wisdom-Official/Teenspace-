@@ -155,7 +155,7 @@
             <img src="0.png" alt="Teenspace Banner Logo" class="h-10 w-auto object-contain" onerror="this.onerror=null; this.src='https://placehold.co/200x60/0f172a/ffffff?text=Teenspace';" />
           </div>
           <p class="text-slate-400 text-sm max-w-xl">
-            Unified Desk Registration System. Register delegates smoothly in offline mode; data syncs automatically to Firestore when connected.
+            Unified Desk Registration System. Register delegates smoothly in offline mode; data syncs automatically to Server when connected.
           </p>
         </div>
 
@@ -213,7 +213,7 @@
               <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
                 <i data-lucide="user" class="w-4 h-4"></i>
               </span>
-              <input type="text" id="fieldName" required placeholder="e.g. Alex Rivera" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition" />
+              <input type="text" id="fieldName" required placeholder="e.g. Shadil NM" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition" />
             </div>
           </div>
 
@@ -551,7 +551,7 @@
         showToast("Cannot sync: Internet connection offline.", "amber");
         return;
       }
-      showToast("Syncing data with Firestore...", "sky");
+      showToast("Syncing data with Setver...", "sky");
       triggerSyncProcess();
     };
 
