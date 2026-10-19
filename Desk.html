@@ -385,6 +385,7 @@
       onAuthStateChanged 
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
+    // Your web app's Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyBLyKNAbhjVj5yBKWjT4_t0DrPRxnuH86U",
       authDomain: "event-1b1b1.firebaseapp.com",
@@ -404,6 +405,7 @@
 
     let isAuthReady = false;
 
+    // Authenticate anonymously so Firestore Rules pass safely
     async function setupAuth() {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -419,6 +421,7 @@
     onAuthStateChanged(auth, (user) => {
       if (user) {
         isAuthReady = true;
+        // Trigger sync as soon as Auth is established and user is online
         triggerSyncProcess();
       }
     });
@@ -490,11 +493,10 @@
       });
     }
 
-    // BACKGROUND SYNC ENGINE
     let isSyncing = false;
 
     async function triggerSyncProcess() {
-      if (isSyncing || !navigator.onLine) return;
+      if (isSyncing || !navigator.onLine || !isAuthReady) return;
       isSyncing = true;
       updateSyncUIState(true);
 
@@ -508,6 +510,7 @@
           refreshUI();
 
           try {
+            // Document write directly to Firebase Firestore collection 'teenspace_registrations'
             const docRef = doc(db, "teenspace_registrations", record.id);
             const firestorePayload = {
               id: record.id,
@@ -522,13 +525,14 @@
 
             await setDoc(docRef, firestorePayload, { merge: true });
 
+            // Mark locally as SYNCED upon successful write
             record.syncStatus = "SYNCED";
             record.lastSyncedAt = new Date().toISOString();
             await saveToLocalDB(record);
 
             localStorage.setItem("teenspace_last_sync", new Date().toLocaleTimeString());
           } catch (err) {
-            console.error("Sync error ID " + record.id, err);
+            console.error("Firestore sync error for ID " + record.id, err);
             record.syncStatus = "FAILED";
             await saveToLocalDB(record);
           }
@@ -547,7 +551,7 @@
         showToast("Cannot sync: Internet connection offline.", "amber");
         return;
       }
-      showToast("Syncing data...", "sky");
+      showToast("Syncing data with Firestore...", "sky");
       triggerSyncProcess();
     };
 
@@ -650,10 +654,17 @@
       };
 
       try {
+        // Save to Local IndexedDB first (Offline Guaranteed)
         await saveToLocalDB(newRecord);
         document.getElementById('studentForm').reset();
-        showToast(`Registration Saved! ID: ${newRecord.id}`, "emerald");
+        
+        if (navigator.onLine) {
+          showToast(`Saved locally! Syncing with Cloud...`, "sky");
+        } else {
+          showToast(`Saved Offline! ID: ${newRecord.id}`, "emerald");
+        }
 
+        // Trigger synchronization immediately if online
         triggerSyncProcess();
         refreshUI();
       } catch (err) {
