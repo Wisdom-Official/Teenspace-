@@ -1,0 +1,913 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teenspace Event Registration System</title>
+  
+  <!-- Tailwind CSS & Lucide Icons -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Font Setup -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              pink: '#E91E63',
+              blue: '#00A8FF',
+              dark: '#0F172A',
+              card: '#1E293B',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-pink-500 selection:text-white">
+
+  <!-- Top Navigation Header -->
+  <header class="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20">
+        
+        <!-- Logo / Event Name -->
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
+          <img src="0.png" alt="Teenspace Logo" class="h-8 sm:h-10 w-auto object-contain" onerror="this.onerror=null; this.src='https://placehold.co/180x50/0f172a/ffffff?text=Teenspace';" />
+        </div>
+
+        <!-- Connection Status & Sync Controls -->
+        <div class="flex items-center space-x-3">
+          <!-- Online/Offline Badge -->
+          <div id="connectionBadge" class="flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 transition-all">
+            <span id="connectionDot" class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            <span id="connectionText" class="hidden sm:inline">Online</span>
+          </div>
+
+          <!-- Manual Sync Button -->
+          <button id="manualSyncBtn" onclick="triggerManualSync()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700 relative group" title="Trigger Sync">
+            <i data-lucide="refresh-cw" class="w-4 h-4 transition-transform group-hover:rotate-180"></i>
+            <span id="pendingBadge" class="hidden absolute -top-1 -right-1 bg-amber-500 text-slate-950 text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center border border-slate-900">0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Bar Tabs -->
+  <nav class="bg-slate-900/60 border-b border-slate-800/80 sticky top-16 sm:top-20 z-30 backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex space-x-2 py-2 overflow-x-auto scrollbar-none">
+        <button id="tabBtn-dashboard" onclick="switchTab('dashboard')" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-pink-500/10 text-pink-400 border border-pink-500/30">
+          <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+          <span>Dashboard</span>
+        </button>
+
+        <button id="tabBtn-registration" onclick="switchTab('registration')" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+          <i data-lucide="user-plus" class="w-4 h-4 text-sky-400"></i>
+          <span>Registration Desk</span>
+        </button>
+
+        <button id="tabBtn-records" onclick="switchTab('records')" class="tab-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+          <i data-lucide="users" class="w-4 h-4"></i>
+          <span>Records List</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- DASHBOARD VIEW -->
+    <section id="view-dashboard" class="tab-view space-y-6">
+      <!-- Quick Stats Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between">
+          <div class="flex justify-between items-center text-slate-400">
+            <span class="text-xs font-semibold uppercase tracking-wider">Total Regs</span>
+            <i data-lucide="users" class="w-4 h-4 text-pink-400"></i>
+          </div>
+          <p id="statTotal" class="text-3xl font-extrabold text-slate-100 mt-2">0</p>
+        </div>
+
+        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between">
+          <div class="flex justify-between items-center text-emerald-400">
+            <span class="text-xs font-semibold uppercase tracking-wider">Synced</span>
+            <i data-lucide="cloud-check" class="w-4 h-4"></i>
+          </div>
+          <p id="statSynced" class="text-3xl font-extrabold text-emerald-400 mt-2">0</p>
+        </div>
+
+        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between">
+          <div class="flex justify-between items-center text-amber-400">
+            <span class="text-xs font-semibold uppercase tracking-wider">Pending</span>
+            <i data-lucide="cloud-off" class="w-4 h-4"></i>
+          </div>
+          <p id="statPending" class="text-3xl font-extrabold text-amber-400 mt-2">0</p>
+        </div>
+
+        <div class="bg-slate-900/80 p-5 rounded-2xl border border-slate-800 flex flex-col justify-between">
+          <div class="flex justify-between items-center text-sky-400">
+            <span class="text-xs font-semibold uppercase tracking-wider">Last Sync</span>
+            <i data-lucide="clock" class="w-4 h-4"></i>
+          </div>
+          <p id="statLastSync" class="text-sm font-semibold text-slate-300 mt-4 truncate">Never</p>
+        </div>
+      </div>
+
+      <!-- Quick Desk Navigation Banner -->
+      <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="space-y-3 text-center md:text-left">
+          <div class="flex justify-center md:justify-start">
+            <img src="0.png" alt="Teenspace Banner Logo" class="h-10 w-auto object-contain" onerror="this.onerror=null; this.src='https://placehold.co/200x60/0f172a/ffffff?text=Teenspace';" />
+          </div>
+          <p class="text-slate-400 text-sm max-w-xl">
+            Unified Desk Registration System. Register delegates smoothly in offline mode; data syncs automatically to Firestore when connected.
+          </p>
+        </div>
+
+        <button onclick="switchTab('registration')" class="w-full md:w-auto flex items-center justify-center space-x-2 bg-gradient-to-r from-pink-500 to-sky-500 hover:from-pink-600 hover:to-sky-600 text-white px-8 py-4 rounded-2xl font-bold transition-all transform hover:-translate-y-0.5 shadow-lg shadow-pink-500/10">
+          <i data-lucide="user-plus" class="w-5 h-5"></i>
+          <span>New Registration</span>
+        </button>
+      </div>
+
+      <!-- Recent Activity View -->
+      <div class="bg-slate-900/80 rounded-2xl border border-slate-800 overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-800/80 flex justify-between items-center">
+          <h3 class="font-bold text-slate-200 text-sm flex items-center space-x-2">
+            <i data-lucide="history" class="w-4 h-4 text-pink-400"></i>
+            <span>Recent Registrations</span>
+          </h3>
+          <button onclick="switchTab('records')" class="text-xs text-pink-400 hover:text-pink-300 font-semibold flex items-center space-x-1">
+            <span>View All</span>
+            <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <div id="recentRecordsList" class="divide-y divide-slate-800/60">
+          <div class="p-6 text-center text-slate-500 text-sm">No registrations recorded yet.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REGISTRATION FORM VIEW -->
+    <section id="view-registration" class="tab-view hidden max-w-2xl mx-auto space-y-6">
+      
+      <!-- Desk Banner -->
+      <div class="p-6 rounded-3xl border bg-gradient-to-r from-slate-900 to-slate-950 border-slate-800 flex items-center justify-between">
+        <div class="flex items-center space-x-4">
+          <div class="p-3 rounded-2xl bg-pink-500/10 border border-pink-500/20 text-pink-400">
+            <i data-lucide="user-check" class="w-7 h-7"></i>
+          </div>
+          <div>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-white">Event Registration Desk</h2>
+            <p class="text-xs text-slate-400 mt-0.5">Enter delegate information below</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Simplified Registration Form -->
+      <form id="studentForm" onsubmit="handleFormSubmit(event)" class="bg-slate-900/90 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-5 shadow-2xl">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <!-- Full Name -->
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+              Full Name <span class="text-pink-500">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </span>
+              <input type="text" id="fieldName" required placeholder="e.g. Alex Rivera" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition" />
+            </div>
+          </div>
+
+          <!-- Place / Location -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+              Place <span class="text-pink-500">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <i data-lucide="map-pin" class="w-4 h-4"></i>
+              </span>
+              <input type="text" id="fieldPlace" required placeholder="e.g. Kozhikode" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition" />
+            </div>
+          </div>
+
+          <!-- Mobile Number -->
+          <div>
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+              Mobile Number <span class="text-pink-500">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <i data-lucide="phone" class="w-4 h-4"></i>
+              </span>
+              <input type="tel" id="fieldPhone" required pattern="[0-9]{8,15}" placeholder="e.g. 9876543210" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition" />
+            </div>
+          </div>
+
+          <!-- Age -->
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+              Age <span class="text-pink-500">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+                <i data-lucide="calendar" class="w-4 h-4"></i>
+              </span>
+              <input type="number" id="fieldAge" required min="5" max="100" placeholder="e.g. 16" class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-slate-100 text-sm focus:outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500 transition" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-3">
+          <button type="submit" id="submitRegBtn" class="w-full bg-gradient-to-r from-pink-500 to-sky-500 hover:from-pink-600 hover:to-sky-600 text-white font-extrabold py-4 px-6 rounded-2xl shadow-lg transition-all transform active:scale-[0.99] flex items-center justify-center space-x-2">
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+            <span id="submitBtnText">Complete Registration</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- RECORDS MANAGEMENT VIEW -->
+    <section id="view-records" class="tab-view hidden space-y-6">
+      
+      <!-- Top Filters Bar -->
+      <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+        
+        <!-- Search input -->
+        <div class="relative w-full sm:w-80">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-500">
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </span>
+          <input type="text" id="searchInput" oninput="renderRecordsTable()" placeholder="Search name, place, phone, ID..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-100 focus:outline-none focus:border-pink-500" />
+        </div>
+
+        <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
+          <!-- Sync Filter -->
+          <select id="filterSync" onchange="renderRecordsTable()" class="bg-slate-950 text-slate-300 border border-slate-800 text-xs rounded-xl px-3 py-2.5 focus:outline-none">
+            <option value="ALL">All Sync States</option>
+            <option value="PENDING">Pending Sync</option>
+            <option value="SYNCED">Synced</option>
+            <option value="FAILED">Sync Failed</option>
+          </select>
+
+          <!-- CSV Export Button -->
+          <button onclick="exportToCSV()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center space-x-1 whitespace-nowrap transition">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-400"></i>
+            <span>Export CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Records Table Container -->
+      <div class="bg-slate-900/80 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-300">
+            <thead class="bg-slate-950 text-xs uppercase text-slate-400 font-bold border-b border-slate-800">
+              <tr>
+                <th class="py-3.5 px-4">Reg ID</th>
+                <th class="py-3.5 px-4">Name</th>
+                <th class="py-3.5 px-4">Place</th>
+                <th class="py-3.5 px-4">Mobile Number</th>
+                <th class="py-3.5 px-4">Age</th>
+                <th class="py-3.5 px-4">Sync</th>
+                <th class="py-3.5 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recordsTableBody" class="divide-y divide-slate-800/80">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- REMOVED DOCUMENTATION & SETUP VIEW -->
+  </main>
+
+  <!-- Edit Student Modal -->
+  <div id="editModal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 space-y-4 shadow-2xl relative">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-bold text-slate-100">Edit Registration</h3>
+        <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-200">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="editForm" onsubmit="handleEditSubmit(event)" class="space-y-4 text-xs sm:text-sm">
+        <input type="hidden" id="editRegId" />
+        
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Full Name</label>
+          <input type="text" id="editName" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100" />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Place</label>
+            <input type="text" id="editPlace" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Mobile Number</label>
+            <input type="tel" id="editPhone" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Age</label>
+          <input type="number" id="editAge" required min="5" max="100" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-slate-100" />
+        </div>
+
+        <div class="pt-2 flex justify-end space-x-3">
+          <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-slate-800 text-slate-300 rounded-xl font-semibold">Cancel</button>
+          <button type="submit" class="px-4 py-2 bg-pink-500 hover:bg-pink-600 text-white rounded-xl font-bold">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { 
+      initializeFirestore, 
+      persistentLocalCache, 
+      persistentMultipleTabManager,
+      doc, 
+      setDoc, 
+      deleteDoc 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { 
+      getAuth, 
+      signInAnonymously, 
+      signInWithCustomToken, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBLyKNAbhjVj5yBKWjT4_t0DrPRxnuH86U",
+      authDomain: "event-1b1b1.firebaseapp.com",
+      projectId: "event-1b1b1",
+      storageBucket: "event-1b1b1.firebasestorage.app",
+      messagingSenderId: "825845170211",
+      appId: "1:825845170211:web:f9b3fcf5771b2bf0abf196"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = initializeFirestore(app, {
+      localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager()
+      })
+    });
+    const auth = getAuth(app);
+
+    let isAuthReady = false;
+
+    async function setupAuth() {
+      try {
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+      } catch (err) {
+        console.warn("Auth setup note:", err.message);
+      }
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        isAuthReady = true;
+        triggerSyncProcess();
+      }
+    });
+
+    setupAuth();
+
+    // INDEXEDDB ENGINE
+    const DB_NAME = "TeenspaceRegistrationDB";
+    const DB_VERSION = 2;
+    const STORE_NAME = "registrations";
+
+    function openIndexedDB() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+        request.onupgradeneeded = (event) => {
+          const idb = event.target.result;
+          if (!idb.objectStoreNames.contains(STORE_NAME)) {
+            const store = idb.createObjectStore(STORE_NAME, { keyPath: "id" });
+            store.createIndex("syncStatus", "syncStatus", { unique: false });
+            store.createIndex("createdAt", "createdAt", { unique: false });
+          }
+        };
+      });
+    }
+
+    async function saveToLocalDB(record) {
+      const idb = await openIndexedDB();
+      return new Promise((resolve, reject) => {
+        const tx = idb.transaction(STORE_NAME, "readwrite");
+        const store = tx.objectStore(STORE_NAME);
+        store.put(record);
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    async function getLocalRecord(id) {
+      const idb = await openIndexedDB();
+      return new Promise((resolve, reject) => {
+        const tx = idb.transaction(STORE_NAME, "readonly");
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.get(id);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function getAllLocalRecords() {
+      const idb = await openIndexedDB();
+      return new Promise((resolve, reject) => {
+        const tx = idb.transaction(STORE_NAME, "readonly");
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    async function deleteFromLocalDB(id) {
+      const idb = await openIndexedDB();
+      return new Promise((resolve, reject) => {
+        const tx = idb.transaction(STORE_NAME, "readwrite");
+        const store = tx.objectStore(STORE_NAME);
+        store.delete(id);
+        tx.oncomplete = () => resolve(true);
+        tx.onerror = () => reject(tx.error);
+      });
+    }
+
+    // BACKGROUND SYNC ENGINE
+    let isSyncing = false;
+
+    async function triggerSyncProcess() {
+      if (isSyncing || !navigator.onLine) return;
+      isSyncing = true;
+      updateSyncUIState(true);
+
+      try {
+        const allRecords = await getAllLocalRecords();
+        const pendingRecords = allRecords.filter(r => r.syncStatus === "PENDING" || r.syncStatus === "FAILED");
+
+        for (const record of pendingRecords) {
+          record.syncStatus = "SYNCING";
+          await saveToLocalDB(record);
+          refreshUI();
+
+          try {
+            const docRef = doc(db, "teenspace_registrations", record.id);
+            const firestorePayload = {
+              id: record.id,
+              name: record.name,
+              place: record.place,
+              phone: record.phone,
+              age: record.age,
+              createdAt: record.createdAt,
+              updatedAt: record.updatedAt || record.createdAt,
+              isDeleted: record.isDeleted || false
+            };
+
+            await setDoc(docRef, firestorePayload, { merge: true });
+
+            record.syncStatus = "SYNCED";
+            record.lastSyncedAt = new Date().toISOString();
+            await saveToLocalDB(record);
+
+            localStorage.setItem("teenspace_last_sync", new Date().toLocaleTimeString());
+          } catch (err) {
+            console.error("Sync error ID " + record.id, err);
+            record.syncStatus = "FAILED";
+            await saveToLocalDB(record);
+          }
+        }
+      } catch (err) {
+        console.error("Sync process error:", err);
+      } finally {
+        isSyncing = false;
+        updateSyncUIState(false);
+        refreshUI();
+      }
+    }
+
+    window.triggerManualSync = function() {
+      if (!navigator.onLine) {
+        showToast("Cannot sync: Internet connection offline.", "amber");
+        return;
+      }
+      showToast("Syncing data...", "sky");
+      triggerSyncProcess();
+    };
+
+    function updateSyncUIState(syncing) {
+      const btn = document.getElementById("manualSyncBtn");
+      if (syncing) {
+        btn?.classList.add("animate-spin");
+      } else {
+        btn?.classList.remove("animate-spin");
+      }
+    }
+
+    // STATUS LISTENERS
+    function updateOnlineStatus() {
+      const isOnline = navigator.onLine;
+      const badge = document.getElementById("connectionBadge");
+      const dot = document.getElementById("connectionDot");
+      const text = document.getElementById("connectionText");
+
+      if (isOnline) {
+        badge.className = "flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+        dot.className = "w-2 h-2 rounded-full bg-emerald-400 animate-ping";
+        text.innerText = "Online";
+        triggerSyncProcess();
+      } else {
+        badge.className = "flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20";
+        dot.className = "w-2 h-2 rounded-full bg-amber-400";
+        text.innerText = "Offline Mode";
+      }
+    }
+
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
+
+    // TAB NAVIGATION
+    window.switchTab = function(tabName) {
+      document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(el => {
+        el.className = "tab-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all text-slate-400 hover:text-slate-200 hover:bg-slate-800/50";
+      });
+
+      if (tabName === 'dashboard') {
+        document.getElementById('view-dashboard').classList.remove('hidden');
+        document.getElementById('tabBtn-dashboard').className = "tab-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-pink-500/10 text-pink-400 border border-pink-500/30";
+      } else if (tabName === 'registration') {
+        document.getElementById('view-registration').classList.remove('hidden');
+        document.getElementById('tabBtn-registration').className = "tab-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-sky-500/10 text-sky-400 border border-sky-500/30";
+      } else if (tabName === 'records') {
+        document.getElementById('view-records').classList.remove('hidden');
+        document.getElementById('tabBtn-records').className = "tab-btn flex items-center space-x-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all bg-purple-500/10 text-purple-400 border border-purple-500/30";
+        renderRecordsTable();
+      }
+
+      refreshUI();
+    };
+
+    // FORM & RECORD GENERATION
+    function generateUniqueRegId() {
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const timestamp = Date.now().toString().slice(-4);
+      return `TS-${timestamp}${randomNum}`;
+    }
+
+    window.handleFormSubmit = async function(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitRegBtn');
+      submitBtn.disabled = true;
+
+      const name = document.getElementById('fieldName').value.trim();
+      const place = document.getElementById('fieldPlace').value.trim();
+      const phone = document.getElementById('fieldPhone').value.trim();
+      const age = document.getElementById('fieldAge').value.trim();
+
+      if (!name || !place || !phone || !age) {
+        showToast("Please fill in all fields.", "amber");
+        submitBtn.disabled = false;
+        return;
+      }
+
+      const existingRecords = await getAllLocalRecords();
+      const isDuplicate = existingRecords.some(r => r.phone === phone && !r.isDeleted);
+
+      if (isDuplicate) {
+        if (!confirm(`Phone number ${phone} is already registered. Continue saving?`)) {
+          submitBtn.disabled = false;
+          return;
+        }
+      }
+
+      const newRecord = {
+        id: generateUniqueRegId(),
+        name,
+        place,
+        phone,
+        age,
+        createdAt: new Date().toISOString(),
+        syncStatus: "PENDING",
+        isDeleted: false
+      };
+
+      try {
+        await saveToLocalDB(newRecord);
+        document.getElementById('studentForm').reset();
+        showToast(`Registration Saved! ID: ${newRecord.id}`, "emerald");
+
+        triggerSyncProcess();
+        refreshUI();
+      } catch (err) {
+        console.error("Save error:", err);
+        showToast("Failed to save registration.", "rose");
+      } finally {
+        submitBtn.disabled = false;
+      }
+    };
+
+    // UI REFRESH
+    async function refreshUI() {
+      const records = await getAllLocalRecords();
+      const activeRecords = records.filter(r => !r.isDeleted);
+
+      const total = activeRecords.length;
+      const synced = activeRecords.filter(r => r.syncStatus === 'SYNCED').length;
+      const pending = activeRecords.filter(r => r.syncStatus === 'PENDING' || r.syncStatus === 'FAILED').length;
+      const lastSync = localStorage.getItem("teenspace_last_sync") || "Never";
+
+      document.getElementById('statTotal').innerText = total;
+      document.getElementById('statSynced').innerText = synced;
+      document.getElementById('statPending').innerText = pending;
+      document.getElementById('statLastSync').innerText = lastSync;
+
+      const pendingBadge = document.getElementById('pendingBadge');
+      if (pending > 0) {
+        pendingBadge.innerText = pending;
+        pendingBadge.classList.remove('hidden');
+      } else {
+        pendingBadge.classList.add('hidden');
+      }
+
+      renderRecentActivity(activeRecords);
+    }
+
+    function renderRecentActivity(records) {
+      const container = document.getElementById('recentRecordsList');
+      const sorted = [...records].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 5);
+
+      if (sorted.length === 0) {
+        container.innerHTML = `<div class="p-6 text-center text-slate-500 text-sm">No registrations recorded yet.</div>`;
+        return;
+      }
+
+      container.innerHTML = sorted.map(r => `
+        <div class="px-6 py-3.5 flex items-center justify-between hover:bg-slate-800/40 transition">
+          <div>
+            <p class="text-sm font-bold text-slate-200">${escapeHtml(r.name)}</p>
+            <p class="text-xs text-slate-400">${escapeHtml(r.place)} • <span class="font-mono text-slate-300">${r.id}</span></p>
+          </div>
+          <div>
+            ${renderSyncBadge(r.syncStatus)}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // TABLE RENDERING
+    window.renderRecordsTable = async function() {
+      const records = await getAllLocalRecords();
+      const activeRecords = records.filter(r => !r.isDeleted);
+
+      const searchQuery = (document.getElementById('searchInput')?.value || '').toLowerCase();
+      const filterSync = document.getElementById('filterSync')?.value || 'ALL';
+
+      const filtered = activeRecords.filter(r => {
+        const matchesSearch = r.name.toLowerCase().includes(searchQuery) ||
+                              r.id.toLowerCase().includes(searchQuery) ||
+                              r.phone.toLowerCase().includes(searchQuery) ||
+                              r.place.toLowerCase().includes(searchQuery);
+        
+        const matchesSync = filterSync === 'ALL' || r.syncStatus === filterSync;
+
+        return matchesSearch && matchesSync;
+      });
+
+      const tbody = document.getElementById('recordsTableBody');
+      if (!tbody) return;
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-slate-500 text-sm">No records found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(r => `
+        <tr class="hover:bg-slate-800/30 transition border-b border-slate-800/60">
+          <td class="py-3.5 px-4 font-mono text-xs font-bold text-slate-300">${r.id}</td>
+          <td class="py-3.5 px-4 font-bold text-slate-100">${escapeHtml(r.name)}</td>
+          <td class="py-3.5 px-4 text-xs text-slate-300">${escapeHtml(r.place)}</td>
+          <td class="py-3.5 px-4 text-xs font-mono text-slate-300">${r.phone}</td>
+          <td class="py-3.5 px-4 text-xs text-slate-300">${r.age}</td>
+          <td class="py-3.5 px-4">
+            ${renderSyncBadge(r.syncStatus)}
+          </td>
+          <td class="py-3.5 px-4 text-right space-x-2">
+            <button onclick="openEditModal('${r.id}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition" title="Edit">
+              <i data-lucide="edit-3" class="w-4 h-4"></i>
+            </button>
+            <button onclick="confirmDeleteRecord('${r.id}')" class="p-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg transition" title="Delete">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      lucide.createIcons();
+    };
+
+    function renderSyncBadge(status) {
+      if (status === 'SYNCED') {
+        return `<span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><i data-lucide="check" class="w-3 h-3"></i><span>Synced</span></span>`;
+      } else if (status === 'SYNCING') {
+        return `<span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20 animate-pulse"><i data-lucide="refresh-cw" class="w-3 h-3 animate-spin"></i><span>Syncing</span></span>`;
+      } else if (status === 'FAILED') {
+        return `<span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20"><i data-lucide="alert-triangle" class="w-3 h-3"></i><span>Failed</span></span>`;
+      } else {
+        return `<span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20"><i data-lucide="clock" class="w-3 h-3"></i><span>Pending</span></span>`;
+      }
+    }
+
+    // EDIT & DELETE
+    window.openEditModal = async function(id) {
+      const record = await getLocalRecord(id);
+      if (!record) return;
+
+      document.getElementById('editRegId').value = record.id;
+      document.getElementById('editName').value = record.name;
+      document.getElementById('editPlace').value = record.place;
+      document.getElementById('editPhone').value = record.phone;
+      document.getElementById('editAge').value = record.age;
+
+      document.getElementById('editModal').classList.remove('hidden');
+    };
+
+    window.closeEditModal = function() {
+      document.getElementById('editModal').classList.add('hidden');
+    };
+
+    window.handleEditSubmit = async function(e) {
+      e.preventDefault();
+      const id = document.getElementById('editRegId').value;
+      const record = await getLocalRecord(id);
+
+      if (!record) return;
+
+      record.name = document.getElementById('editName').value.trim();
+      record.place = document.getElementById('editPlace').value.trim();
+      record.phone = document.getElementById('editPhone').value.trim();
+      record.age = document.getElementById('editAge').value.trim();
+      record.updatedAt = new Date().toISOString();
+      record.syncStatus = "PENDING";
+
+      await saveToLocalDB(record);
+      closeEditModal();
+      showToast("Updated successfully.", "sky");
+      triggerSyncProcess();
+      renderRecordsTable();
+      refreshUI();
+    };
+
+    window.confirmDeleteRecord = async function(id) {
+      if (!confirm(`Delete registration ID ${id}?`)) return;
+
+      const record = await getLocalRecord(id);
+      if (record) {
+        record.isDeleted = true;
+        record.syncStatus = "PENDING";
+        await saveToLocalDB(record);
+
+        if (navigator.onLine && isAuthReady) {
+          try {
+            await deleteDoc(doc(db, "teenspace_registrations", id));
+            await deleteFromLocalDB(id);
+          } catch (err) {
+            console.error("Deletion sync error:", err);
+          }
+        }
+
+        showToast("Record deleted.", "rose");
+        renderRecordsTable();
+        refreshUI();
+      }
+    };
+
+    // EXPORT
+    window.exportToCSV = async function() {
+      const records = await getAllLocalRecords();
+      const activeRecords = records.filter(r => !r.isDeleted);
+
+      if (activeRecords.length === 0) {
+        showToast("No records to export.", "amber");
+        return;
+      }
+
+      const headers = ["ID", "Name", "Place", "Mobile", "Age", "Sync Status", "Created At"];
+      const rows = activeRecords.map(r => [
+        `"${r.id}"`,
+        `"${r.name.replace(/"/g, '""')}"`,
+        `"${r.place.replace(/"/g, '""')}"`,
+        `"${r.phone}"`,
+        `"${r.age}"`,
+        `"${r.syncStatus}"`,
+        `"${r.createdAt}"`
+      ]);
+
+      const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Teenspace_Registrations_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast("CSV exported!", "emerald");
+    };
+
+    // TOAST UTILS
+    function showToast(message, type = "sky") {
+      const container = document.getElementById("toastContainer");
+      if (!container) return;
+
+      const toast = document.createElement("div");
+      const bgColors = {
+        sky: "bg-slate-900 border-sky-500/40 text-sky-300",
+        emerald: "bg-slate-900 border-emerald-500/40 text-emerald-300",
+        amber: "bg-slate-900 border-amber-500/40 text-amber-300",
+        rose: "bg-slate-900 border-rose-500/40 text-rose-300"
+      };
+
+      toast.className = `px-4 py-3 rounded-2xl border ${bgColors[type] || bgColors.sky} text-xs sm:text-sm font-semibold shadow-2xl transition-all transform translate-y-2 opacity-0 flex items-center space-x-2 pointer-events-auto`;
+      toast.innerHTML = `<span>${escapeHtml(message)}</span>`;
+
+      container.appendChild(toast);
+
+      setTimeout(() => toast.classList.remove("translate-y-2", "opacity-0"), 10);
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "translate-y-2");
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+      });
+    }
+
+    window.addEventListener("DOMContentLoaded", async () => {
+      lucide.createIcons();
+      updateOnlineStatus();
+      await refreshUI();
+    });
+  </script>
+</body>
+</html>
