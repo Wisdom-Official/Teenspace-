@@ -1,0 +1,948 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TeenSpace - Team Task Hub</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Google Font: Inter -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              pink: '#D81B60',
+              pinkLight: '#FCE4EC',
+              pinkDark: '#AD1457',
+              blue: '#0284C7',
+              blueLight: '#E0F2FE',
+              blueDark: '#075985',
+              surface: '#FFFFFF',
+              bg: '#F8FAFC',
+              border: '#E2E8F0',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .glass-nav {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+    }
+    /* Clean custom datepicker indicators */
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      opacity: 0.6;
+    }
+    input[type="datetime-local"]::-webkit-calendar-picker-indicator:hover {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col font-sans antialiased selection:bg-pink-100 selection:text-pink-700">
+
+  <header class="sticky top-0 z-40 glass-nav border-b border-slate-200/80 px-4 lg:px-8 py-3 shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-row items-center justify-between gap-4">
+      
+      <!-- Logo Container -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 bg-slate-900 px-3.5 py-1.5 rounded-xl shadow-sm">
+          <img 
+            src="0.png" 
+            alt="TeenSpace Logo" 
+            class="h-8 md:h-9 w-auto object-contain"
+            id="brandLogo"
+            onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 420 120\' width=\'420\' height=\'120\'><text x=\'10\' y=\'80\' font-family=\'sans-serif\' font-weight=\'bold\' font-size=\'60\' fill=\'%23ffffff\'>TeenSpace</text></svg>'"
+          />
+        </div>
+        <span class="hidden sm:inline-block text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-200/80 text-slate-700 border border-slate-300">
+          Task Hub
+        </span>
+      </div>
+
+      <!-- Connection Status & Create Action -->
+      <div class="flex items-center gap-3">
+        <div id="connectionStatus" class="hidden sm:flex items-center gap-2 text-xs text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
+          <i class="fa-solid fa-spinner fa-spin"></i>
+          <span>Connecting...</span>
+        </div>
+
+        <button id="openAddModalBtn" class="flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 transition-all text-white font-semibold px-4 py-2 rounded-xl shadow-md active:scale-95 text-xs md:text-sm">
+          <i class="fa-solid fa-plus text-sm"></i>
+          <span>New Task</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-6 flex flex-col gap-6">
+
+    <!-- Compact Stats Bar -->
+    <div class="grid grid-cols-3 gap-3 md:gap-4 bg-white border border-slate-200/80 p-3 md:p-4 rounded-2xl shadow-sm">
+      <div class="flex items-center gap-3 p-2 border-r border-slate-100">
+        <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-lg hidden sm:flex">
+          <i class="fa-solid fa-hourglass-half"></i>
+        </div>
+        <div>
+          <span id="statOpen" class="block text-xl md:text-2xl font-bold text-amber-600 leading-none">0</span>
+          <span class="text-[11px] text-slate-500 uppercase font-semibold tracking-wider">Unassigned</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 p-2 border-r border-slate-100">
+        <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center font-bold text-lg hidden sm:flex">
+          <i class="fa-solid fa-user-gear"></i>
+        </div>
+        <div>
+          <span id="statClaimed" class="block text-xl md:text-2xl font-bold text-sky-600 leading-none">0</span>
+          <span class="text-[11px] text-slate-500 uppercase font-semibold tracking-wider">In Progress</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 p-2">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-lg hidden sm:flex">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+          <span id="statDone" class="block text-xl md:text-2xl font-bold text-emerald-600 leading-none">0</span>
+          <span class="text-[11px] text-slate-500 uppercase font-semibold tracking-wider">Completed</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between bg-white border border-slate-200/80 p-3.5 rounded-2xl shadow-sm">
+      
+      <!-- Status Filter Tabs -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none" id="filterTabs">
+        <button data-filter="all" class="filter-tab active px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all bg-slate-900 text-white shadow-sm">
+          All
+        </button>
+        <button data-filter="unassigned" class="filter-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all bg-slate-100 text-slate-600 hover:bg-slate-200">
+          Needs Volunteer
+        </button>
+        <button data-filter="in-progress" class="filter-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all bg-slate-100 text-slate-600 hover:bg-slate-200">
+          In Progress
+        </button>
+        <button data-filter="completed" class="filter-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all bg-slate-100 text-slate-600 hover:bg-slate-200">
+          Completed
+        </button>
+      </div>
+
+      <!-- Search & Category Dropdown -->
+      <div class="flex items-center gap-2">
+        <div class="relative flex-1 md:w-60">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input type="text" id="searchInput" placeholder="Search tasks..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-slate-400 transition-all placeholder:text-slate-400" />
+        </div>
+
+        <select id="categoryFilter" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-700 focus:outline-none focus:border-slate-400">
+          <option value="all">All Categories</option>
+          <option value="Purchases / Procurement">🛒 Purchases</option>
+          <option value="Stage & Venue Setup">🎪 Stage & Venue</option>
+          <option value="Hospitality & Food">🍕 Hospitality</option>
+          <option value="Media & Design">🎨 Media & Design</option>
+          <option value="Technical & Sound">🔊 Tech & Sound</option>
+          <option value="Registration & Helpdesk">📋 Registration</option>
+          <option value="General">📍 General</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div id="tasksGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="animate-pulse bg-white border border-slate-200 rounded-2xl p-5 h-48 flex flex-col justify-between">
+        <div class="space-y-3">
+          <div class="h-4 bg-slate-100 rounded w-1/3"></div>
+          <div class="h-5 bg-slate-200 rounded w-3/4"></div>
+          <div class="h-10 bg-slate-100 rounded w-full"></div>
+        </div>
+        <div class="h-8 bg-slate-100 rounded w-full"></div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden flex-col items-center justify-center py-16 bg-white rounded-2xl border border-dashed border-slate-200 text-center shadow-sm">
+      <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3 text-xl">
+        <i class="fa-solid fa-folder-open"></i>
+      </div>
+      <h3 class="text-sm font-semibold text-slate-700">No tasks found</h3>
+      <p class="text-xs text-slate-400 max-w-xs mt-1">There are no tasks matching your selected filters.</p>
+    </div>
+
+  </main>
+
+  <!-- Create Task Modal -->
+  <div id="addModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-4 relative transform scale-95 transition-transform duration-200" id="addModalBox">
+      
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="p-2 rounded-lg bg-pink-50 text-brand-pink">
+            <i class="fa-solid fa-plus-circle text-base"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-800">Create Task</h3>
+          </div>
+        </div>
+        <button id="closeAddModalBtn" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-all">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <form id="addTaskForm" class="space-y-3.5">
+        
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Task Title <span class="text-pink-600">*</span></label>
+          <input type="text" id="taskTitle" required placeholder="e.g. Purchase Badges & Lanyards" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400 transition-all" />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Category <span class="text-pink-600">*</span></label>
+            <select id="taskCategory" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400">
+              <option value="Purchases / Procurement">🛒 Purchases / Procurement</option>
+              <option value="Stage & Venue Setup">🎪 Stage & Venue Setup</option>
+              <option value="Hospitality & Food">🍕 Hospitality & Food</option>
+              <option value="Media & Design">🎨 Media & Design</option>
+              <option value="Technical & Sound">🔊 Technical & Sound</option>
+              <option value="Registration & Helpdesk">📋 Registration & Helpdesk</option>
+              <option value="General" selected>📍 General</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Priority</label>
+            <select id="taskPriority" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400">
+              <option value="Low">🟢 Low</option>
+              <option value="Medium" selected>🟡 Medium</option>
+              <option value="High">🔴 High / Urgent</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Created By <span class="text-pink-600">*</span></label>
+            <input type="text" id="createdBy" required placeholder="Your Name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Target Cut-off <span class="text-pink-600">*</span></label>
+            <input type="datetime-local" id="cutoffTime" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Details & Requirements</label>
+          <textarea id="taskDesc" rows="2.5" placeholder="Specify requirements, vendor details, or specifications..." class="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-800 focus:outline-none focus:border-slate-400"></textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" id="cancelAddBtn" class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-all">
+            Cancel
+          </button>
+          <button type="submit" id="submitTaskBtn" class="px-4 py-2 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 active:scale-95 transition-all flex items-center gap-1.5">
+            <span>Add Task</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Claim Modal -->
+  <div id="claimModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-white border border-slate-200 rounded-2xl max-w-md w-full p-5 shadow-xl space-y-3.5 transform scale-95 transition-transform duration-200" id="claimModalBox">
+      
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="p-2 rounded-lg bg-sky-50 text-sky-600">
+            <i class="fa-solid fa-hand text-base"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-800">Volunteer for Task</h3>
+          </div>
+        </div>
+        <button id="closeClaimModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+        <span id="claimModalTaskCat" class="text-[10px] font-bold uppercase tracking-wider text-sky-700">Category</span>
+        <h4 id="claimModalTaskTitle" class="text-xs font-bold text-slate-800 mt-0.5">Task Title</h4>
+      </div>
+
+      <form id="claimTaskForm" class="space-y-3">
+        <input type="hidden" id="claimTaskId" />
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Your Name <span class="text-sky-600">*</span></label>
+          <input type="text" id="assigneeName" required placeholder="Full Name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Set Secret PIN / Passcode <span class="text-sky-600">*</span></label>
+          <input type="password" id="assigneePin" required maxLength="6" placeholder="Passcode (e.g. 1234)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400 tracking-widest" />
+          <p class="text-[10px] text-slate-500 mt-1"><i class="fa-solid fa-lock mr-1"></i>Required later to complete or unassign this task.</p>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Est. Completion Target <span class="text-sky-600">*</span></label>
+          <input type="datetime-local" id="estimatedCompletion" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400" />
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" id="cancelClaimBtn" class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-100">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold shadow-sm active:scale-95 transition-all">
+            Confirm & Claim
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- PIN Verification Modal -->
+  <div id="pinModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4 hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-white border border-slate-200 rounded-2xl max-w-sm w-full p-5 shadow-xl space-y-3.5 transform scale-95 transition-transform duration-200" id="pinModalBox">
+      
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="p-2 rounded-lg bg-pink-50 text-pink-600">
+            <i class="fa-solid fa-key text-base"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-800" id="pinModalTitle">Verify Passcode</h3>
+          </div>
+        </div>
+        <button id="closePinModalBtn" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
+          <i class="fa-solid fa-xmark text-base"></i>
+        </button>
+      </div>
+
+      <form id="pinVerificationForm" class="space-y-3">
+        <input type="hidden" id="pinTaskId" />
+        <input type="hidden" id="pinTargetAction" />
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Enter Your Passcode <span class="text-pink-600">*</span></label>
+          <input type="password" id="inputVerifyPin" required placeholder="Enter PIN" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-slate-400 tracking-widest" />
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" id="cancelPinBtn" class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-100">
+            Cancel
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold active:scale-95 transition-all">
+            Verify
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-slate-200 py-3 text-center text-xs text-slate-500 bg-white">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="font-medium text-slate-600">
+        TeenSpace Conference &bull; Volunteer Platform
+      </div>
+      <div class="text-slate-400">
+        Realtime Sync Active
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      updateDoc, 
+      doc, 
+      onSnapshot, 
+      serverTimestamp,
+      deleteDoc 
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // Firebase Configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBwNK6lDzwKtkkhvODpCDSuQhpdwEUy5Tk",
+      authDomain: "to-do-96252.firebaseapp.com",
+      projectId: "to-do-96252",
+      storageBucket: "to-do-96252.firebasestorage.app",
+      messagingSenderId: "1046893566921",
+      appId: "1:1046893566921:web:e14ef2fb8a6cf810ea6618"
+    };
+
+    let app, db;
+    let allTasks = [];
+    let currentFilter = 'all';
+    let currentCategory = 'all';
+    let searchQuery = '';
+
+    try {
+      app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      updateStatus(true, "Live Sync Active");
+    } catch (err) {
+      console.error("Firebase Initialization Error:", err);
+      updateStatus(false, "Connection Failed");
+    }
+
+    // DOM References
+    const tasksGrid = document.getElementById('tasksGrid');
+    const emptyState = document.getElementById('emptyState');
+    const openAddModalBtn = document.getElementById('openAddModalBtn');
+    const closeAddModalBtn = document.getElementById('closeAddModalBtn');
+    const cancelAddBtn = document.getElementById('cancelAddBtn');
+    const addModal = document.getElementById('addModal');
+    const addModalBox = document.getElementById('addModalBox');
+    const addTaskForm = document.getElementById('addTaskForm');
+
+    const claimModal = document.getElementById('claimModal');
+    const claimModalBox = document.getElementById('claimModalBox');
+    const closeClaimModalBtn = document.getElementById('closeClaimModalBtn');
+    const cancelClaimBtn = document.getElementById('cancelClaimBtn');
+    const claimTaskForm = document.getElementById('claimTaskForm');
+
+    const pinModal = document.getElementById('pinModal');
+    const pinModalBox = document.getElementById('pinModalBox');
+    const closePinModalBtn = document.getElementById('closePinModalBtn');
+    const cancelPinBtn = document.getElementById('cancelPinBtn');
+    const pinVerificationForm = document.getElementById('pinVerificationForm');
+
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const filterTabs = document.getElementById('filterTabs');
+
+    // Default datetimes set to Oct 20-21, 2026
+    const setOct2026Defaults = () => {
+      const cutoffEl = document.getElementById('cutoffTime');
+      const estEl = document.getElementById('estimatedCompletion');
+
+      if (cutoffEl) cutoffEl.value = "2026-10-20T18:00";
+      if (estEl) estEl.value = "2026-10-21T18:00";
+    };
+
+    setOct2026Defaults();
+
+    // UI Toast Notification
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      
+      const isSuccess = type === 'success';
+      toast.className = `pointer-events-auto flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border shadow-lg text-xs font-semibold transform transition-all duration-300 translate-y-3 opacity-0 ${
+        isSuccess 
+          ? 'bg-white border-emerald-300 text-emerald-700' 
+          : 'bg-white border-rose-300 text-rose-700'
+      }`;
+      
+      toast.innerHTML = `
+        <i class="fa-solid ${isSuccess ? 'fa-circle-check text-emerald-500' : 'fa-circle-exclamation text-rose-500'} text-sm"></i>
+        <span>${message}</span>
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-3', 'opacity-0');
+      }, 10);
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-3', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function updateStatus(isOnline, text) {
+      const el = document.getElementById('connectionStatus');
+      if (!el) return;
+      if (isOnline) {
+        el.className = "hidden sm:flex items-center gap-2 text-xs text-emerald-700 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200";
+        el.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span><span>${text}</span>`;
+      } else {
+        el.className = "hidden sm:flex items-center gap-2 text-xs text-rose-700 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-200";
+        el.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i><span>${text}</span>`;
+      }
+    }
+
+    function toggleModal(modalEl, boxEl, show) {
+      if (show) {
+        modalEl.classList.remove('hidden');
+        setTimeout(() => {
+          modalEl.classList.remove('opacity-0');
+          boxEl.classList.remove('scale-95');
+        }, 10);
+      } else {
+        modalEl.classList.add('opacity-0');
+        boxEl.classList.add('scale-95');
+        setTimeout(() => {
+          modalEl.classList.add('hidden');
+        }, 200);
+      }
+    }
+
+    openAddModalBtn.addEventListener('click', () => {
+      setOct2026Defaults();
+      toggleModal(addModal, addModalBox, true);
+    });
+    closeAddModalBtn.addEventListener('click', () => toggleModal(addModal, addModalBox, false));
+    cancelAddBtn.addEventListener('click', () => toggleModal(addModal, addModalBox, false));
+
+    closeClaimModalBtn.addEventListener('click', () => toggleModal(claimModal, claimModalBox, false));
+    cancelClaimBtn.addEventListener('click', () => toggleModal(claimModal, claimModalBox, false));
+
+    closePinModalBtn.addEventListener('click', () => toggleModal(pinModal, pinModalBox, false));
+    cancelPinBtn.addEventListener('click', () => toggleModal(pinModal, pinModalBox, false));
+
+    function listenToTasks() {
+      if (!db) return;
+      const tasksRef = collection(db, 'tasks');
+
+      onSnapshot(tasksRef, (snapshot) => {
+        allTasks = [];
+        snapshot.forEach((docSnap) => {
+          allTasks.push({
+            id: docSnap.id,
+            ...docSnap.data()
+          });
+        });
+
+        allTasks.sort((a, b) => {
+          const tA = a.createdAt?.seconds || 0;
+          const tB = b.createdAt?.seconds || 0;
+          return tB - tA;
+        });
+
+        updateCounters();
+        renderTasks();
+      }, (error) => {
+        console.error("Firestore Listen Error:", error);
+        updateStatus(false, "Sync Error");
+      });
+    }
+
+    function updateCounters() {
+      const openCount = allTasks.filter(t => t.status === 'open').length;
+      const claimedCount = allTasks.filter(t => t.status === 'claimed').length;
+      const doneCount = allTasks.filter(t => t.status === 'completed').length;
+
+      document.getElementById('statOpen').textContent = openCount;
+      document.getElementById('statClaimed').textContent = claimedCount;
+      document.getElementById('statDone').textContent = doneCount;
+    }
+
+    function renderTasks() {
+      let filtered = allTasks.filter(t => {
+        if (currentFilter === 'unassigned' && t.status !== 'open') return false;
+        if (currentFilter === 'in-progress' && t.status !== 'claimed') return false;
+        if (currentFilter === 'completed' && t.status !== 'completed') return false;
+
+        if (currentCategory !== 'all' && t.category !== currentCategory) return false;
+
+        if (searchQuery.trim() !== '') {
+          const q = searchQuery.toLowerCase();
+          const matchTitle = t.title?.toLowerCase().includes(q);
+          const matchDesc = t.description?.toLowerCase().includes(q);
+          const matchCreator = t.createdBy?.toLowerCase().includes(q);
+          const matchAssignee = t.assignedTo?.toLowerCase().includes(q);
+          if (!matchTitle && !matchDesc && !matchCreator && !matchAssignee) return false;
+        }
+
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        tasksGrid.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      emptyState.classList.remove('flex');
+
+      tasksGrid.innerHTML = filtered.map(task => createTaskCardHTML(task)).join('');
+
+      attachCardEventListeners();
+    }
+
+    function createTaskCardHTML(t) {
+      const isCompleted = t.status === 'completed';
+      const isClaimed = t.status === 'claimed';
+      const isOpen = t.status === 'open';
+
+      let priorityBadge = '<span class="px-2 py-0.5 text-[10px] rounded-md bg-slate-100 text-slate-600 font-medium">Medium</span>';
+      if (t.priority === 'High') {
+        priorityBadge = '<span class="px-2 py-0.5 text-[10px] rounded-md bg-rose-50 text-rose-600 font-semibold border border-rose-200">🔴 High</span>';
+      } else if (t.priority === 'Low') {
+        priorityBadge = '<span class="px-2 py-0.5 text-[10px] rounded-md bg-emerald-50 text-emerald-600 font-medium">🟢 Low</span>';
+      }
+
+      let statusBadge = '';
+      if (isOpen) {
+        statusBadge = '<span class="px-2 py-0.5 text-[11px] rounded-md bg-amber-50 text-amber-700 font-semibold border border-amber-200">Needs Volunteer</span>';
+      } else if (isClaimed) {
+        statusBadge = '<span class="px-2 py-0.5 text-[11px] rounded-md bg-sky-50 text-sky-700 font-semibold border border-sky-200">In Progress</span>';
+      } else {
+        statusBadge = '<span class="px-2 py-0.5 text-[11px] rounded-md bg-emerald-50 text-emerald-700 font-semibold border border-emerald-200">Completed</span>';
+      }
+
+      const formatTime = (ts) => {
+        if (!ts) return '-';
+        const d = new Date(ts);
+        if (isNaN(d.getTime())) return ts;
+        return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+      };
+
+      const cutoffDisplay = formatTime(t.cutoffTime);
+      const estDisplay = t.estimatedCompletion ? formatTime(t.estimatedCompletion) : null;
+
+      return `
+        <div class="bg-white border ${isCompleted ? 'border-slate-200 opacity-75' : 'border-slate-200/90'} rounded-2xl p-4 flex flex-col justify-between hover:shadow-md transition-all relative">
+          
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-[10px] font-bold text-sky-700 uppercase tracking-wider bg-sky-50 px-2 py-0.5 rounded border border-sky-100">
+                ${t.category || 'General'}
+              </span>
+              ${priorityBadge}
+            </div>
+
+            <div>
+              <h3 class="text-sm font-bold text-slate-800 ${isCompleted ? 'line-through text-slate-400' : ''} leading-snug">
+                ${escapeHTML(t.title)}
+              </h3>
+              ${t.description ? `<p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">${escapeHTML(t.description)}</p>` : ''}
+            </div>
+
+            <div class="space-y-1 pt-2 border-t border-slate-100 text-xs text-slate-500">
+              <div class="flex items-center justify-between">
+                <span>Cut-off:</span>
+                <span class="font-medium text-slate-700">${cutoffDisplay}</span>
+              </div>
+
+              <div class="flex items-center justify-between">
+                <span>Added by:</span>
+                <span class="font-medium text-slate-700">${escapeHTML(t.createdBy || 'Anonymous')}</span>
+              </div>
+
+              ${isClaimed || isCompleted ? `
+                <div class="flex items-center justify-between bg-slate-50 p-1.5 rounded-lg border border-slate-100 mt-1.5">
+                  <span class="text-slate-500">Assigned:</span>
+                  <span class="font-bold text-slate-800">${escapeHTML(t.assignedTo || 'Volunteer')}</span>
+                </div>
+                ${estDisplay ? `
+                  <div class="flex items-center justify-between text-[11px] text-slate-400 px-0.5">
+                    <span>Est. Finish:</span>
+                    <span class="text-slate-600 font-medium">${estDisplay}</span>
+                  </div>
+                ` : ''}
+              ` : ''}
+            </div>
+          </div>
+
+          <div class="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <div>${statusBadge}</div>
+
+            <div class="flex items-center gap-1.5">
+              ${isOpen ? `
+                <button data-action="claim" data-id="${t.id}" data-title="${escapeHTML(t.title)}" data-category="${escapeHTML(t.category)}" class="bg-sky-600 hover:bg-sky-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 transition-all active:scale-95 shadow-sm">
+                  <i class="fa-solid fa-hand-holding-hand text-xs"></i>
+                  <span>Claim</span>
+                </button>
+              ` : ''}
+
+              ${isClaimed ? `
+                <button data-action="complete" data-id="${t.id}" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1.5 rounded-xl text-xs flex items-center gap-1 transition-all active:scale-95 shadow-sm">
+                  <i class="fa-solid fa-check text-xs"></i>
+                  <span>Done</span>
+                </button>
+                <button data-action="unclaim" data-id="${t.id}" title="Unassign task" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-1.5 rounded-xl text-xs transition-all">
+                  <i class="fa-solid fa-rotate-left"></i>
+                </button>
+              ` : ''}
+
+              <button data-action="delete" data-id="${t.id}" title="Delete Task" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-xl hover:bg-slate-100 transition-all">
+                <i class="fa-solid fa-trash-can text-xs"></i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      `;
+    }
+
+    function attachCardEventListeners() {
+      document.querySelectorAll('button[data-action="claim"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          const title = btn.getAttribute('data-title');
+          const category = btn.getAttribute('data-category');
+
+          document.getElementById('claimTaskId').value = id;
+          document.getElementById('claimModalTaskTitle').textContent = title;
+          document.getElementById('claimModalTaskCat').textContent = category;
+          document.getElementById('assigneePin').value = '';
+
+          document.getElementById('estimatedCompletion').value = "2026-10-21T18:00";
+
+          toggleModal(claimModal, claimModalBox, true);
+        });
+      });
+
+      document.querySelectorAll('button[data-action="complete"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          promptPinVerification(id, 'complete', 'Mark Completed');
+        });
+      });
+
+      document.querySelectorAll('button[data-action="unclaim"]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const id = btn.getAttribute('data-id');
+          promptPinVerification(id, 'unclaim', 'Unassign Task');
+        });
+      });
+
+      document.querySelectorAll('button[data-action="delete"]').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = btn.getAttribute('data-id');
+          if (confirm("Are you sure you want to delete this task?")) {
+            try {
+              await deleteDoc(doc(db, 'tasks', id));
+              showToast("Task deleted.", "success");
+            } catch (err) {
+              console.error("Delete Error:", err);
+              showToast("Failed to delete task.", "error");
+            }
+          }
+        });
+      });
+    }
+
+    function promptPinVerification(taskId, action, actionTitle) {
+      document.getElementById('pinTaskId').value = taskId;
+      document.getElementById('pinTargetAction').value = action;
+      document.getElementById('pinModalTitle').textContent = actionTitle;
+      document.getElementById('inputVerifyPin').value = '';
+      toggleModal(pinModal, pinModalBox, true);
+    }
+
+    pinVerificationForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const taskId = document.getElementById('pinTaskId').value;
+      const action = document.getElementById('pinTargetAction').value;
+      const inputPin = document.getElementById('inputVerifyPin').value.trim();
+
+      const task = allTasks.find(t => t.id === taskId);
+      if (!task) {
+        showToast("Task not found.", "error");
+        return;
+      }
+
+      if (task.pin && task.pin !== inputPin) {
+        showToast("Incorrect passcode!", "error");
+        return;
+      }
+
+      toggleModal(pinModal, pinModalBox, false);
+
+      if (action === 'complete') {
+        await updateTaskStatus(taskId, {
+          status: 'completed',
+          completedAt: new Date().toISOString()
+        }, "Task completed! 🎉");
+      } else if (action === 'unclaim') {
+        await updateTaskStatus(taskId, {
+          status: 'open',
+          assignedTo: null,
+          pin: null,
+          estimatedCompletion: null
+        }, "Task returned to unassigned list.");
+      }
+    });
+
+    async function updateTaskStatus(taskId, updateData, successMsg) {
+      if (!db) return;
+      try {
+        const taskRef = doc(db, 'tasks', taskId);
+        await updateDoc(taskRef, updateData);
+        showToast(successMsg, "success");
+      } catch (err) {
+        console.error("Update Task Error:", err);
+        showToast("Error updating status.", "error");
+      }
+    }
+
+    addTaskForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('taskTitle').value.trim();
+      const category = document.getElementById('taskCategory').value;
+      const priority = document.getElementById('taskPriority').value;
+      const createdBy = document.getElementById('createdBy').value.trim();
+      const cutoffTime = document.getElementById('cutoffTime').value;
+      const description = document.getElementById('taskDesc').value.trim();
+
+      if (!title || !createdBy || !cutoffTime) {
+        showToast("Please fill in required fields.", "error");
+        return;
+      }
+
+      const newTask = {
+        title,
+        category,
+        priority,
+        createdBy,
+        cutoffTime,
+        description,
+        status: 'open',
+        assignedTo: null,
+        estimatedCompletion: null,
+        createdAt: serverTimestamp()
+      };
+
+      try {
+        const submitBtn = document.getElementById('submitTaskBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Adding...`;
+
+        await addDoc(collection(db, 'tasks'), newTask);
+
+        showToast("New task created!");
+        addTaskForm.reset();
+        setOct2026Defaults();
+        toggleModal(addModal, addModalBox, false);
+
+      } catch (err) {
+        console.error("Add Task Error:", err);
+        showToast("Failed to create task.", "error");
+      } finally {
+        const submitBtn = document.getElementById('submitTaskBtn');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Add Task</span><i class="fa-solid fa-arrow-right text-xs"></i>`;
+      }
+    });
+
+    claimTaskForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const taskId = document.getElementById('claimTaskId').value;
+      const assigneeName = document.getElementById('assigneeName').value.trim();
+      const assigneePin = document.getElementById('assigneePin').value.trim();
+      const estimatedCompletion = document.getElementById('estimatedCompletion').value;
+
+      if (!assigneeName || !assigneePin || !estimatedCompletion) {
+        showToast("Please complete all fields.", "error");
+        return;
+      }
+
+      try {
+        await updateDoc(doc(db, 'tasks', taskId), {
+          status: 'claimed',
+          assignedTo: assigneeName,
+          pin: assigneePin,
+          estimatedCompletion: estimatedCompletion,
+          claimedAt: new Date().toISOString()
+        });
+
+        showToast(`Task claimed by ${assigneeName}!`);
+        claimTaskForm.reset();
+        setOct2026Defaults();
+        toggleModal(claimModal, claimModalBox, false);
+
+      } catch (err) {
+        console.error("Claim Task Error:", err);
+        showToast("Failed to claim task.", "error");
+      }
+    });
+
+    // Filtering Controls
+    filterTabs.addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-tab');
+      if (!btn) return;
+
+      document.querySelectorAll('.filter-tab').forEach(b => {
+        b.className = 'filter-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all bg-slate-100 text-slate-600 hover:bg-slate-200';
+      });
+
+      btn.className = 'filter-tab active px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all bg-slate-900 text-white shadow-sm';
+
+      currentFilter = btn.getAttribute('data-filter');
+      renderTasks();
+    });
+
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      renderTasks();
+    });
+
+    categoryFilter.addEventListener('change', (e) => {
+      currentCategory = e.target.value;
+      renderTasks();
+    });
+
+    function escapeHTML(str) {
+      if (!str) return '';
+      return str.replace(/[&<>'"]/g, 
+        tag => ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          "'": '&#39;',
+          '"': '&quot;'
+        }[tag] || tag)
+      );
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      listenToTasks();
+    });
+  </script>
+</body>
+</html>
