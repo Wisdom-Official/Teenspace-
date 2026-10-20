@@ -59,7 +59,7 @@
             signOut 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Provided Firebase Configuration
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyB87xG9PfEPU76qvZXj_HMBMSo41MvawdU",
             authDomain: "check-b2152.firebaseapp.com",
@@ -69,12 +69,10 @@
             appId: "1:973461667305:web:59767e47862054d9dadf78"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // App Globals
         window.db = db;
         window.auth = auth;
         window.studentsList = [];
@@ -229,7 +227,7 @@
                     <a href="check_in.html" class="px-5 py-2.5 rounded-xl text-slate-300 hover:text-white transition-all flex items-center">
                         <i class="fa-solid fa-bus text-sky-600 mr-2 text-base"></i> Index (Check-In)
                     </a>
-                    <a href="Dash_Og.html" class="px-5 py-2.5 rounded-xl bg-white text-slate-900 shadow-md font-extrabold transition-all flex items-center">
+                    <a href="Desk-Og.html" class="px-5 py-2.5 rounded-xl bg-white text-slate-900 shadow-md font-extrabold transition-all flex items-center">
                         <i class="fa-solid fa-chart-pie text-pink-500 mr-2 text-base"></i> Dashboard & Excel
                     </a>
                 </nav>
@@ -254,7 +252,7 @@
                 <a href="check_in.html" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 text-center border border-slate-700 flex items-center justify-center">
                     <i class="fa-solid fa-bus text-sky-600 mr-1.5"></i> Check-In Index
                 </a>
-                <a href="Dash_Og.html" class="flex-1 py-2.5 rounded-xl text-xs font-black bg-white text-slate-900 text-center shadow flex items-center justify-center">
+                <a href="Desk-Og.html" class="flex-1 py-2.5 rounded-xl text-xs font-black bg-white text-slate-900 text-center shadow flex items-center justify-center">
                     <i class="fa-solid fa-chart-pie text-pink-500 mr-1.5"></i> Dashboard
                 </a>
             </div>
@@ -359,6 +357,7 @@
                                 <th class="p-3 sm:p-4">Phone Number</th>
                                 <th class="p-3 sm:p-4">Mandalam</th>
                                 <th class="p-3 sm:p-4">Unit</th>
+                                <th class="p-3 sm:p-4">Updated By</th>
                                 <th class="p-3 sm:p-4 text-center">Status</th>
                             </tr>
                         </thead>
@@ -422,7 +421,7 @@
             }
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 font-bold">No student data available.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400 font-bold">No student data available.</td></tr>`;
                 return;
             }
 
@@ -438,6 +437,7 @@
                         <td class="p-3 sm:p-4 font-semibold">${s.mobile || '-'}</td>
                         <td class="p-3 sm:p-4"><span class="bg-sky-50 text-sky-700 px-2.5 py-1 rounded-md text-[11px] font-bold">${s.mandalam || '-'}</span></td>
                         <td class="p-3 sm:p-4"><span class="bg-purple-50 text-purple-700 px-2.5 py-1 rounded-md text-[11px] font-bold">${s.unit || '-'}</span></td>
+                        <td class="p-3 sm:p-4 text-xs text-slate-500 font-semibold">${s.updatedBy || '-'}</td>
                         <td class="p-3 sm:p-4 text-center">
                             ${s.checkedIn ? 
                                 `<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full">Boarded</span>` : 
@@ -501,6 +501,7 @@
                 "Mandalam": s.mandalam || "",
                 "Unit": s.unit || "",
                 "Boarding Status": "Checked-In",
+                "Updated By": s.updatedBy || "",
                 "Check-In Time": s.checkInTime ? new Date(s.checkInTime).toLocaleString() : "Yes"
             }));
 
@@ -528,6 +529,7 @@
                 "Mandalam": s.mandalam || "",
                 "Unit": s.unit || "",
                 "Boarding Status": s.checkedIn ? "Checked-In" : "Pending",
+                "Updated By": s.updatedBy || "",
                 "Check-In Time": s.checkInTime ? new Date(s.checkInTime).toLocaleString() : "-"
             }));
 
