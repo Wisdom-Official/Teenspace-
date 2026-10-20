@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Teen Space - Bus Check-in Index</title>
+    <title>Teen Space - Bus Check-in Portal</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -57,7 +57,7 @@
             signOut 
         } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
-        // Provided Firebase Configuration
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyB87xG9PfEPU76qvZXj_HMBMSo41MvawdU",
             authDomain: "check-b2152.firebaseapp.com",
@@ -67,12 +67,10 @@
             appId: "1:973461667305:web:59767e47862054d9dadf78"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // App Globals
         window.db = db;
         window.auth = auth;
         window.studentsList = [];
@@ -160,13 +158,22 @@
             showToast("Failed to load data", "error");
         });
 
-        // Toggle Check-in status
+        // Toggle Check-in status with Updater Details
         window.toggleCheckIn = async (studentId, currentStatus) => {
+            const updaterName = (document.getElementById('updater-name').value || '').trim();
+            const updaterMobile = (document.getElementById('updater-mobile').value || '').trim();
+
+            if (!currentStatus && (!updaterName || !updaterMobile)) {
+                showToast("അപ്ഡേറ്റ് ചെയ്യുന്ന ആളുടെ പേരും മൊബൈൽ നമ്പറും നൽകുക!", "error");
+                return;
+            }
+
             try {
                 const docRef = doc(db, "students", studentId);
                 await updateDoc(docRef, {
                     checkedIn: !currentStatus,
-                    checkInTime: !currentStatus ? new Date().toISOString() : null
+                    checkInTime: !currentStatus ? new Date().toISOString() : null,
+                    updatedBy: !currentStatus ? `${updaterName} (${updaterMobile})` : null
                 });
                 showToast(!currentStatus ? "Checked-In Successfully ✅" : "Check-In Cancelled ❌", "success");
             } catch (e) {
@@ -176,6 +183,9 @@
 
         // Add New Unlisted Student Realtime Function
         window.addNewStudentToFirebase = async (name, mobile, mandalam, unit, autoCheckIn) => {
+            const updaterName = (document.getElementById('updater-name').value || '').trim();
+            const updaterMobile = (document.getElementById('updater-mobile').value || '').trim();
+
             try {
                 showToast("Adding new student...", "info");
                 const cleanName = name.trim();
@@ -193,6 +203,7 @@
                     unit: cleanUnit,
                     checkedIn: autoCheckIn,
                     checkInTime: autoCheckIn ? new Date().toISOString() : null,
+                    updatedBy: autoCheckIn ? `${updaterName} (${updaterMobile})` : 'Manual Add',
                     addedManually: true,
                     createdAt: new Date().toISOString()
                 }, { merge: true });
@@ -224,10 +235,10 @@
 
                 <!-- Navigation Links -->
                 <nav class="hidden md:flex space-x-2 bg-slate-800/90 p-1.5 rounded-2xl border border-slate-700 text-sm font-bold">
-                    <a href="check-in.html" class="px-5 py-2.5 rounded-xl bg-white text-slate-900 shadow-md font-extrabold transition-all flex items-center">
+                    <a href="check_in.html" class="px-5 py-2.5 rounded-xl bg-white text-slate-900 shadow-md font-extrabold transition-all flex items-center">
                         <i class="fa-solid fa-bus text-sky-600 mr-2 text-base"></i> Index (Check-In)
                     </a>
-                    <a href="Dash_Og.html" class="px-5 py-2.5 rounded-xl text-slate-300 hover:text-white transition-all flex items-center">
+                    <a href="Desk-Og.html" class="px-5 py-2.5 rounded-xl text-slate-300 hover:text-white transition-all flex items-center">
                         <i class="fa-solid fa-chart-pie text-pink-500 mr-2 text-base"></i> Dashboard & Excel
                     </a>
                 </nav>
@@ -249,10 +260,10 @@
 
             <!-- Mobile Sub Navigation Tabs -->
             <div class="flex md:hidden pb-3 pt-1 space-x-2">
-                <a href="check-in.html" class="flex-1 py-2.5 rounded-xl text-xs font-black bg-white text-slate-900 text-center shadow flex items-center justify-center">
+                <a href="check_in.html" class="flex-1 py-2.5 rounded-xl text-xs font-black bg-white text-slate-900 text-center shadow flex items-center justify-center">
                     <i class="fa-solid fa-bus text-sky-600 mr-1.5"></i> Check-In Index
                 </a>
-                <a href="Dash_Og.html" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 text-center border border-slate-700 flex items-center justify-center">
+                <a href="Desk-Og.html" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 text-center border border-slate-700 flex items-center justify-center">
                     <i class="fa-solid fa-chart-pie text-pink-500 mr-1.5"></i> Dashboard
                 </a>
             </div>
@@ -305,11 +316,11 @@
         </div>
 
         <section id="page-checkin" class="space-y-4 sm:space-y-5">
-            <!-- Filter Options & Add Student Banner -->
+            <!-- Filter Options & Incharge Banner -->
             <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                     <h2 class="text-xs sm:text-sm font-extrabold text-slate-800 flex items-center">
-                        <i class="fa-solid fa-filter text-sky-500 mr-2"></i> Select Mandalam & Unit (Index Filter)
+                        <i class="fa-solid fa-filter text-sky-500 mr-2"></i> 1. മണ്ഡലവും യൂണിറ്റും തിരഞ്ഞെടുക്കുക
                     </h2>
                     
                     <div class="flex items-center space-x-2">
@@ -325,7 +336,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <!-- Mandalam Dropdown -->
                     <div>
-                        <label class="block text-[11px] font-black text-slate-500 mb-1 uppercase">1. Mandalam</label>
+                        <label class="block text-[11px] font-black text-slate-500 mb-1 uppercase">1. Mandalam *</label>
                         <select id="select-mandalam" onchange="onMandalamChange()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm rounded-xl focus:ring-2 focus:ring-sky-500 p-3 outline-none font-bold touch-target">
                             <option value="">-- Select Mandalam --</option>
                         </select>
@@ -333,8 +344,8 @@
 
                     <!-- Unit Dropdown -->
                     <div>
-                        <label class="block text-[11px] font-black text-slate-500 mb-1 uppercase">2. Unit</label>
-                        <select id="select-unit" onchange="renderStudentsList()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm rounded-xl focus:ring-2 focus:ring-sky-500 p-3 outline-none font-bold touch-target" disabled>
+                        <label class="block text-[11px] font-black text-slate-500 mb-1 uppercase">2. Unit *</label>
+                        <select id="select-unit" onchange="onUnitChange()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm rounded-xl focus:ring-2 focus:ring-sky-500 p-3 outline-none font-bold touch-target" disabled>
                             <option value="">-- Select Mandalam First --</option>
                         </select>
                     </div>
@@ -347,6 +358,27 @@
                             <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400 text-xs sm:text-sm"></i>
                         </div>
                     </div>
+                </div>
+
+                <!-- Updater/Incharge Details Section (Mandatory to unlock student list) -->
+                <div id="updater-details-container" class="mt-4 p-4 bg-sky-50/70 border border-sky-200 rounded-xl space-y-3">
+                    <div class="flex items-center space-x-2 text-sky-900 font-extrabold text-xs sm:text-sm">
+                        <i class="fa-solid fa-user-shield text-sky-600"></i>
+                        <span>2. അപ്ഡേറ്റ് ചെയ്യുന്ന ആളുടെ വിവരങ്ങൾ നൽകുക (Incharge Details)</span>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 mb-1">അപ്ഡേറ്റ് ചെയ്യുന്ന ആളുടെ പേര് *</label>
+                            <input type="text" id="updater-name" placeholder="പേര് ടൈപ്പ് ചെയ്യുക..." class="w-full bg-white border border-slate-300 text-xs sm:text-sm rounded-xl p-2.5 outline-none font-bold focus:ring-2 focus:ring-sky-500">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-600 mb-1">മൊബൈൽ നമ്പർ *</label>
+                            <input type="tel" id="updater-mobile" placeholder="മൊബൈൽ നമ്പർ..." class="w-full bg-white border border-slate-300 text-xs sm:text-sm rounded-xl p-2.5 outline-none font-bold focus:ring-2 focus:ring-sky-500">
+                        </div>
+                    </div>
+                    <button onclick="confirmInchargeDetails()" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 text-white text-xs font-black px-5 py-2.5 rounded-xl shadow transition flex items-center justify-center">
+                        <i class="fa-solid fa-check-circle mr-1.5"></i> Verify & Unlock Student Checklist
+                    </button>
                 </div>
 
                 <!-- Status Filter Badges -->
@@ -375,7 +407,7 @@
                     <!-- Dynamic Items Render Here -->
                     <div class="p-10 text-center text-slate-400">
                         <i class="fa-solid fa-bus-simple text-4xl mb-3 text-slate-300"></i>
-                        <p class="text-sm font-bold">Please select Mandalam and Unit to load student details.</p>
+                        <p class="text-sm font-bold">മണ്ഡലവും യൂണിറ്റും തിരഞ്ഞെടുത്ത ശേഷം ഇൻചാർജ് പേരും മൊബൈൽ നമ്പറും നൽകുക.</p>
                     </div>
                 </div>
             </div>
@@ -388,6 +420,7 @@
         Teen Space Higher Secondary Students Conference &bull; Bus Check-In Portal
     </footer>
 
+    <!-- Add Student Modal -->
     <div id="add-student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
         <div class="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-md shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
@@ -463,13 +496,14 @@
 
     <script>
         let currentStatusFilter = 'all';
+        let inchargeVerified = false;
 
-        // Populate Mandalam Select Dropdown
+        // Populate Mandalam Dropdown
         function populateMandalamDropdown() {
             const select = document.getElementById('select-mandalam');
             const currentVal = select.value;
 
-            select.innerHTML = '<option value="">-- All Mandalams --</option>';
+            select.innerHTML = '<option value="">-- Select Mandalam --</option>';
             window.mandalamList.forEach(m => {
                 const opt = document.createElement('option');
                 opt.value = m;
@@ -485,7 +519,8 @@
             const mandalam = document.getElementById('select-mandalam').value;
             const unitSelect = document.getElementById('select-unit');
 
-            unitSelect.innerHTML = '<option value="">-- All Units --</option>';
+            unitSelect.innerHTML = '<option value="">-- Select Unit --</option>';
+            inchargeVerified = false;
 
             if (mandalam && window.unitMap[mandalam]) {
                 unitSelect.disabled = false;
@@ -499,6 +534,25 @@
                 unitSelect.disabled = true;
             }
 
+            renderStudentsList();
+        }
+
+        function onUnitChange() {
+            inchargeVerified = false;
+            renderStudentsList();
+        }
+
+        function confirmInchargeDetails() {
+            const name = (document.getElementById('updater-name').value || '').trim();
+            const mobile = (document.getElementById('updater-mobile').value || '').trim();
+
+            if (!name || !mobile) {
+                showToast("ദയവായി നിങ്ങളുടെ പേരും ഫോൺ നമ്പറും നൽകുക!", "error");
+                return;
+            }
+
+            inchargeVerified = true;
+            showToast("ഇൻചാർജ് ഡീറ്റെയിൽസ് സ്ഥിരീകരിച്ചു 👍", "success");
             renderStudentsList();
         }
 
@@ -521,10 +575,13 @@
             document.getElementById('select-unit').value = "";
             document.getElementById('select-unit').disabled = true;
             document.getElementById('input-search').value = "";
+            document.getElementById('updater-name').value = "";
+            document.getElementById('updater-mobile').value = "";
+            inchargeVerified = false;
             setStatusFilter('all');
         }
 
-        // Render Student Checklist for Bus Check-in (Index Page)
+        // Render Student Checklist for Bus Check-in
         function renderStudentsList() {
             const selectedMandalam = document.getElementById('select-mandalam').value;
             const selectedUnit = document.getElementById('select-unit').value;
@@ -532,14 +589,29 @@
             const container = document.getElementById('students-checklist');
             const badge = document.getElementById('student-count-badge');
 
-            let filtered = window.studentsList || [];
+            // Strictly check if mandalam and unit are selected and incharge details are verified
+            if (!selectedMandalam || !selectedUnit) {
+                badge.textContent = "0";
+                container.innerHTML = `
+                    <div class="p-8 sm:p-10 text-center text-slate-400">
+                        <i class="fa-solid fa-filter text-3xl mb-3 text-slate-300"></i>
+                        <p class="text-sm font-bold">മണ്ഡലവും യൂണിറ്റും തിരഞ്ഞെടുക്കുക.</p>
+                    </div>`;
+                return;
+            }
 
-            if (selectedMandalam) {
-                filtered = filtered.filter(s => s.mandalam === selectedMandalam);
+            if (!inchargeVerified) {
+                badge.textContent = "0";
+                container.innerHTML = `
+                    <div class="p-8 sm:p-10 text-center text-slate-400">
+                        <i class="fa-solid fa-user-lock text-3xl mb-3 text-amber-400"></i>
+                        <p class="text-sm font-bold text-slate-700">അപ്ഡേറ്റ് ചെയ്യുന്ന ആളുടെ പേരും നമ്പറും നൽകി Verify കൊടുക്കുക.</p>
+                    </div>`;
+                return;
             }
-            if (selectedUnit) {
-                filtered = filtered.filter(s => s.unit === selectedUnit);
-            }
+
+            let filtered = (window.studentsList || []).filter(s => s.mandalam === selectedMandalam && s.unit === selectedUnit);
+
             if (searchQuery) {
                 filtered = filtered.filter(s => 
                     (s.name && s.name.toLowerCase().includes(searchQuery)) ||
@@ -558,7 +630,7 @@
                 container.innerHTML = `
                     <div class="p-8 sm:p-10 text-center text-slate-400">
                         <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-300"></i>
-                        <p class="text-xs sm:text-sm font-bold">No student data found!</p>
+                        <p class="text-xs sm:text-sm font-bold">No student data found for this selection!</p>
                     </div>`;
                 return;
             }
@@ -583,8 +655,7 @@
                                 </div>
                                 <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-slate-500 font-bold mt-0.5">
                                     ${s.mobile ? `<a href="tel:${s.mobile}" class="text-sky-600 hover:underline"><i class="fa-solid fa-phone text-[10px] mr-1"></i>${s.mobile}</a>` : '<span class="text-slate-400">No Phone</span>'}
-                                    <span>&bull;</span>
-                                    <span>${s.unit || '-'} (${s.mandalam || '-'})</span>
+                                    ${s.updatedBy ? `<span class="text-slate-400">&bull; Updated by: ${s.updatedBy}</span>` : ''}
                                 </div>
                             </label>
                         </div>
