@@ -65,7 +65,7 @@
         
         <!-- Logo / Event Name -->
         <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('dashboard')">
-          <img src="3274.png" alt="Teenspace Logo" class="h-8 sm:h-10 w-auto object-contain" onerror="this.onerror=null; this.src='https://placehold.co/180x50/ffffff/0f172a?text=Teenspace';" />
+          <img id="headerLogo" src="3274.png" alt="Teenspace Logo" class="h-8 sm:h-10 w-auto object-contain" onerror="this.onerror=null; this.src='https://placehold.co/180x50/ffffff/0f172a?text=Teenspace';" />
         </div>
 
         <!-- Connection Status & Sync Controls -->
@@ -152,7 +152,7 @@
       <div class="bg-gradient-to-r from-white via-indigo-50/60 to-pink-50/60 p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
         <div class="space-y-3 text-center md:text-left">
           <div class="flex justify-center md:justify-start">
-            <img src="3274.png" alt="Teenspace Banner Logo" class="h-10 w-auto object-contain" onerror="this.onerror=null; this.src='https://placehold.co/200x60/ffffff/0f172a?text=Teenspace';" />
+            <img id="bannerLogo" src="3274.png" alt="Teenspace Banner Logo" class="h-10 w-auto object-contain" onerror="this.onerror=null; this.src='https://placehold.co/200x60/ffffff/0f172a?text=Teenspace';" />
           </div>
           <p class="text-slate-600 text-sm max-w-xl font-medium">
             Unified Desk Registration System. Register delegates smoothly in offline mode; data syncs Automatically to Server when connected.
@@ -1011,9 +1011,27 @@
       });
     }
 
+    // Dynamic Theme Detection & Logo Switcher
+    function updateLogosForTheme() {
+      const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const logoPath = isDarkMode ? '0.png' : '3274.png';
+
+      const headerLogo = document.getElementById('headerLogo');
+      const bannerLogo = document.getElementById('bannerLogo');
+
+      if (headerLogo) headerLogo.src = logoPath;
+      if (bannerLogo) bannerLogo.src = logoPath;
+    }
+
+    // Listen for system theme changes in real-time
+    if (window.matchMedia) {
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateLogosForTheme);
+    }
+
     window.addEventListener("DOMContentLoaded", async () => {
       lucide.createIcons();
       updateOnlineStatus();
+      updateLogosForTheme();
       await refreshUI();
     });
   </script>
