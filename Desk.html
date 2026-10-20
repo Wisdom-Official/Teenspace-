@@ -803,13 +803,24 @@
                 ? '<span class="text-[10px] font-bold bg-pink-100 text-pink-700 px-1.5 py-0.5 rounded border border-pink-200">Girl</span>' 
                 : '<span class="text-[10px] font-bold bg-sky-100 text-sky-700 px-1.5 py-0.5 rounded border border-sky-200">Boy</span>'}
             </div>
-            <p class="text-xs text-slate-500">${escapeHtml(r.place)} • <span class="font-mono text-slate-600 font-medium">${r.id}</span></p>
+            <p class="text-xs text-slate-500">${escapeHtml(r.place)} • <span class="font-mono text-slate-600 font-medium">${r.id}</span> • <span class="font-mono text-slate-500 font-medium">${maskPhoneNumber(r.phone)}</span></p>
           </div>
           <div>
             ${renderSyncBadge(r.syncStatus)}
           </div>
         </div>
       `).join('');
+    }
+
+    // PHONE MASKING HELPER FOR PRIVACY (Shows only last 3 digits in UI)
+    function maskPhoneNumber(phone) {
+      if (!phone) return '';
+      const str = phone.toString();
+      if (str.length <= 3) return str;
+      const visibleLength = 3;
+      const maskedPart = '*'.repeat(str.length - visibleLength);
+      const visiblePart = str.slice(-visibleLength);
+      return maskedPart + visiblePart;
     }
 
     // TABLE RENDERING
@@ -849,7 +860,7 @@
               : '<span class="text-sky-700 bg-sky-100 px-2 py-0.5 rounded border border-sky-200">Male</span>'}
           </td>
           <td class="py-3.5 px-4 text-xs text-slate-600 font-medium">${escapeHtml(r.place)}</td>
-          <td class="py-3.5 px-4 text-xs font-mono text-slate-600 font-medium">${r.phone}</td>
+          <td class="py-3.5 px-4 text-xs font-mono text-slate-600 font-medium">${maskPhoneNumber(r.phone)}</td>
           <td class="py-3.5 px-4 text-xs text-slate-600 font-medium">${r.age}</td>
           <td class="py-3.5 px-4">
             ${renderSyncBadge(r.syncStatus)}
