@@ -194,20 +194,198 @@
             <i data-lucide="user-check" class="w-7 h-7"></i>
           </div>
           <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Mobile Number</label>
-          <!-- Hidden input for complete full phone value -->
-          <input type="hidden" id="fieldFullPhone" />
-          <input type="tel" id="fieldPhone" required maxlength="15" placeholder="Enter Mobile Number" oninput="handleFormPhoneInput(this)" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3.5 text-slate-800 font-semibold focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition shadow-xs" />
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Age</label>
+            <h2 class="text-xl sm:text-2xl font-extrabold text-slate-800">Event Registration Desk</h2>
+            <p class="text-xs font-semibold text-slate-500 mt-0.5">Enter delegate information below</p>
+          </div>
         </div>
       </div>
 
-      <div>
-        <label class="block font-semibold text-slate-700 mb-1">Age</label>
-          <input type="number" id="editAge" required min="5" max="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 font-medium" />
+      <!-- Registration Form -->
+      <form id="studentForm" onsubmit="handleFormSubmit(event)" class="bg-white/90 backdrop-blur-md p-6 sm:p-8 rounded-3xl border border-slate-200/80 space-y-5 shadow-sm">
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <!-- Full Name -->
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+              Full Name <span class="text-pink-500">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </span>
+              <input type="text" id="fieldName" required placeholder="e.g. Shadil NM" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-3.5 text-slate-800 font-semibold focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition shadow-xs" />
+            </div>
+          </div>
+
+          <!-- Gender Selection Option -->
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+              Gender <span class="text-pink-500">*</span>
+            </label>
+            <div class="grid grid-cols-2 gap-3">
+              <label id="genderMaleLabel" onclick="selectGender('Male')" class="cursor-pointer flex items-center justify-center space-x-3 p-3.5 rounded-xl border bg-sky-50/60 border-sky-400 text-sky-700 transition-all shadow-sm">
+                <input type="radio" name="gender" value="Male" checked class="hidden" />
+                <i data-lucide="user" class="w-4 h-4"></i>
+                <span class="font-bold text-sm">Male</span>
+              </label>
+
+              <label id="genderFemaleLabel" onclick="selectGender('Female')" class="cursor-pointer flex items-center justify-center space-x-3 p-3.5 rounded-xl border bg-slate-50 border-slate-200 text-slate-500 transition-all opacity-80">
+                <input type="radio" name="gender" value="Female" class="hidden" />
+                <i data-lucide="user" class="w-4 h-4"></i>
+                <span class="font-bold text-sm">Female</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Place / Location -->
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+              Place <span class="text-pink-500">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i data-lucide="map-pin" class="w-4 h-4"></i>
+              </span>
+              <input type="text" id="fieldPlace" required placeholder="e.g. Kozhikode" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-3.5 text-slate-800 font-semibold focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition shadow-xs" />
+            </div>
+          </div>
+
+          <!-- Mobile Number with Privacy Masking -->
+          <div>
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+              Mobile Number <span class="text-pink-500">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i data-lucide="phone" class="w-4 h-4"></i>
+              </span>
+              <input type="hidden" id="fieldFullPhone" />
+              <input type="tel" id="fieldPhone" required maxlength="15" placeholder="Enter Mobile Number" oninput="handleFormPhoneInput(this)" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-3.5 text-slate-800 font-semibold focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition shadow-xs" />
+            </div>
+          </div>
+
+          <!-- Age -->
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
+              Age <span class="text-pink-500">*</span>
+            </label>
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <i data-lucide="calendar" class="w-4 h-4"></i>
+              </span>
+              <input type="number" id="fieldAge" required min="5" max="100" placeholder="e.g. 16" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-3.5 text-slate-800 font-semibold focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition shadow-xs" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-3">
+          <button type="submit" id="submitRegBtn" class="w-full bg-gradient-to-r from-pink-500 via-purple-500 to-sky-500 hover:from-pink-600 hover:to-sky-600 text-white font-extrabold py-4 px-6 rounded-2xl shadow-md hover:shadow-lg transition-all transform active:scale-[0.99] flex items-center justify-center space-x-2 shadow-pink-500/20">
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+            <span id="submitBtnText">Complete Registration</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- RECORDS MANAGEMENT VIEW -->
+    <section id="view-records" class="tab-view hidden space-y-6">
+      
+      <!-- Top Filters Bar -->
+      <div class="bg-white/80 backdrop-blur-md p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        
+        <!-- Search input -->
+        <div class="relative w-full sm:w-80">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <i data-lucide="search" class="w-4 h-4"></i>
+          </span>
+          <input type="text" id="searchInput" oninput="renderRecordsTable()" placeholder="Search name, place, phone, ID..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-pink-500 focus:bg-white" />
+        </div>
+
+        <div class="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-end">
+          <!-- Sync Filter -->
+          <select id="filterSync" onchange="renderRecordsTable()" class="bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-pink-500">
+            <option value="ALL">All Sync States</option>
+            <option value="PENDING">Pending Sync</option>
+            <option value="SYNCED">Synced</option>
+            <option value="FAILED">Sync Failed</option>
+          </select>
+
+          <!-- CSV Export Button -->
+          <button onclick="exportToCSV()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 px-3.5 py-2.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 whitespace-nowrap transition shadow-xs">
+            <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-600"></i>
+            <span>Export CSV</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Records Table Container -->
+      <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm text-slate-600">
+            <thead class="bg-slate-50/80 text-xs uppercase text-slate-500 font-bold border-b border-slate-200">
+              <tr>
+                <th class="py-3.5 px-4">Reg ID</th>
+                <th class="py-3.5 px-4">Name</th>
+                <th class="py-3.5 px-4">Gender</th>
+                <th class="py-3.5 px-4">Place</th>
+                <th class="py-3.5 px-4">Mobile Number</th>
+                <th class="py-3.5 px-4">Age</th>
+                <th class="py-3.5 px-4">Sync</th>
+                <th class="py-3.5 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recordsTableBody" class="divide-y divide-slate-100">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Edit Student Modal -->
+  <div id="editModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-lg rounded-3xl p-6 space-y-4 shadow-xl relative">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+        <h3 class="text-lg font-extrabold text-slate-800">Edit Registration</h3>
+        <button onclick="closeEditModal()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="editForm" onsubmit="handleEditSubmit(event)" class="space-y-4 text-xs sm:text-sm">
+        <input type="hidden" id="editRegId" />
+        
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Full Name</label>
+          <input type="text" id="editName" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 font-medium focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition" />
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Gender</label>
+          <select id="editGender" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 font-medium focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition">
+            <option value="Male">Male (Boy)</option>
+            <option value="Female">Female (Girl)</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Place</label>
+            <input type="text" id="editPlace" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 font-medium focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition" />
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Mobile Number</label>
+            <input type="hidden" id="editFullPhone" />
+            <input type="tel" id="editPhone" required maxlength="15" oninput="handleEditPhoneInput(this)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 font-medium focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Age</label>
+          <input type="number" id="editAge" required min="5" max="100" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 font-medium focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition" />
         </div>
 
         <div class="pt-2 flex justify-end space-x-3">
@@ -239,7 +417,7 @@
       onAuthStateChanged 
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-    // Your web app's Firebase configuration
+    // Firebase Config Setup
     const firebaseConfig = {
       apiKey: "AIzaSyBLyKNAbhjVj5yBKWjT4_t0DrPRxnuH86U",
       authDomain: "event-1b1b1.firebaseapp.com",
@@ -275,7 +453,7 @@
       }
     };
 
-    // Authenticate anonymously so Firestore Rules pass safely
+    // Safe Anonymous Authentication
     async function setupAuth() {
       try {
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
@@ -291,7 +469,6 @@
     onAuthStateChanged(auth, (user) => {
       if (user) {
         isAuthReady = true;
-        // Trigger sync and start realtime listener for all devices
         triggerSyncProcess();
         setupRealtimeFirestoreListener();
       }
@@ -299,7 +476,7 @@
 
     setupAuth();
 
-    // LISTEN TO FIRESTORE REALTIME UPDATES FROM ALL DEVICES
+    // REALTIME FIRESTORE LISTENER
     function setupRealtimeFirestoreListener() {
       const recordsCol = collection(db, "teenspace_registrations");
       
@@ -309,7 +486,6 @@
           
           if (change.type === "added" || change.type === "modified") {
             const localRecord = await getLocalRecord(cloudData.id);
-            // Only update local IDB if it's new or cloud data has been updated
             if (!localRecord || localRecord.syncStatus !== "PENDING") {
               await saveToLocalDB({
                 ...cloudData,
@@ -414,7 +590,6 @@
           refreshUI();
 
           try {
-            // Document write directly to Firebase Firestore collection 'teenspace_registrations'
             const docRef = doc(db, "teenspace_registrations", record.id);
             const firestorePayload = {
               id: record.id,
@@ -430,7 +605,6 @@
 
             await setDoc(docRef, firestorePayload, { merge: true });
 
-            // Mark locally as SYNCED upon successful write
             record.syncStatus = "SYNCED";
             record.lastSyncedAt = new Date().toISOString();
             await saveToLocalDB(record);
@@ -469,7 +643,7 @@
       }
     }
 
-    // STATUS LISTENERS
+    // NETWORK ONLINE / OFFLINE DETECTOR
     function updateOnlineStatus() {
       const isOnline = navigator.onLine;
       const badge = document.getElementById("connectionBadge");
@@ -491,7 +665,7 @@
     window.addEventListener("online", updateOnlineStatus);
     window.addEventListener("offline", updateOnlineStatus);
 
-    // TAB NAVIGATION
+    // NAVIGATION TABS
     window.switchTab = function(tabName) {
       document.querySelectorAll('.tab-view').forEach(el => el.classList.add('hidden'));
       document.querySelectorAll('.tab-btn').forEach(el => {
@@ -513,13 +687,79 @@
       refreshUI();
     };
 
-    // FORM & RECORD GENERATION
     function generateUniqueRegId() {
       const randomNum = Math.floor(1000 + Math.random() * 9000);
       const timestamp = Date.now().toString().slice(-4);
       return `TS-${timestamp}${randomNum}`;
     }
 
+    // MASKING UTILS (SHOWS ONLY LAST 3 DIGITS)
+    function maskPhoneNumber(phone) {
+      if (!phone) return '';
+      const str = phone.toString();
+      if (str.length <= 3) return str;
+      const visibleLength = 3;
+      const maskedPart = '*'.repeat(str.length - visibleLength);
+      const visiblePart = str.slice(-visibleLength);
+      return maskedPart + visiblePart;
+    }
+
+    // FORM INPUT DYNAMIC MASKING HANDLERS
+    window.handleFormPhoneInput = function(input) {
+      const hiddenInput = document.getElementById('fieldFullPhone');
+      let currentFull = hiddenInput.value || "";
+      let entered = input.value;
+
+      if (!entered) {
+        hiddenInput.value = "";
+        input.value = "";
+        return;
+      }
+
+      const digitsOnly = entered.replace(/\D/g, '');
+      if (entered.includes('*')) {
+        const lastChar = entered.slice(-1);
+        if (/\d/.test(lastChar)) {
+          currentFull += lastChar;
+        } else if (entered.length < maskPhoneNumber(currentFull).length) {
+          currentFull = currentFull.slice(0, -1);
+        }
+      } else {
+        currentFull = digitsOnly;
+      }
+
+      hiddenInput.value = currentFull;
+      input.value = maskPhoneNumber(currentFull);
+    };
+
+    window.handleEditPhoneInput = function(input) {
+      const hiddenInput = document.getElementById('editFullPhone');
+      let currentFull = hiddenInput.value || "";
+      let entered = input.value;
+
+      if (!entered) {
+        hiddenInput.value = "";
+        input.value = "";
+        return;
+      }
+
+      const digitsOnly = entered.replace(/\D/g, '');
+      if (entered.includes('*')) {
+        const lastChar = entered.slice(-1);
+        if (/\d/.test(lastChar)) {
+          currentFull += lastChar;
+        } else if (entered.length < maskPhoneNumber(currentFull).length) {
+          currentFull = currentFull.slice(0, -1);
+        }
+      } else {
+        currentFull = digitsOnly;
+      }
+
+      hiddenInput.value = currentFull;
+      input.value = maskPhoneNumber(currentFull);
+    };
+
+    // FORM SUBMISSION
     window.handleFormSubmit = async function(e) {
       e.preventDefault();
       
@@ -528,7 +768,11 @@
 
       const name = document.getElementById('fieldName').value.trim();
       const place = document.getElementById('fieldPlace').value.trim();
-      const phone = document.getElementById('fieldPhone').value.trim();
+      
+      const phoneInputVal = document.getElementById('fieldPhone').value.trim();
+      const fullPhoneVal = document.getElementById('fieldFullPhone').value.trim();
+      const phone = fullPhoneVal || phoneInputVal;
+      
       const age = document.getElementById('fieldAge').value.trim();
       const gender = selectedGender;
 
@@ -542,7 +786,7 @@
       const isDuplicate = existingRecords.some(r => r.phone === phone && !r.isDeleted);
 
       if (isDuplicate) {
-        if (!confirm(`Phone number ${phone} is already registered. Continue saving?`)) {
+        if (!confirm(`Phone number ${maskPhoneNumber(phone)} is already registered. Continue saving?`)) {
           submitBtn.disabled = false;
           return;
         }
@@ -561,9 +805,9 @@
       };
 
       try {
-        // Save to Local IndexedDB first (Offline Guaranteed)
         await saveToLocalDB(newRecord);
         document.getElementById('studentForm').reset();
+        document.getElementById('fieldFullPhone').value = "";
         selectGender('Male');
         
         if (navigator.onLine) {
@@ -572,7 +816,6 @@
           showToast(`Saved Offline! ID: ${newRecord.id}`, "emerald");
         }
 
-        // Trigger synchronization immediately if online
         triggerSyncProcess();
         refreshUI();
       } catch (err) {
@@ -621,30 +864,19 @@
       container.innerHTML = sorted.map(r => `
         <div class="px-6 py-3.5 flex items-center justify-between hover:bg-slate-50/80 transition">
           <div>
-          <label class="block font-semibold text-slate-700 mb-1">Mobile Number</label>
-          <!-- Store full phone in hidden input while showing masked format in input field -->
-          <input type="hidden" id="editFullPhone" />
-          <input type="tel" id="editPhone" required maxlength="15" oninput="handleEditPhoneInput(this)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 font-medium focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition" />
-        </div>
-      </div>
-
-      <div>
-        <label class="block font-semibold text-slate-700 mb-1">Age</label>
+            <div class="flex items-center space-x-2">
+              <p class="text-sm font-bold text-slate-800">${escapeHtml(r.name)}</p>
+              ${r.gender === 'Female' 
+                ? '<span class="text-[10px] font-bold bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full border border-pink-200">Girl</span>' 
+                : '<span class="text-[10px] font-bold bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full border border-sky-200">Boy</span>'}
+            </div>
+            <p class="text-xs text-slate-500 font-medium">${escapeHtml(r.place)} • <span class="font-mono text-slate-600 font-bold">${r.id}</span> • <span class="font-mono text-slate-600 font-bold">${maskPhoneNumber(r.phone)}</span></p>
+          </div>
+          <div>
             ${renderSyncBadge(r.syncStatus)}
           </div>
         </div>
       `).join('');
-    }
-
-    // PHONE MASKING HELPER FOR PRIVACY (Shows only last 3 digits in UI)
-    function maskPhoneNumber(phone) {
-      if (!phone) return '';
-      const str = phone.toString();
-      if (str.length <= 3) return str;
-      const visibleLength = 3;
-      const maskedPart = '*'.repeat(str.length - visibleLength);
-      const visiblePart = str.slice(-visibleLength);
-      return maskedPart + visiblePart;
     }
 
     // TABLE RENDERING
@@ -673,145 +905,49 @@
         tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-slate-400 text-sm">No records found.</td></tr>`;
         return;
       }
-    window.handleFormSubmit = async function(e) {
-      e.preventDefault();
-      
-      const submitBtn = document.getElementById('submitRegBtn');
-      submitBtn.disabled = true;
 
-      const name = document.getElementById('fieldName').value.trim();
-      const place = document.getElementById('fieldPlace').value.trim();
-      
-      // Always pull the complete raw phone number
-      const phoneInputVal = document.getElementById('fieldPhone').value.trim();
-      const fullPhoneVal = document.getElementById('fieldFullPhone').value.trim();
-      const phone = fullPhoneVal || phoneInputVal;
-      
-      const age = document.getElementById('fieldAge').value.trim();
-      const gender = selectedGender;
+      tbody.innerHTML = filtered.map(r => `
+        <tr class="hover:bg-slate-50/80 transition border-b border-slate-100">
+          <td class="py-3.5 px-4 font-mono text-xs font-bold text-pink-600">${r.id}</td>
+          <td class="py-3.5 px-4 font-bold text-slate-800">${escapeHtml(r.name)}</td>
+          <td class="py-3.5 px-4 text-xs font-semibold">
+            ${r.gender === 'Female' 
+              ? '<span class="text-pink-700 bg-pink-50 px-2 py-0.5 rounded-full border border-pink-200">Female</span>' 
+              : '<span class="text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200">Male</span>'}
+          </td>
+          <td class="py-3.5 px-4 text-xs font-semibold text-slate-600">${escapeHtml(r.place)}</td>
+          <td class="py-3.5 px-4 text-xs font-mono font-bold text-slate-700">${maskPhoneNumber(r.phone)}</td>
+          <td class="py-3.5 px-4 text-xs font-semibold text-slate-600">${r.age}</td>
+          <td class="py-3.5 px-4">
+            ${renderSyncBadge(r.syncStatus)}
+          </td>
+          <td class="py-3.5 px-4 text-right space-x-2">
+            <button onclick="openEditModal('${r.id}')" class="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition" title="Edit">
+              <i data-lucide="edit-3" class="w-4 h-4"></i>
+            </button>
+            <button onclick="confirmDeleteRecord('${r.id}')" class="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 rounded-lg transition" title="Delete">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
 
-      if (!name || !place || !phone || !age) {
-        showToast("Please fill in all fields.", "amber");
-        submitBtn.disabled = false;
-        return;
-      }
-
-      const existingRecords = await getAllLocalRecords();
-      const isDuplicate = existingRecords.some(r => r.phone === phone && !r.isDeleted);
-
-      if (isDuplicate) {
-        if (!confirm(`Phone number ${phone} is already registered. Continue saving?`)) {
-          submitBtn.disabled = false;
-          return;
-        }
-      }
-
-      const newRecord = {
-        id: generateUniqueRegId(),
-        name,
-        gender,
-        place,
-        phone,
-        age,
-        createdAt: new Date().toISOString(),
-        syncStatus: "PENDING",
-        isDeleted: false
-      };
-
-      try {
-        // Save to Local IndexedDB first (Offline Guaranteed)
-        await saveToLocalDB(newRecord);
-        document.getElementById('studentForm').reset();
-        document.getElementById('fieldFullPhone').value = "";
-        selectGender('Male');
-        
-        if (navigator.onLine) {
-          showToast(`Saved locally! Syncing with Cloud...`, "sky");
-        } else {
-          showToast(`Saved Offline! ID: ${newRecord.id}`, "emerald");
-        }
-
-        // Trigger synchronization immediately if online
-        triggerSyncProcess();
-        refreshUI();
-      } catch (err) {
-        console.error("Save error:", err);
-        showToast("Failed to save registration.", "rose");
-      } finally {
-        submitBtn.disabled = false;
-      }
+      lucide.createIcons();
     };
-    // PHONE MASKING HELPER FOR PRIVACY (Shows only last 3 digits)
-    function maskPhoneNumber(phone) {
-      if (!phone) return '';
-      const str = phone.toString();
-      if (str.length <= 3) return str;
-      const visibleLength = 3;
-      const maskedPart = '*'.repeat(str.length - visibleLength);
-      const visiblePart = str.slice(-visibleLength);
-      return maskedPart + visiblePart;
+
+    function renderSyncBadge(status) {
+      if (status === 'SYNCED') {
+        return `<span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200"><i data-lucide="check" class="w-3 h-3"></i><span>Synced</span></span>`;
+      } else if (status === 'SYNCING') {
+        return `<span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-sky-50 text-sky-700 border border-sky-200 animate-pulse"><i data-lucide="refresh-cw" class="w-3 h-3 animate-spin"></i><span>Syncing</span></span>`;
+      } else if (status === 'FAILED') {
+        return `<span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200"><i data-lucide="alert-triangle" class="w-3 h-3"></i><span>Failed</span></span>`;
+      } else {
+        return `<span class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200"><i data-lucide="clock" class="w-3 h-3"></i><span>Pending</span></span>`;
+      }
     }
 
-    // Dynamic Masking handlers during typing / edition
-    window.handleFormPhoneInput = function(input) {
-      const hiddenInput = document.getElementById('fieldFullPhone');
-      let currentFull = hiddenInput.value || "";
-      let entered = input.value;
-
-      // If user clears input or selects all and deletes
-      if (!entered) {
-        hiddenInput.value = "";
-        input.value = "";
-        return;
-      }
-
-      // Extract new raw digits typed
-      const digitsOnly = entered.replace(/\D/g, '');
-      if (entered.includes('*')) {
-        // User typed an additional digit while phone was masked
-        const lastChar = entered.slice(-1);
-        if (/\d/.test(lastChar)) {
-          currentFull += lastChar;
-        } else if (entered.length < maskPhoneNumber(currentFull).length) {
-          // User hit backspace
-          currentFull = currentFull.slice(0, -1);
-        }
-      } else {
-        currentFull = digitsOnly;
-      }
-
-      hiddenInput.value = currentFull;
-      input.value = maskPhoneNumber(currentFull);
-    };
-
-    window.handleEditPhoneInput = function(input) {
-      const hiddenInput = document.getElementById('editFullPhone');
-      let currentFull = hiddenInput.value || "";
-      let entered = input.value;
-
-      if (!entered) {
-        hiddenInput.value = "";
-        input.value = "";
-        return;
-      }
-
-      const digitsOnly = entered.replace(/\D/g, '');
-      if (entered.includes('*')) {
-        const lastChar = entered.slice(-1);
-        if (/\d/.test(lastChar)) {
-          currentFull += lastChar;
-        } else if (entered.length < maskPhoneNumber(currentFull).length) {
-          currentFull = currentFull.slice(0, -1);
-        }
-      } else {
-        currentFull = digitsOnly;
-      }
-
-      hiddenInput.value = currentFull;
-      input.value = maskPhoneNumber(currentFull);
-    };
-
-    // EDIT & DELETE
+    // EDIT & DELETE MODAL ACTIONS
     window.openEditModal = async function(id) {
       const record = await getLocalRecord(id);
       if (!record) return;
@@ -821,9 +957,7 @@
       document.getElementById('editGender').value = record.gender || "Male";
       document.getElementById('editPlace').value = record.place;
       
-      // Keep full phone number in hidden field for Firebase/IDB saving
       document.getElementById('editFullPhone').value = record.phone;
-      // Show masked phone number (last 3 digits visible) in edit field
       document.getElementById('editPhone').value = maskPhoneNumber(record.phone);
       
       document.getElementById('editAge').value = record.age;
@@ -846,7 +980,6 @@
       record.gender = document.getElementById('editGender').value;
       record.place = document.getElementById('editPlace').value.trim();
       
-      // Use full phone from hidden field
       const phoneInputVal = document.getElementById('editPhone').value.trim();
       const fullPhoneVal = document.getElementById('editFullPhone').value.trim();
       record.phone = fullPhoneVal || phoneInputVal;
@@ -887,7 +1020,7 @@
       }
     };
 
-    // EXPORT
+    // CSV EXPORT
     window.exportToCSV = async function() {
       const records = await getAllLocalRecords();
       const activeRecords = records.filter(r => !r.isDeleted);
@@ -920,7 +1053,7 @@
       showToast("CSV exported!", "emerald");
     };
 
-    // TOAST UTILS
+    // TOAST NOTIFICATIONS
     function showToast(message, type = "sky") {
       const container = document.getElementById("toastContainer");
       if (!container) return;
@@ -968,23 +1101,20 @@
       if (bannerLogo) bannerLogo.src = logoPath;
     };
 
-    // Robust Image Error Fallback Handler
     window.handleLogoError = function(imgElement) {
       const isDarkMode = window.getCurrentLogoPath() === '0.png';
       const fallbackBg = isDarkMode ? '0f172a' : 'ffffff';
       const fallbackText = isDarkMode ? 'ffffff' : '0f172a';
-      imgElement.onerror = null; // Prevent infinite loop
+      imgElement.onerror = null;
       imgElement.src = `https://placehold.co/180x50/${fallbackBg}/${fallbackText}?text=Teenspace`;
     };
 
-    // Watch for both OS color scheme changes and manual DOM dark mode toggles
     if (window.matchMedia) {
       window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
         window.updateLogosForTheme();
       });
     }
 
-    // MutationObserver to detect dark class additions on html tag
     const observer = new MutationObserver(() => {
       window.updateLogosForTheme();
     });
