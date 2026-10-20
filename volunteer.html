@@ -228,15 +228,49 @@
         </div>
     </main>
 
-    <div id="custom-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm hidden p-4">
-        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 sm:p-8 text-center space-y-4 shadow-2xl relative">
+    <div id="custom-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md hidden p-4 overflow-y-auto">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-3xl max-w-md w-full p-6 sm:p-8 text-center space-y-5 shadow-2xl relative my-auto">
             <div id="modal-icon" class="w-16 h-16 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-2xl">
                 <i class="fa-solid fa-check"></i>
             </div>
             <h3 id="modal-title" class="text-xl font-bold text-white">Registration Successful!</h3>
-            <p id="modal-message" class="text-zinc-400 text-sm leading-relaxed">Thank you for registering as a volunteer for TeenSpace.</p>
+            
+            <div id="modal-message" class="text-zinc-400 text-sm leading-relaxed">
+                Thank you for registering as a volunteer for TeenSpace.
+            </div>
+
+            <!-- WhatsApp Group Section -->
+            <div id="whatsapp-group-container" class="space-y-4 pt-4 border-t border-zinc-800">
+                <div class="bg-emerald-950/40 border border-emerald-500/30 rounded-2xl p-4 space-y-3 text-center">
+                    <p class="text-xs font-semibold text-emerald-400 uppercase tracking-wider flex items-center justify-center gap-1.5">
+                        <i class="fa-brands fa-whatsapp text-emerald-400 text-base"></i> Join Volunteer WhatsApp Group
+                    </p>
+                    <p class="text-xs text-zinc-300">
+                        Please join our official WhatsApp group to get instant updates and coordination details for volunteers.
+                    </p>
+                    
+                    <!-- QR Code Image -->
+                    <div class="flex justify-center my-3">
+                        <div class="p-2 bg-white rounded-xl shadow-md border border-zinc-200">
+                            <img src="QR.jpg" alt="Scan to Join WhatsApp Group" class="w-36 h-36 object-contain rounded-lg">
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-zinc-400">Scan the QR code above or tap the button below to join directly.</p>
+
+                    <!-- Join Button -->
+                    <a id="whatsapp-join-btn" 
+                       href="https://chat.whatsapp.com/EeB79sgxwzpFPXeSJhQAE3?s=cl&p=a&mlu=4&ilr=4" 
+                       target="_blank" 
+                       rel="noopener noreferrer" 
+                       class="w-full inline-flex items-center justify-center gap-2 py-3.5 px-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all duration-200 text-sm shadow-lg shadow-emerald-900/30">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                        <span>Join Volunteer Group</span>
+                    </a>
+                </div>
+            </div>
+
             <div class="pt-2">
-                <button onclick="closeModal()" class="w-full py-3.5 bg-gradient-to-r from-pink-500 to-cyan-500 text-white font-semibold rounded-xl transition-all text-sm shadow-lg hover:opacity-95">
+                <button onclick="closeModal()" class="w-full py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white font-semibold rounded-xl transition-all text-xs border border-zinc-700">
                     Register Another Volunteer
                 </button>
             </div>
@@ -298,7 +332,7 @@
             const oct21Checked = document.getElementById('date-oct21-check').checked;
 
             if (!oct20Checked && !oct21Checked) {
-                showModal('Selection Required', 'Please select at least one conference date (October 20 or October 21) to proceed.');
+                showModal('Selection Required', 'Please select at least one conference date (October 20 or October 21) to proceed.', false);
                 return;
             }
 
@@ -343,10 +377,10 @@
                 document.getElementById('time-slot-oct20').classList.add('hidden');
                 document.getElementById('time-slot-oct21').classList.add('hidden');
 
-                showModal('Registration Successful!', `Thank you <strong>${escapeHtml(name)}</strong>! You have been successfully registered under the <span class="text-cyan-400 capitalize">${escapeHtml(wing)}</span> wing in <span class="text-pink-400 capitalize">${escapeHtml(zone)}</span> zone.`);
+                showModal('Registration Successful!', `Thank you <strong>${escapeHtml(name)}</strong>! You have been successfully registered under the <span class="text-cyan-400 capitalize">${escapeHtml(wing)}</span> wing in <span class="text-pink-400 capitalize">${escapeHtml(zone)}</span> zone.`, true);
             } catch (err) {
                 console.error("Error adding document: ", err);
-                showModal('Registration Failed', 'Could not save data to Server. Please check your connection or try again.');
+                showModal('Registration Failed', 'Could not save data to Server. Please check your connection or try again.', false);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane mr-2"></i> Complete Registration`;
@@ -363,9 +397,17 @@
             return `${hour}:${minuteStr} ${ampm}`;
         }
 
-        window.showModal = function(title, message) {
+        window.showModal = function(title, message, showWhatsapp = true) {
             document.getElementById('modal-title').innerText = title;
             document.getElementById('modal-message').innerHTML = message;
+            
+            const waContainer = document.getElementById('whatsapp-group-container');
+            if (showWhatsapp) {
+                waContainer.classList.remove('hidden');
+            } else {
+                waContainer.classList.add('hidden');
+            }
+
             document.getElementById('custom-modal').classList.remove('hidden');
         };
 
