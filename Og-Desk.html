@@ -1,0 +1,911 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Teen Space - Registration Desk Portal</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .touch-target {
+            min-height: 48px;
+        }
+        .animate-pulse-slow {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between antialiased selection:bg-purple-500 selection:text-white">
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc,
+            onSnapshot, 
+            updateDoc,
+            enableIndexedDbPersistence
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // Provided Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB87xG9PfEPU76qvZXj_HMBMSo41MvawdU",
+            authDomain: "check-b2152.firebaseapp.com",
+            projectId: "check-b2152",
+            storageBucket: "check-b2152.firebasestorage.app",
+            messagingSenderId: "973461667305",
+            appId: "1:973461667305:web:59767e47862054d9dadf78"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Enable Firebase Offline Persistence
+        enableIndexedDbPersistence(db).catch((err) => {
+            if (err.code === 'failed-precondition') {
+                console.warn('Firestore offline persistence failed: Multiple tabs open');
+            } else if (err.code === 'unimplemented') {
+                console.warn('Firestore offline persistence is not supported by browser');
+            }
+        });
+
+        // App Globals
+        window.db = db;
+        window.auth = auth;
+        window.studentsList = [];
+        window.mandalamList = [];
+        window.unitMap = {};
+        window.isOnline = navigator.onLine;
+
+        // Custom Local IndexedDB Fallback Manager
+        class OfflineStorage {
+            constructor() {
+                this.dbName = "TeenSpaceDeskDB";
+                this.db = null;
+            }
+
+            async init() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(this.dbName, 1);
+                    request.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains("students")) {
+                            db.createObjectStore("students", { keyPath: "id" });
+                        }
+                        if (!db.objectStoreNames.contains("syncQueue")) {
+                            db.createObjectStore("syncQueue", { keyPath: "id", autoIncrement: true });
+                        }
+                    };
+                    request.onsuccess = (e) => {
+                        this.db = e.target.result;
+                        resolve(this.db);
+                    };
+                    request.onerror = (e) => reject(e);
+                });
+            }
+
+            async saveStudents(students) {
+                if (!this.db) await this.init();
+                const tx = this.db.transaction("students", "readwrite");
+                const store = tx.objectStore("students");
+                students.forEach(s => store.put(s));
+            }
+
+            async getAllStudents() {
+                if (!this.db) await this.init();
+                return new Promise((resolve) => {
+                    const tx = this.db.transaction("students", "readonly");
+                    const store = tx.objectStore("students");
+                    const req = store.getAll();
+                    req.onsuccess = () => resolve(req.result || []);
+                    req.onerror = () => resolve([]);
+                });
+            }
+
+            async addToSyncQueue(item) {
+                if (!this.db) await this.init();
+                const tx = this.db.transaction("syncQueue", "readwrite");
+                tx.objectStore("syncQueue").add(item);
+            }
+
+            async getSyncQueue() {
+                if (!this.db) await this.init();
+                return new Promise((resolve) => {
+                    const tx = this.db.transaction("syncQueue", "readonly");
+                    const req = tx.objectStore("syncQueue").getAll();
+                    req.onsuccess = () => resolve(req.result || []);
+                    req.onerror = () => resolve([]);
+                });
+            }
+
+            async clearSyncQueue() {
+                if (!this.db) await this.init();
+                const tx = this.db.transaction("syncQueue", "readwrite");
+                tx.objectStore("syncQueue").clear();
+            }
+        }
+
+        const localStore = new OfflineStorage();
+        window.localStore = localStore;
+
+        // Monitor Online/Offline Status
+        window.addEventListener('online', () => updateNetworkStatus(true));
+        window.addEventListener('offline', () => updateNetworkStatus(false));
+
+        async function updateNetworkStatus(online) {
+            window.isOnline = online;
+            const badge = document.getElementById('network-badge');
+            const icon = document.getElementById('network-icon');
+            const text = document.getElementById('network-text');
+
+            if (online) {
+                badge.className = "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[11px] px-2.5 py-1 rounded-full font-bold flex items-center shadow-sm";
+                icon.className = "fa-solid fa-wifi mr-1.5 text-emerald-400";
+                text.textContent = "ONLINE & SYNCED";
+                showToast("Connection restored! Syncing offline queue...", "info");
+                await syncOfflineQueue();
+            } else {
+                badge.className = "bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[11px] px-2.5 py-1 rounded-full font-bold flex items-center shadow-sm";
+                icon.className = "fa-solid fa-wifi-slash mr-1.5 text-amber-300 animate-pulse-slow";
+                text.textContent = "OFFLINE MODE";
+                showToast("You are offline. Data saved locally and will auto-sync when online.", "error");
+            }
+        }
+
+        // Sync local queue to Firebase
+        async function syncOfflineQueue() {
+            try {
+                const queue = await localStore.getSyncQueue();
+                if (queue.length === 0) return;
+
+                showToast(`Syncing ${queue.length} offline updates...`, "info");
+                for (const item of queue) {
+                    const docRef = doc(db, "students", item.studentId);
+                    if (item.action === "update") {
+                        await updateDoc(docRef, item.data);
+                    } else if (item.action === "set") {
+                        await setDoc(docRef, item.data, { merge: true });
+                    }
+                }
+                await localStore.clearSyncQueue();
+                showToast("Offline data successfully synced to Firebase! 🎉", "success");
+            } catch (err) {
+                console.error("Queue sync error:", err);
+            }
+        }
+
+        // Expose Firebase Auth Functions
+        window.loginUser = async (email, password) => {
+            try {
+                showToast("Logging in...", "info");
+                await signInWithEmailAndPassword(auth, email, password);
+                showToast("Login Successful!", "success");
+                closeAuthModal();
+            } catch (err) {
+                showToast("Login Failed: " + err.message, "error");
+            }
+        };
+
+        window.logoutUser = async () => {
+            await signOut(auth);
+            showToast("Logged Out Successfully", "info");
+        };
+
+        // Auth Listener
+        onAuthStateChanged(auth, (user) => {
+            const authBtn = document.getElementById('auth-btn');
+            const authBtnMobile = document.getElementById('auth-btn-mobile');
+            
+            if (user) {
+                const userText = `<i class="fa-solid fa-right-from-bracket mr-1.5"></i> Logout (${user.email.split('@')[0]})`;
+                if(authBtn) {
+                    authBtn.innerHTML = userText;
+                    authBtn.onclick = window.logoutUser;
+                }
+                if(authBtnMobile) {
+                    authBtnMobile.innerHTML = `<i class="fa-solid fa-right-from-bracket text-rose-500"></i>`;
+                    authBtnMobile.onclick = window.logoutUser;
+                    authBtnMobile.title = "Logout";
+                }
+            } else {
+                const loginText = `<i class="fa-solid fa-user-lock mr-1.5"></i> Admin Login`;
+                if(authBtn) {
+                    authBtn.innerHTML = loginText;
+                    authBtn.onclick = openAuthModal;
+                }
+                if(authBtnMobile) {
+                    authBtnMobile.innerHTML = `<i class="fa-solid fa-user-lock text-sky-600"></i>`;
+                    authBtnMobile.onclick = openAuthModal;
+                    authBtnMobile.title = "Admin Login";
+                }
+            }
+        });
+
+        const studentsCol = collection(db, "students");
+        onSnapshot(studentsCol, async (snapshot) => {
+            const list = [];
+            const mandalams = new Set();
+            const units = {};
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const item = { id: doc.id, ...data };
+                list.push(item);
+
+                if (data.mandalam) {
+                    mandalams.add(data.mandalam);
+                    if (!units[data.mandalam]) units[data.mandalam] = new Set();
+                    if (data.unit) units[data.mandalam].add(data.unit);
+                }
+            });
+
+            window.studentsList = list;
+            window.mandalamList = Array.from(mandalams).sort();
+            window.unitMap = {};
+            for (let m in units) {
+                window.unitMap[m] = Array.from(units[m]).sort();
+            }
+
+            // Save to IndexedDB for offline access
+            await localStore.saveStudents(list);
+
+            updateStats();
+            populateMandalamDropdown();
+            renderDeskList();
+        }, async (err) => {
+            console.warn("Firestore listener failed or working offline. Loading local database...", err);
+            const cachedList = await localStore.getAllStudents();
+            if (cachedList.length > 0) {
+                window.studentsList = cachedList;
+                const mandalams = new Set();
+                const units = {};
+                cachedList.forEach(data => {
+                    if (data.mandalam) {
+                        mandalams.add(data.mandalam);
+                        if (!units[data.mandalam]) units[data.mandalam] = new Set();
+                        if (data.unit) units[data.mandalam].add(data.unit);
+                    }
+                });
+                window.mandalamList = Array.from(mandalams).sort();
+                window.unitMap = {};
+                for (let m in units) {
+                    window.unitMap[m] = Array.from(units[m]).sort();
+                }
+                updateStats();
+                populateMandalamDropdown();
+                renderDeskList();
+                showToast("Loaded cached data from local database.", "info");
+            }
+        });
+
+        // Toggle Registration Desk Check-in Status
+        window.toggleRegistration = async (studentId, currentRegStatus) => {
+            const newStatus = !currentRegStatus;
+            const updatePayload = {
+                registeredAtDesk: newStatus,
+                deskRegistrationTime: newStatus ? new Date().toISOString() : null,
+                welcomeTagIssued: newStatus
+            };
+
+            // Update in local memory immediately for fast feedback
+            const student = window.studentsList.find(s => s.id === studentId);
+            if (student) {
+                student.registeredAtDesk = newStatus;
+                student.deskRegistrationTime = updatePayload.deskRegistrationTime;
+                student.welcomeTagIssued = newStatus;
+                updateStats();
+                renderDeskList();
+            }
+
+            if (window.isOnline) {
+                try {
+                    const docRef = doc(db, "students", studentId);
+                    await updateDoc(docRef, updatePayload);
+                    showToast(newStatus ? "Registration Confirmed & Tag Issued! 🎫" : "Desk Registration Reset ❌", "success");
+                } catch (e) {
+                    console.error("Online update failed, queueing offline...", e);
+                    await localStore.addToSyncQueue({ studentId, action: "update", data: updatePayload });
+                    showToast("Saved locally (Offline mode)", "info");
+                }
+            } else {
+                await localStore.addToSyncQueue({ studentId, action: "update", data: updatePayload });
+                showToast("Saved locally. Will auto-sync when online!", "info");
+            }
+        };
+
+        // Add Spot Student Realtime & Offline
+        window.addSpotStudent = async (name, mobile, mandalam, unit, autoRegister) => {
+            try {
+                showToast("Processing spot registration...", "info");
+                const cleanName = name.trim();
+                const cleanMobile = mobile.trim();
+                const cleanMandalam = mandalam.trim();
+                const cleanUnit = unit.trim();
+
+                const docId = cleanMobile ? cleanMobile : `desk_${cleanName}_${cleanUnit}`.replace(/[^a-zA-Z0-9_]/g, "_");
+                
+                const studentData = {
+                    id: docId,
+                    name: cleanName,
+                    mobile: cleanMobile,
+                    mandalam: cleanMandalam,
+                    unit: cleanUnit,
+                    checkedIn: true, // Auto marked boarded/arrived
+                    registeredAtDesk: autoRegister,
+                    welcomeTagIssued: autoRegister,
+                    deskRegistrationTime: autoRegister ? new Date().toISOString() : null,
+                    addedManually: true,
+                    spotRegisteredAtDesk: true,
+                    createdAt: new Date().toISOString()
+                };
+
+                // Add to memory
+                window.studentsList.unshift(studentData);
+                await localStore.saveStudents([studentData]);
+                updateStats();
+                renderDeskList();
+
+                if (window.isOnline) {
+                    const docRef = doc(db, "students", docId);
+                    await setDoc(docRef, studentData, { merge: true });
+                    showToast("Spot Student Registered & Sync Complete! 🎉", "success");
+                } else {
+                    await localStore.addToSyncQueue({ studentId: docId, action: "set", data: studentData });
+                    showToast("Spot Student Saved Offline. Will sync automatically!", "info");
+                }
+
+                closeSpotModal();
+            } catch (err) {
+                console.error("Spot student error:", err);
+                showToast("Failed to register spot student: " + err.message, "error");
+            }
+        };
+    </script>
+
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 shadow-xl">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 sm:h-20">
+                <!-- Logo & Branding -->
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <div class="bg-slate-800/80 p-1.5 sm:p-2 rounded-2xl flex items-center justify-center border border-slate-700/60 shadow-inner">
+                        <img src="0.png" alt="Teen Space Logo" class="h-7 sm:h-10 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/180x60/0f172a/ffffff?text=TeenSpace';">
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <h1 class="text-base sm:text-xl font-extrabold bg-gradient-to-r from-purple-400 via-pink-400 to-sky-400 bg-clip-text text-transparent leading-tight">
+                                Teen Space
+                            </h1>
+                            <div id="network-badge" class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] sm:text-[11px] px-2 py-0.5 rounded-full font-bold flex items-center">
+                                <i id="network-icon" class="fa-solid fa-wifi mr-1 text-emerald-400"></i>
+                                <span id="network-text" class="hidden sm:inline">ONLINE & SYNCED</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] sm:text-xs font-black text-slate-400 tracking-wider uppercase">REGISTRATION COUNTER DESK</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex space-x-2 bg-slate-800/90 p-1.5 rounded-2xl border border-slate-700 text-sm font-bold">
+                    <a href="index.html" class="px-4 py-2 rounded-xl text-slate-300 hover:text-white transition-all flex items-center">
+                        <i class="fa-solid fa-bus text-sky-400 mr-2"></i> Bus Check-In
+                    </a>
+                    <a href="registration-desk.html" class="px-4 py-2 rounded-xl bg-white text-slate-900 shadow-md font-extrabold transition-all flex items-center">
+                        <i class="fa-solid fa-id-badge text-purple-600 mr-2"></i> Registration Desk
+                    </a>
+                    <a href="dashboard.html" class="px-4 py-2 rounded-xl text-slate-300 hover:text-white transition-all flex items-center">
+                        <i class="fa-solid fa-chart-pie text-pink-400 mr-2"></i> Dashboard
+                    </a>
+                </nav>
+
+                <!-- Auth Action Button (Desktop) -->
+                <div class="hidden md:block">
+                    <button id="auth-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl transition border border-slate-700 shadow-sm flex items-center">
+                        <i class="fa-solid fa-user-lock mr-2 text-sky-400"></i> Admin Login
+                    </button>
+                </div>
+
+                <!-- Mobile Action Button -->
+                <div class="flex md:hidden items-center">
+                    <button id="auth-btn-mobile" class="bg-slate-800 text-slate-200 w-10 h-10 rounded-xl border border-slate-700 flex items-center justify-center">
+                        <i class="fa-solid fa-user-lock text-sky-400"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Sub Navigation Tabs -->
+            <div class="flex md:hidden pb-3 pt-1 space-x-1.5">
+                <a href="index.html" class="flex-1 py-2 rounded-xl text-[11px] font-bold bg-slate-800 text-slate-300 text-center border border-slate-700 flex items-center justify-center">
+                    <i class="fa-solid fa-bus text-sky-400 mr-1"></i> Bus Index
+                </a>
+                <a href="registration-desk.html" class="flex-1 py-2 rounded-xl text-[11px] font-black bg-white text-slate-900 text-center shadow flex items-center justify-center">
+                    <i class="fa-solid fa-id-badge text-purple-600 mr-1"></i> Reg Desk
+                </a>
+                <a href="dashboard.html" class="flex-1 py-2 rounded-xl text-[11px] font-bold bg-slate-800 text-slate-300 text-center border border-slate-700 flex items-center justify-center">
+                    <i class="fa-solid fa-chart-pie text-pink-400 mr-1"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex-1 w-full">
+
+        <!-- Desk Overview Summary Badges -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-4 sm:mb-6">
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                <div class="p-2.5 sm:p-3 bg-purple-50 text-purple-600 rounded-xl shrink-0">
+                    <i class="fa-solid fa-id-badge text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wide">Counter Registered</p>
+                    <h3 id="stat-desk-registered" class="text-lg sm:text-2xl font-black text-purple-600">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                <div class="p-2.5 sm:p-3 bg-emerald-50 text-emerald-600 rounded-xl shrink-0">
+                    <i class="fa-solid fa-bus text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wide">Bus Boarded (Confirmed)</p>
+                    <h3 id="stat-boarded" class="text-lg sm:text-2xl font-black text-emerald-600">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                <div class="p-2.5 sm:p-3 bg-amber-50 text-amber-600 rounded-xl shrink-0">
+                    <i class="fa-solid fa-hourglass-half text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wide">Pending at Desk</p>
+                    <h3 id="stat-pending-desk" class="text-lg sm:text-2xl font-black text-amber-600">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                <div class="p-2.5 sm:p-3 bg-sky-50 text-sky-600 rounded-xl shrink-0">
+                    <i class="fa-solid fa-users text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wide">Total Delegates</p>
+                    <h3 id="stat-total" class="text-lg sm:text-2xl font-black text-slate-800">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <section class="space-y-4 sm:space-y-5">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+                    <div>
+                        <h2 class="text-xs sm:text-sm font-extrabold text-slate-800 flex items-center">
+                            <i class="fa-solid fa-sliders text-purple-600 mr-2"></i> Registration Desk Search & Filter
+                        </h2>
+                        <p class="text-[11px] text-slate-400 font-semibold mt-0.5">Issue welcome tags, pass instructions, and confirm desk attendance.</p>
+                    </div>
+                    
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openSpotModal()" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-black px-4 py-2.5 rounded-xl transition shadow-md flex items-center active:scale-95">
+                            <i class="fa-solid fa-user-plus mr-1.5"></i> Spot Registration
+                        </button>
+                        <button onclick="resetDeskFilters()" class="text-[11px] font-bold text-slate-400 hover:text-slate-600">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Filter Categories -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-500 mb-1 uppercase">1. Mandalam</label>
+                        <select id="select-mandalam" onchange="onMandalamChange()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm rounded-xl focus:ring-2 focus:ring-purple-500 p-3 outline-none font-bold touch-target">
+                            <option value="">-- All Mandalams --</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-500 mb-1 uppercase">2. Unit</label>
+                        <select id="select-unit" onchange="renderDeskList()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm rounded-xl focus:ring-2 focus:ring-purple-500 p-3 outline-none font-bold touch-target" disabled>
+                            <option value="">-- Select Mandalam First --</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-500 mb-1 uppercase">3. Search Delegate</label>
+                        <div class="relative">
+                            <input type="text" id="input-search" oninput="renderDeskList()" placeholder="Name / Phone / Unit..." class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm rounded-xl focus:ring-2 focus:ring-purple-500 p-3 pl-9 outline-none font-medium touch-target">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400 text-xs sm:text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registration Status Quick Filter Pills -->
+                <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100 text-xs font-bold">
+                    <span class="text-slate-400 text-[11px] mr-1">Filter View:</span>
+                    <button id="tab-all" onclick="setDeskTab('all')" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white text-[11px] font-black transition shadow-sm">All Delegates</button>
+                    <button id="tab-boarded" onclick="setDeskTab('boarded')" class="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-800 text-[11px] font-bold transition">Bus Boarded (Confirmed)</button>
+                    <button id="tab-unboarded" onclick="setDeskTab('unboarded')" class="px-3 py-1.5 rounded-lg bg-amber-100 text-amber-800 text-[11px] font-bold transition">Unboarded / Direct Arrival</button>
+                    <button id="tab-registered" onclick="setDeskTab('registered')" class="px-3 py-1.5 rounded-lg bg-purple-100 text-purple-800 text-[11px] font-bold transition">Counter Done & Tagged</button>
+                    <button id="tab-pending-desk" onclick="setDeskTab('pending-desk')" class="px-3 py-1.5 rounded-lg bg-rose-100 text-rose-800 text-[11px] font-bold transition">Pending Desk Action</button>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-3.5 sm:p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <h3 class="font-extrabold text-xs sm:text-sm text-slate-700 flex items-center">
+                        <i class="fa-solid fa-clipboard-user text-purple-600 mr-2"></i> Delegate Registration Roster
+                        <span id="desk-count-badge" class="ml-2 bg-purple-100 text-purple-700 text-xs px-2.5 py-0.5 rounded-full font-black">0</span>
+                    </h3>
+                    
+                    <div class="text-[11px] font-bold text-slate-400 hidden sm:block">
+                        Tap "Issue Tag & Register" to complete counter check-in
+                    </div>
+                </div>
+
+                <div id="desk-checklist" class="divide-y divide-slate-100 max-h-[620px] overflow-y-auto">
+                    <!-- Dynamic Desk Delegate Cards Render Here -->
+                    <div class="p-10 text-center text-slate-400">
+                        <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-purple-400"></i>
+                        <p class="text-xs sm:text-sm font-bold">Loading registration data...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-[11px] text-slate-400 font-bold">
+        Teen Space Higher Secondary Students Conference &bull; Registration Counter Desk
+    </footer>
+
+    <div id="spot-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-md shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                <h3 class="text-base font-extrabold text-slate-800 flex items-center">
+                    <i class="fa-solid fa-id-badge text-purple-600 mr-2"></i> Desk Spot Registration
+                </h3>
+                <button onclick="closeSpotModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitSpotRegistration();" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Delegate Name *</label>
+                    <input type="text" id="spot-name" required placeholder="Full student name..." class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500 font-bold">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Mobile Phone Number</label>
+                    <input type="tel" id="spot-mobile" placeholder="e.g. 9876543210" class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500 font-bold">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Mandalam *</label>
+                        <input type="text" id="spot-mandalam" required placeholder="Mandalam..." class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500 font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Unit *</label>
+                        <input type="text" id="spot-unit" required placeholder="Unit name..." class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500 font-bold">
+                    </div>
+                </div>
+
+                <div class="bg-purple-50 p-3 rounded-xl border border-purple-200 flex items-center space-x-3">
+                    <input type="checkbox" id="spot-autoreg" checked class="w-5 h-5 rounded text-purple-600 focus:ring-purple-500 accent-purple-600 cursor-pointer">
+                    <label for="spot-autoreg" class="text-xs font-bold text-slate-700 cursor-pointer select-none">
+                        Issue Welcome Tag & Complete Registration Now
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-3.5 rounded-xl text-sm transition shadow-lg flex items-center justify-center">
+                    <i class="fa-solid fa-circle-check mr-2"></i> Register Delegate & Save
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-sm shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-base font-extrabold text-slate-800">Admin Login</h3>
+                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="event.preventDefault(); submitLogin();" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Email Address</label>
+                    <input type="email" id="login-email" required placeholder="admin@teenspace.org" class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-purple-500">
+                </div>
+                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg">
+                    Log In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start space-x-2 pointer-events-none">
+        <span id="toast-msg"></span>
+    </div>
+
+    <script>
+        let currentTabFilter = 'all';
+
+        // Populate Mandalam Select Dropdown
+        function populateMandalamDropdown() {
+            const select = document.getElementById('select-mandalam');
+            const currentVal = select.value;
+
+            select.innerHTML = '<option value="">-- All Mandalams --</option>';
+            window.mandalamList.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = m;
+                select.appendChild(opt);
+            });
+
+            select.value = currentVal;
+        }
+
+        // Mandalam Change Listener
+        function onMandalamChange() {
+            const mandalam = document.getElementById('select-mandalam').value;
+            const unitSelect = document.getElementById('select-unit');
+
+            unitSelect.innerHTML = '<option value="">-- All Units --</option>';
+
+            if (mandalam && window.unitMap[mandalam]) {
+                unitSelect.disabled = false;
+                window.unitMap[mandalam].forEach(u => {
+                    const opt = document.createElement('option');
+                    opt.value = u;
+                    opt.textContent = u;
+                    unitSelect.appendChild(opt);
+                });
+            } else {
+                unitSelect.disabled = true;
+            }
+
+            renderDeskList();
+        }
+
+        function setDeskTab(tab) {
+            currentTabFilter = tab;
+
+            const tabs = ['all', 'boarded', 'unboarded', 'registered', 'pending-desk'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (!btn) return;
+                if (t === tab) {
+                    btn.className = "px-3 py-1.5 rounded-lg bg-slate-900 text-white text-[11px] font-black transition shadow-sm";
+                } else {
+                    btn.className = "px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 text-[11px] font-bold transition hover:bg-slate-200";
+                }
+            });
+
+            renderDeskList();
+        }
+
+        function resetDeskFilters() {
+            document.getElementById('select-mandalam').value = "";
+            document.getElementById('select-unit').value = "";
+            document.getElementById('select-unit').disabled = true;
+            document.getElementById('input-search').value = "";
+            setDeskTab('all');
+        }
+
+        // Render Registration Desk Roster
+        function renderDeskList() {
+            const selectedMandalam = document.getElementById('select-mandalam').value;
+            const selectedUnit = document.getElementById('select-unit').value;
+            const searchQuery = document.getElementById('input-search').value.toLowerCase().trim();
+            const container = document.getElementById('desk-checklist');
+            const badge = document.getElementById('desk-count-badge');
+
+            let filtered = window.studentsList || [];
+
+            if (selectedMandalam) {
+                filtered = filtered.filter(s => s.mandalam === selectedMandalam);
+            }
+            if (selectedUnit) {
+                filtered = filtered.filter(s => s.unit === selectedUnit);
+            }
+            if (searchQuery) {
+                filtered = filtered.filter(s => 
+                    (s.name && s.name.toLowerCase().includes(searchQuery)) ||
+                    (s.mobile && s.mobile.includes(searchQuery)) ||
+                    (s.unit && s.unit.toLowerCase().includes(searchQuery))
+                );
+            }
+
+            // Apply desk tab filtering logic
+            if (currentTabFilter === 'boarded') {
+                filtered = filtered.filter(s => s.checkedIn);
+            } else if (currentTabFilter === 'unboarded') {
+                filtered = filtered.filter(s => !s.checkedIn);
+            } else if (currentTabFilter === 'registered') {
+                filtered = filtered.filter(s => s.registeredAtDesk);
+            } else if (currentTabFilter === 'pending-desk') {
+                filtered = filtered.filter(s => !s.registeredAtDesk);
+            }
+
+            badge.textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 sm:p-10 text-center text-slate-400">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-300"></i>
+                        <p class="text-xs sm:text-sm font-bold">No delegates match the selected filters!</p>
+                    </div>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(s => {
+                const isBoarded = s.checkedIn || false;
+                const isDeskDone = s.registeredAtDesk || false;
+
+                html += `
+                    <div class="p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-slate-50 transition gap-3 ${isDeskDone ? 'bg-purple-50/30' : ''}">
+                        <div class="flex items-start space-x-3 min-w-0 flex-1">
+                            <div class="mt-0.5">
+                                <button 
+                                    onclick="window.toggleRegistration('${s.id}', ${isDeskDone})"
+                                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center transition ${isDeskDone ? 'bg-purple-600 text-white shadow-md' : 'bg-slate-100 text-slate-400 hover:bg-slate-200 border border-slate-300'}"
+                                    title="${isDeskDone ? 'Click to mark as pending' : 'Click to register & issue tag'}"
+                                >
+                                    <i class="fa-solid ${isDeskDone ? 'fa-check text-sm' : 'fa-id-badge text-xs'}"></i>
+                                </button>
+                            </div>
+
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center space-x-2 flex-wrap">
+                                    <h4 class="font-extrabold text-xs sm:text-sm text-slate-900">${s.name}</h4>
+                                    ${s.spotRegisteredAtDesk ? '<span class="bg-purple-100 text-purple-700 text-[9px] font-black px-1.5 py-0.5 rounded">Desk Spot</span>' : ''}
+                                    ${s.addedManually && !s.spotRegisteredAtDesk ? '<span class="bg-pink-100 text-pink-700 text-[9px] font-black px-1.5 py-0.5 rounded">Bus Spot</span>' : ''}
+                                </div>
+
+                                <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-slate-500 font-semibold mt-1">
+                                    ${s.mobile ? `<a href="tel:${s.mobile}" class="text-sky-600 hover:underline font-bold"><i class="fa-solid fa-phone text-[10px] mr-1"></i>${s.mobile}</a>` : '<span class="text-slate-400">No Phone</span>'}
+                                    <span>&bull;</span>
+                                    <span>${s.unit || '-'} (${s.mandalam || '-'})</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Status Tags & Action Buttons -->
+                        <div class="flex items-center space-x-2 shrink-0 self-end sm:self-center">
+                            <!-- Bus Boarded Status Pill -->
+                            ${isBoarded ? `
+                                <span class="bg-emerald-100 text-emerald-800 text-[10px] sm:text-xs font-extrabold px-2.5 py-1 rounded-full flex items-center">
+                                    <i class="fa-solid fa-bus text-[10px] mr-1 text-emerald-600"></i> Boarded
+                                </span>
+                            ` : `
+                                <span class="bg-amber-100 text-amber-800 text-[10px] sm:text-xs font-extrabold px-2.5 py-1 rounded-full flex items-center" title="Direct arrival at registration counter">
+                                    <i class="fa-solid fa-person-walking text-[10px] mr-1 text-amber-600"></i> Unboarded
+                                </span>
+                            `}
+
+                            <!-- Registration Counter Button / Pill -->
+                            <button 
+                                onclick="window.toggleRegistration('${s.id}', ${isDeskDone})"
+                                class="text-[10px] sm:text-xs font-black px-3 py-1.5 rounded-xl transition shadow-sm flex items-center ${isDeskDone ? 'bg-purple-700 text-white hover:bg-purple-800' : 'bg-slate-900 text-white hover:bg-slate-800'}"
+                            >
+                                <i class="fa-solid ${isDeskDone ? 'fa-id-card-clip mr-1 text-purple-200' : 'fa-check mr-1 text-emerald-400'}"></i>
+                                ${isDeskDone ? 'Tag Issued' : 'Issue Tag & Register'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Update Desk Counters
+        function updateStats() {
+            const list = window.studentsList || [];
+            const total = list.length;
+            const boarded = list.filter(s => s.checkedIn).length;
+            const deskReg = list.filter(s => s.registeredAtDesk).length;
+            const pendingDesk = total - deskReg;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-boarded').textContent = boarded;
+            document.getElementById('stat-desk-registered').textContent = deskReg;
+            document.getElementById('stat-pending-desk').textContent = pendingDesk;
+        }
+
+        // Spot Registration Modal Helpers
+        function openSpotModal() {
+            const currentM = document.getElementById('select-mandalam').value;
+            const currentU = document.getElementById('select-unit').value;
+            if(currentM) document.getElementById('spot-mandalam').value = currentM;
+            if(currentU) document.getElementById('spot-unit').value = currentU;
+            
+            document.getElementById('spot-modal').classList.remove('hidden');
+        }
+        function closeSpotModal() {
+            document.getElementById('spot-modal').classList.add('hidden');
+            document.getElementById('spot-name').value = '';
+            document.getElementById('spot-mobile').value = '';
+        }
+        function submitSpotRegistration() {
+            const name = document.getElementById('spot-name').value;
+            const mobile = document.getElementById('spot-mobile').value;
+            const mandalam = document.getElementById('spot-mandalam').value;
+            const unit = document.getElementById('spot-unit').value;
+            const autoRegister = document.getElementById('spot-autoreg').checked;
+
+            window.addSpotStudent(name, mobile, mandalam, unit, autoRegister);
+        }
+
+        // Auth Modal Helpers
+        function openAuthModal() {
+            document.getElementById('auth-modal').classList.remove('hidden');
+        }
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        }
+        function submitLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            window.loginUser(email, password);
+        }
+
+        // Notification Toast
+        function showToast(msg, type = "info") {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.textContent = msg;
+
+            if (type === "success") toast.className = "fixed bottom-4 right-4 left-4 sm:left-auto z-50 transition-all duration-300 bg-emerald-600 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start pointer-events-none";
+            else if (type === "error") toast.className = "fixed bottom-4 right-4 left-4 sm:left-auto z-50 transition-all duration-300 bg-rose-600 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start pointer-events-none";
+            else toast.className = "fixed bottom-4 right-4 left-4 sm:left-auto z-50 transition-all duration-300 bg-slate-900 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start pointer-events-none";
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
