@@ -1,0 +1,677 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Teen Space - Bus Check-in Index</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .touch-target {
+            min-height: 48px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between antialiased selection:bg-pink-500 selection:text-white">
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc,
+            onSnapshot, 
+            updateDoc
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // Provided Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB87xG9PfEPU76qvZXj_HMBMSo41MvawdU",
+            authDomain: "check-b2152.firebaseapp.com",
+            projectId: "check-b2152",
+            storageBucket: "check-b2152.firebasestorage.app",
+            messagingSenderId: "973461667305",
+            appId: "1:973461667305:web:59767e47862054d9dadf78"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // App Globals
+        window.db = db;
+        window.auth = auth;
+        window.studentsList = [];
+        window.mandalamList = [];
+        window.unitMap = {};
+
+        // Expose Firebase Auth Functions
+        window.loginUser = async (email, password) => {
+            try {
+                showToast("Logging in...", "info");
+                await signInWithEmailAndPassword(auth, email, password);
+                showToast("Login Successful!", "success");
+                closeAuthModal();
+            } catch (err) {
+                showToast("Login Failed: " + err.message, "error");
+            }
+        };
+
+        window.logoutUser = async () => {
+            await signOut(auth);
+            showToast("Logged Out Successfully", "info");
+        };
+
+        // Listen Auth State
+        onAuthStateChanged(auth, (user) => {
+            const authBtn = document.getElementById('auth-btn');
+            const authBtnMobile = document.getElementById('auth-btn-mobile');
+            
+            if (user) {
+                const userText = `<i class="fa-solid fa-right-from-bracket mr-1.5"></i> Logout (${user.email.split('@')[0]})`;
+                if(authBtn) {
+                    authBtn.innerHTML = userText;
+                    authBtn.onclick = window.logoutUser;
+                }
+                if(authBtnMobile) {
+                    authBtnMobile.innerHTML = `<i class="fa-solid fa-right-from-bracket text-rose-500"></i>`;
+                    authBtnMobile.onclick = window.logoutUser;
+                    authBtnMobile.title = "Logout";
+                }
+            } else {
+                const loginText = `<i class="fa-solid fa-user-lock mr-1.5"></i> Admin Login`;
+                if(authBtn) {
+                    authBtn.innerHTML = loginText;
+                    authBtn.onclick = openAuthModal;
+                }
+                if(authBtnMobile) {
+                    authBtnMobile.innerHTML = `<i class="fa-solid fa-user-lock text-sky-600"></i>`;
+                    authBtnMobile.onclick = openAuthModal;
+                    authBtnMobile.title = "Admin Login";
+                }
+            }
+        });
+
+        // Realtime Listener for Students Database
+        const studentsCol = collection(db, "students");
+        onSnapshot(studentsCol, (snapshot) => {
+            const list = [];
+            const mandalams = new Set();
+            const units = {};
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const item = { id: doc.id, ...data };
+                list.push(item);
+
+                if (data.mandalam) {
+                    mandalams.add(data.mandalam);
+                    if (!units[data.mandalam]) units[data.mandalam] = new Set();
+                    if (data.unit) units[data.mandalam].add(data.unit);
+                }
+            });
+
+            window.studentsList = list;
+            window.mandalamList = Array.from(mandalams).sort();
+            window.unitMap = {};
+            for (let m in units) {
+                window.unitMap[m] = Array.from(units[m]).sort();
+            }
+
+            updateStats();
+            populateMandalamDropdown();
+            renderStudentsList();
+        }, (err) => {
+            console.error("Firestore Listen Error:", err);
+            showToast("Failed to load data", "error");
+        });
+
+        // Toggle Check-in status
+        window.toggleCheckIn = async (studentId, currentStatus) => {
+            try {
+                const docRef = doc(db, "students", studentId);
+                await updateDoc(docRef, {
+                    checkedIn: !currentStatus,
+                    checkInTime: !currentStatus ? new Date().toISOString() : null
+                });
+                showToast(!currentStatus ? "Checked-In Successfully ✅" : "Check-In Cancelled ❌", "success");
+            } catch (e) {
+                showToast("Failed to update status", "error");
+            }
+        };
+
+        // Add New Unlisted Student Realtime Function
+        window.addNewStudentToFirebase = async (name, mobile, mandalam, unit, autoCheckIn) => {
+            try {
+                showToast("Adding new student...", "info");
+                const cleanName = name.trim();
+                const cleanMobile = mobile.trim();
+                const cleanMandalam = mandalam.trim();
+                const cleanUnit = unit.trim();
+
+                const docId = cleanMobile ? cleanMobile : `${cleanName}_${cleanUnit}`.replace(/[^a-zA-Z0-9_]/g, "_");
+                const docRef = doc(db, "students", docId);
+
+                await setDoc(docRef, {
+                    name: cleanName,
+                    mobile: cleanMobile,
+                    mandalam: cleanMandalam,
+                    unit: cleanUnit,
+                    checkedIn: autoCheckIn,
+                    checkInTime: autoCheckIn ? new Date().toISOString() : null,
+                    addedManually: true,
+                    createdAt: new Date().toISOString()
+                }, { merge: true });
+
+                showToast("New Student Added Successfully! 🎉", "success");
+                closeAddStudentModal();
+            } catch (err) {
+                console.error("Error adding student:", err);
+                showToast("Failed to add student: " + err.message, "error");
+            }
+        };
+    </script>
+
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 shadow-xl">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 sm:h-20">
+                <!-- Logo & Branding -->
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <div class="bg-slate-800/80 p-1.5 sm:p-2 rounded-2xl flex items-center justify-center border border-slate-700/60 shadow-inner">
+                        <img src="0.png" alt="Teen Space Logo" class="h-7 sm:h-10 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/180x60/0f172a/ffffff?text=TeenSpace';">
+                    </div>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-extrabold bg-gradient-to-r from-pink-500 via-purple-400 to-sky-400 bg-clip-text text-transparent leading-tight">
+                            Teen Space
+                        </h1>
+                        <p class="text-[10px] sm:text-xs font-black text-slate-400 tracking-wider">BUS CHECK-IN PORTAL</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex space-x-2 bg-slate-800/90 p-1.5 rounded-2xl border border-slate-700 text-sm font-bold">
+                    <a href="index.html" class="px-5 py-2.5 rounded-xl bg-white text-slate-900 shadow-md font-extrabold transition-all flex items-center">
+                        <i class="fa-solid fa-bus text-sky-600 mr-2 text-base"></i> Index (Check-In)
+                    </a>
+                    <a href="Desk-Og.html" class="px-5 py-2.5 rounded-xl text-slate-300 hover:text-white transition-all flex items-center">
+                        <i class="fa-solid fa-chart-pie text-pink-500 mr-2 text-base"></i> Dashboard & Excel
+                    </a>
+                </nav>
+
+                <!-- Auth Action Button (Desktop) -->
+                <div class="hidden md:block">
+                    <button id="auth-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl transition border border-slate-700 shadow-sm flex items-center">
+                        <i class="fa-solid fa-user-lock mr-2 text-sky-400"></i> Admin Login
+                    </button>
+                </div>
+
+                <!-- Mobile Action Button -->
+                <div class="flex md:hidden items-center">
+                    <button id="auth-btn-mobile" class="bg-slate-800 text-slate-200 w-10 h-10 rounded-xl border border-slate-700 flex items-center justify-center">
+                        <i class="fa-solid fa-user-lock text-sky-400"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Sub Navigation Tabs -->
+            <div class="flex md:hidden pb-3 pt-1 space-x-2">
+                <a href="index.html" class="flex-1 py-2.5 rounded-xl text-xs font-black bg-white text-slate-900 text-center shadow flex items-center justify-center">
+                    <i class="fa-solid fa-bus text-sky-600 mr-1.5"></i> Check-In Index
+                </a>
+                <a href="Desk-Og.html" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 text-center border border-slate-700 flex items-center justify-center">
+                    <i class="fa-solid fa-chart-pie text-pink-500 mr-1.5"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex-1 w-full">
+
+        <!-- Stat Overview Badges -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-4 sm:mb-6">
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                <div class="p-2.5 sm:p-3 bg-pink-50 text-pink-600 rounded-xl shrink-0">
+                    <i class="fa-solid fa-users text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wide">Total Students</p>
+                    <h3 id="stat-total" class="text-lg sm:text-2xl font-black text-slate-800">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                <div class="p-2.5 sm:p-3 bg-emerald-50 text-emerald-600 rounded-xl shrink-0">
+                    <i class="fa-solid fa-circle-check text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wide">Boarded</p>
+                    <h3 id="stat-checkedin" class="text-lg sm:text-2xl font-black text-emerald-600">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                <div class="p-2.5 sm:p-3 bg-amber-50 text-amber-600 rounded-xl shrink-0">
+                    <i class="fa-solid fa-clock text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wide">Pending</p>
+                    <h3 id="stat-pending" class="text-lg sm:text-2xl font-black text-amber-600">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                <div class="p-2.5 sm:p-3 bg-sky-50 text-sky-600 rounded-xl shrink-0">
+                    <i class="fa-solid fa-map-location-dot text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wide">Mandalams</p>
+                    <h3 id="stat-mandalams" class="text-lg sm:text-2xl font-black text-sky-600">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <section id="page-checkin" class="space-y-4 sm:space-y-5">
+            <!-- Filter Options & Add Student Banner -->
+            <div class="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                    <h2 class="text-xs sm:text-sm font-extrabold text-slate-800 flex items-center">
+                        <i class="fa-solid fa-filter text-sky-500 mr-2"></i> Select Mandalam & Unit (Index Filter)
+                    </h2>
+                    
+                    <div class="flex items-center space-x-2">
+                        <button onclick="openAddStudentModal()" class="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-xs font-black px-3.5 py-2 rounded-xl transition shadow-md flex items-center">
+                            <i class="fa-solid fa-user-plus mr-1.5"></i> Add New Student
+                        </button>
+                        <button onclick="resetCheckinFilters()" class="text-[11px] font-bold text-slate-400 hover:text-slate-600">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> Reset
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <!-- Mandalam Dropdown -->
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-500 mb-1 uppercase">1. Mandalam</label>
+                        <select id="select-mandalam" onchange="onMandalamChange()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm rounded-xl focus:ring-2 focus:ring-sky-500 p-3 outline-none font-bold touch-target">
+                            <option value="">-- Select Mandalam --</option>
+                        </select>
+                    </div>
+
+                    <!-- Unit Dropdown -->
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-500 mb-1 uppercase">2. Unit</label>
+                        <select id="select-unit" onchange="renderStudentsList()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm rounded-xl focus:ring-2 focus:ring-sky-500 p-3 outline-none font-bold touch-target" disabled>
+                            <option value="">-- Select Mandalam First --</option>
+                        </select>
+                    </div>
+
+                    <!-- Search Box -->
+                    <div>
+                        <label class="block text-[11px] font-black text-slate-500 mb-1 uppercase">3. Search (Name/Phone)</label>
+                        <div class="relative">
+                            <input type="text" id="input-search" oninput="renderStudentsList()" placeholder="Name / Phone..." class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-xs sm:text-sm rounded-xl focus:ring-2 focus:ring-sky-500 p-3 pl-9 outline-none font-medium touch-target">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-400 text-xs sm:text-sm"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Filter Badges -->
+                <div class="flex items-center space-x-2 pt-3 border-t border-slate-100 text-xs font-bold">
+                    <span class="text-slate-400 text-[11px]">Status:</span>
+                    <button id="filter-status-all" onclick="setStatusFilter('all')" class="px-3 py-1 rounded-lg bg-slate-900 text-white text-[11px] transition">All</button>
+                    <button id="filter-status-pending" onclick="setStatusFilter('pending')" class="px-3 py-1 rounded-lg bg-amber-100 text-amber-800 text-[11px] transition">Pending</button>
+                    <button id="filter-status-done" onclick="setStatusFilter('done')" class="px-3 py-1 rounded-lg bg-emerald-100 text-emerald-800 text-[11px] transition">Boarded</button>
+                </div>
+            </div>
+
+            <!-- Student Checklist Block -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-3.5 sm:p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <h3 class="font-extrabold text-xs sm:text-sm text-slate-700 flex items-center">
+                        <i class="fa-solid fa-list-check text-pink-500 mr-2"></i> Bus Check-In List
+                        <span id="student-count-badge" class="ml-2 bg-pink-100 text-pink-700 text-xs px-2.5 py-0.5 rounded-full font-black">0</span>
+                    </h3>
+                    
+                    <div class="text-[11px] font-bold text-slate-400 hidden sm:block">
+                        Click checkbox to check-in student
+                    </div>
+                </div>
+
+                <div id="students-checklist" class="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
+                    <!-- Dynamic Items Render Here -->
+                    <div class="p-10 text-center text-slate-400">
+                        <i class="fa-solid fa-bus-simple text-4xl mb-3 text-slate-300"></i>
+                        <p class="text-sm font-bold">Please select Mandalam and Unit to load student details.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-[11px] text-slate-400 font-bold">
+        Teen Space Higher Secondary Students Conference &bull; Bus Check-In Portal
+    </footer>
+
+    <div id="add-student-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-md shadow-2xl border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                <h3 class="text-base font-extrabold text-slate-800 flex items-center">
+                    <i class="fa-solid fa-user-plus text-pink-500 mr-2"></i> Add Unlisted Student
+                </h3>
+                <button onclick="closeAddStudentModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <form onsubmit="event.preventDefault(); submitAddStudent();" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Student Full Name *</label>
+                    <input type="text" id="new-name" required placeholder="Enter student name..." class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-500 font-bold">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Mobile Phone Number</label>
+                    <input type="tel" id="new-mobile" placeholder="e.g. 9876543210" class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-500 font-bold">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Mandalam *</label>
+                        <input type="text" id="new-mandalam" required placeholder="Mandalam..." class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-500 font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Unit *</label>
+                        <input type="text" id="new-unit" required placeholder="Unit name..." class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-pink-500 font-bold">
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex items-center space-x-3">
+                    <input type="checkbox" id="new-autocheckin" checked class="w-5 h-5 rounded text-emerald-600 focus:ring-emerald-500 accent-emerald-600 cursor-pointer">
+                    <label for="new-autocheckin" class="text-xs font-bold text-slate-700 cursor-pointer select-none">
+                        Automatically Check-In / Mark as Boarded Now
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-black py-3.5 rounded-xl text-sm transition shadow-lg flex items-center justify-center">
+                    <i class="fa-solid fa-circle-check text-emerald-400 mr-2"></i> Save & Check-In Student
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-sm shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-base font-extrabold text-slate-800">Admin Login</h3>
+                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="event.preventDefault(); submitLogin();" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Email Address</label>
+                    <input type="email" id="login-email" required placeholder="admin@teenspace.org" class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg">
+                    Log In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start space-x-2 pointer-events-none">
+        <span id="toast-msg"></span>
+    </div>
+
+    <script>
+        let currentStatusFilter = 'all';
+
+        // Populate Mandalam Select Dropdown
+        function populateMandalamDropdown() {
+            const select = document.getElementById('select-mandalam');
+            const currentVal = select.value;
+
+            select.innerHTML = '<option value="">-- All Mandalams --</option>';
+            window.mandalamList.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = m;
+                select.appendChild(opt);
+            });
+
+            select.value = currentVal;
+        }
+
+        // Mandalam Change Event Listener
+        function onMandalamChange() {
+            const mandalam = document.getElementById('select-mandalam').value;
+            const unitSelect = document.getElementById('select-unit');
+
+            unitSelect.innerHTML = '<option value="">-- All Units --</option>';
+
+            if (mandalam && window.unitMap[mandalam]) {
+                unitSelect.disabled = false;
+                window.unitMap[mandalam].forEach(u => {
+                    const opt = document.createElement('option');
+                    opt.value = u;
+                    opt.textContent = u;
+                    unitSelect.appendChild(opt);
+                });
+            } else {
+                unitSelect.disabled = true;
+            }
+
+            renderStudentsList();
+        }
+
+        function setStatusFilter(status) {
+            currentStatusFilter = status;
+
+            const btnAll = document.getElementById('filter-status-all');
+            const btnPending = document.getElementById('filter-status-pending');
+            const btnDone = document.getElementById('filter-status-done');
+
+            btnAll.className = status === 'all' ? "px-3 py-1 rounded-lg bg-slate-900 text-white text-[11px] font-black" : "px-3 py-1 rounded-lg bg-slate-100 text-slate-600 text-[11px]";
+            btnPending.className = status === 'pending' ? "px-3 py-1 rounded-lg bg-amber-500 text-white text-[11px] font-black" : "px-3 py-1 rounded-lg bg-amber-50 text-amber-700 text-[11px]";
+            btnDone.className = status === 'done' ? "px-3 py-1 rounded-lg bg-emerald-600 text-white text-[11px] font-black" : "px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-[11px]";
+
+            renderStudentsList();
+        }
+
+        function resetCheckinFilters() {
+            document.getElementById('select-mandalam').value = "";
+            document.getElementById('select-unit').value = "";
+            document.getElementById('select-unit').disabled = true;
+            document.getElementById('input-search').value = "";
+            setStatusFilter('all');
+        }
+
+        // Render Student Checklist for Bus Check-in (Index Page)
+        function renderStudentsList() {
+            const selectedMandalam = document.getElementById('select-mandalam').value;
+            const selectedUnit = document.getElementById('select-unit').value;
+            const searchQuery = document.getElementById('input-search').value.toLowerCase().trim();
+            const container = document.getElementById('students-checklist');
+            const badge = document.getElementById('student-count-badge');
+
+            let filtered = window.studentsList || [];
+
+            if (selectedMandalam) {
+                filtered = filtered.filter(s => s.mandalam === selectedMandalam);
+            }
+            if (selectedUnit) {
+                filtered = filtered.filter(s => s.unit === selectedUnit);
+            }
+            if (searchQuery) {
+                filtered = filtered.filter(s => 
+                    (s.name && s.name.toLowerCase().includes(searchQuery)) ||
+                    (s.mobile && s.mobile.includes(searchQuery))
+                );
+            }
+            if (currentStatusFilter === 'pending') {
+                filtered = filtered.filter(s => !s.checkedIn);
+            } else if (currentStatusFilter === 'done') {
+                filtered = filtered.filter(s => s.checkedIn);
+            }
+
+            badge.textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="p-8 sm:p-10 text-center text-slate-400">
+                        <i class="fa-solid fa-folder-open text-3xl mb-2 text-slate-300"></i>
+                        <p class="text-xs sm:text-sm font-bold">No student data found!</p>
+                    </div>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(s => {
+                const isChecked = s.checkedIn || false;
+                html += `
+                    <div class="p-3 sm:p-4 flex items-center justify-between hover:bg-slate-50 transition active:bg-slate-100 ${isChecked ? 'bg-emerald-50/40' : ''}">
+                        <div class="flex items-center space-x-3 pr-2 flex-1 min-w-0">
+                            <input 
+                                type="checkbox" 
+                                id="chk-${s.id}" 
+                                ${isChecked ? 'checked' : ''} 
+                                onchange="window.toggleCheckIn('${s.id}', ${isChecked})"
+                                class="w-6 h-6 rounded-lg text-emerald-600 border-slate-300 focus:ring-emerald-500 cursor-pointer accent-emerald-600 shrink-0"
+                            />
+                            <label for="chk-${s.id}" class="cursor-pointer select-none flex-1 min-w-0">
+                                <div class="flex items-center space-x-2">
+                                    <h4 class="font-black text-xs sm:text-sm text-slate-800 truncate ${isChecked ? 'line-through text-slate-400' : ''}">${s.name}</h4>
+                                    ${s.addedManually ? '<span class="bg-pink-100 text-pink-700 text-[9px] font-black px-1.5 py-0.5 rounded">Spot Added</span>' : ''}
+                                </div>
+                                <div class="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-slate-500 font-bold mt-0.5">
+                                    ${s.mobile ? `<a href="tel:${s.mobile}" class="text-sky-600 hover:underline"><i class="fa-solid fa-phone text-[10px] mr-1"></i>${s.mobile}</a>` : '<span class="text-slate-400">No Phone</span>'}
+                                    <span>&bull;</span>
+                                    <span>${s.unit || '-'} (${s.mandalam || '-'})</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="shrink-0 ml-2">
+                            ${isChecked ? `
+                                <span class="bg-emerald-100 text-emerald-800 text-[10px] sm:text-xs font-black px-2.5 py-1.5 rounded-full inline-flex items-center shadow-sm">
+                                    <i class="fa-solid fa-check mr-1"></i> Boarded
+                                </span>
+                            ` : `
+                                <span class="bg-slate-100 text-slate-500 text-[10px] sm:text-xs font-bold px-2.5 py-1.5 rounded-full">
+                                    Pending
+                                </span>
+                            `}
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Update Summary Stats
+        function updateStats() {
+            const total = window.studentsList.length;
+            const checkedIn = window.studentsList.filter(s => s.checkedIn).length;
+            const pending = total - checkedIn;
+            const mandalams = window.mandalamList.length;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-checkedin').textContent = checkedIn;
+            document.getElementById('stat-pending').textContent = pending;
+            document.getElementById('stat-mandalams').textContent = mandalams;
+        }
+
+        // Add Student Modal Helpers
+        function openAddStudentModal() {
+            const currentM = document.getElementById('select-mandalam').value;
+            const currentU = document.getElementById('select-unit').value;
+            if(currentM) document.getElementById('new-mandalam').value = currentM;
+            if(currentU) document.getElementById('new-unit').value = currentU;
+            
+            document.getElementById('add-student-modal').classList.remove('hidden');
+        }
+        function closeAddStudentModal() {
+            document.getElementById('add-student-modal').classList.add('hidden');
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-mobile').value = '';
+        }
+        function submitAddStudent() {
+            const name = document.getElementById('new-name').value;
+            const mobile = document.getElementById('new-mobile').value;
+            const mandalam = document.getElementById('new-mandalam').value;
+            const unit = document.getElementById('new-unit').value;
+            const autoCheckIn = document.getElementById('new-autocheckin').checked;
+
+            window.addNewStudentToFirebase(name, mobile, mandalam, unit, autoCheckIn);
+        }
+
+        // Auth Modal Controls
+        function openAuthModal() {
+            document.getElementById('auth-modal').classList.remove('hidden');
+        }
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        }
+        function submitLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            window.loginUser(email, password);
+        }
+
+        // Toast Helper
+        function showToast(msg, type = "info") {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.textContent = msg;
+
+            if (type === "success") toast.className = "fixed bottom-4 right-4 left-4 sm:left-auto z-50 transition-all duration-300 bg-emerald-600 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start pointer-events-none";
+            else if (type === "error") toast.className = "fixed bottom-4 right-4 left-4 sm:left-auto z-50 transition-all duration-300 bg-rose-600 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start pointer-events-none";
+            else toast.className = "fixed bottom-4 right-4 left-4 sm:left-auto z-50 transition-all duration-300 bg-slate-900 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start pointer-events-none";
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
