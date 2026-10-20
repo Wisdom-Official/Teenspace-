@@ -1,0 +1,572 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Teen Space - Dashboard & Excel Portal</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- XLSX library for parsing and exporting Excel files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .touch-target {
+            min-height: 48px;
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col justify-between antialiased selection:bg-pink-500 selection:text-white">
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            onSnapshot, 
+            writeBatch
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { 
+            getAuth, 
+            signInWithEmailAndPassword, 
+            onAuthStateChanged, 
+            signOut 
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        // Provided Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB87xG9PfEPU76qvZXj_HMBMSo41MvawdU",
+            authDomain: "check-b2152.firebaseapp.com",
+            projectId: "check-b2152",
+            storageBucket: "check-b2152.firebasestorage.app",
+            messagingSenderId: "973461667305",
+            appId: "1:973461667305:web:59767e47862054d9dadf78"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // App Globals
+        window.db = db;
+        window.auth = auth;
+        window.studentsList = [];
+
+        // Expose Firebase Auth Functions to Window
+        window.loginUser = async (email, password) => {
+            try {
+                showToast("Logging in...", "info");
+                await signInWithEmailAndPassword(auth, email, password);
+                showToast("Login Successful!", "success");
+                closeAuthModal();
+            } catch (err) {
+                showToast("Login Failed: " + err.message, "error");
+            }
+        };
+
+        window.logoutUser = async () => {
+            await signOut(auth);
+            showToast("Logged Out Successfully", "info");
+        };
+
+        // Listen Auth State
+        onAuthStateChanged(auth, (user) => {
+            const authBtn = document.getElementById('auth-btn');
+            const authBtnMobile = document.getElementById('auth-btn-mobile');
+            
+            if (user) {
+                const userText = `<i class="fa-solid fa-right-from-bracket mr-1.5"></i> Logout (${user.email.split('@')[0]})`;
+                if(authBtn) {
+                    authBtn.innerHTML = userText;
+                    authBtn.onclick = window.logoutUser;
+                }
+                if(authBtnMobile) {
+                    authBtnMobile.innerHTML = `<i class="fa-solid fa-right-from-bracket text-rose-500"></i>`;
+                    authBtnMobile.onclick = window.logoutUser;
+                    authBtnMobile.title = "Logout";
+                }
+            } else {
+                const loginText = `<i class="fa-solid fa-user-lock mr-1.5"></i> Admin Login`;
+                if(authBtn) {
+                    authBtn.innerHTML = loginText;
+                    authBtn.onclick = openAuthModal;
+                }
+                if(authBtnMobile) {
+                    authBtnMobile.innerHTML = `<i class="fa-solid fa-user-lock text-sky-600"></i>`;
+                    authBtnMobile.onclick = openAuthModal;
+                    authBtnMobile.title = "Admin Login";
+                }
+            }
+        });
+
+        // Realtime Listener for Students Database
+        const studentsCol = collection(db, "students");
+        onSnapshot(studentsCol, (snapshot) => {
+            const list = [];
+            const mandalams = new Set();
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const item = { id: doc.id, ...data };
+                list.push(item);
+                if (data.mandalam) mandalams.add(data.mandalam);
+            });
+
+            window.studentsList = list;
+            updateStats(mandalams.size);
+            renderDashboardTable();
+        }, (err) => {
+            console.error("Firestore Listen Error:", err);
+            showToast("Failed to load data", "error");
+        });
+
+        // Upload Excel Data with Smart Merge
+        window.uploadExcelData = async (jsonData) => {
+            if (!jsonData || jsonData.length === 0) {
+                showToast("No data found in the Excel file!", "error");
+                return;
+            }
+
+            showToast("Uploading data...", "info");
+            let addedCount = 0;
+            let updatedCount = 0;
+
+            try {
+                let batch = writeBatch(db);
+                let count = 0;
+
+                for (let row of jsonData) {
+                    const name = row["Name"] || row["NAME"] || row["പേര്"] || row["Student Name"] || "";
+                    const mobile = row["Mobile"] || row["MOBILE"] || row["Phone"] || row["ഫോൺ"] || "";
+                    const mandalam = row["Mandalam"] || row["MANDALAM"] || row["മണ്ഡലം"] || row["Zone"] || row["ZONE"] || "";
+                    const unit = row["Unit"] || row["UNIT"] || row["യൂണിറ്റ്"] || "";
+
+                    if (!name && !mobile) continue;
+
+                    const docId = mobile ? String(mobile).trim() : `${name.trim()}_${unit.trim()}`.replace(/[^a-zA-Z0-9_]/g, "_");
+                    const existingDoc = window.studentsList.find(s => s.id === docId);
+
+                    const studentData = {
+                        name: String(name).trim(),
+                        mobile: String(mobile).trim(),
+                        mandalam: String(mandalam).trim(),
+                        unit: String(unit).trim(),
+                        checkedIn: existingDoc ? (existingDoc.checkedIn || false) : false,
+                        updatedAt: new Date().toISOString()
+                    };
+
+                    const docRef = doc(db, "students", docId);
+                    batch.set(docRef, studentData, { merge: true });
+
+                    if (existingDoc) updatedCount++;
+                    else addedCount++;
+
+                    count++;
+                    if (count === 400) {
+                        await batch.commit();
+                        batch = writeBatch(db);
+                        count = 0;
+                    }
+                }
+
+                if (count > 0) {
+                    await batch.commit();
+                }
+
+                showToast(`Success! Added: ${addedCount}, Updated: ${updatedCount}`, "success");
+            } catch (err) {
+                console.error("Excel upload error:", err);
+                showToast("Upload failed: " + err.message, "error");
+            }
+        };
+    </script>
+
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 shadow-xl">
+        <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 sm:h-20">
+                <!-- Logo & Branding -->
+                <div class="flex items-center space-x-2 sm:space-x-3">
+                    <div class="bg-slate-800/80 p-1.5 sm:p-2 rounded-2xl flex items-center justify-center border border-slate-700/60 shadow-inner">
+                        <img src="0.png" alt="Teen Space Logo" class="h-7 sm:h-10 object-contain" onerror="this.onerror=null; this.src='https://placehold.co/180x60/0f172a/ffffff?text=TeenSpace';">
+                    </div>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-extrabold bg-gradient-to-r from-pink-500 via-purple-400 to-sky-400 bg-clip-text text-transparent leading-tight">
+                            Teen Space
+                        </h1>
+                        <p class="text-[10px] sm:text-xs font-black text-slate-400 tracking-wider">ADMIN DASHBOARD</p>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav class="hidden md:flex space-x-2 bg-slate-800/90 p-1.5 rounded-2xl border border-slate-700 text-sm font-bold">
+                    <a href="check_in.html" class="px-5 py-2.5 rounded-xl text-slate-300 hover:text-white transition-all flex items-center">
+                        <i class="fa-solid fa-bus text-sky-600 mr-2 text-base"></i> Index (Check-In)
+                    </a>
+                    <a href="dashboard.html" class="px-5 py-2.5 rounded-xl bg-white text-slate-900 shadow-md font-extrabold transition-all flex items-center">
+                        <i class="fa-solid fa-chart-pie text-pink-500 mr-2 text-base"></i> Dashboard & Excel
+                    </a>
+                </nav>
+
+                <!-- Auth Action Button (Desktop) -->
+                <div class="hidden md:block">
+                    <button id="auth-btn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl transition border border-slate-700 shadow-sm flex items-center">
+                        <i class="fa-solid fa-user-lock mr-2 text-sky-400"></i> Admin Login
+                    </button>
+                </div>
+
+                <!-- Mobile Action Button -->
+                <div class="flex md:hidden items-center">
+                    <button id="auth-btn-mobile" class="bg-slate-800 text-slate-200 w-10 h-10 rounded-xl border border-slate-700 flex items-center justify-center">
+                        <i class="fa-solid fa-user-lock text-sky-400"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Sub Navigation Tabs -->
+            <div class="flex md:hidden pb-3 pt-1 space-x-2">
+                <a href="check_in.html" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 text-center border border-slate-700 flex items-center justify-center">
+                    <i class="fa-solid fa-bus text-sky-600 mr-1.5"></i> Check-In Index
+                </a>
+                <a href="dashboard.html" class="flex-1 py-2.5 rounded-xl text-xs font-black bg-white text-slate-900 text-center shadow flex items-center justify-center">
+                    <i class="fa-solid fa-chart-pie text-pink-500 mr-1.5"></i> Dashboard
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 flex-1 w-full">
+
+        <!-- Stat Overview Badges -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-4 sm:mb-6">
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                <div class="p-2.5 sm:p-3 bg-pink-50 text-pink-600 rounded-xl shrink-0">
+                    <i class="fa-solid fa-users text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wide">Total Students</p>
+                    <h3 id="stat-total" class="text-lg sm:text-2xl font-black text-slate-800">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                <div class="p-2.5 sm:p-3 bg-emerald-50 text-emerald-600 rounded-xl shrink-0">
+                    <i class="fa-solid fa-circle-check text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wide">Boarded</p>
+                    <h3 id="stat-checkedin" class="text-lg sm:text-2xl font-black text-emerald-600">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                <div class="p-2.5 sm:p-3 bg-amber-50 text-amber-600 rounded-xl shrink-0">
+                    <i class="fa-solid fa-clock text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wide">Pending</p>
+                    <h3 id="stat-pending" class="text-lg sm:text-2xl font-black text-amber-600">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-3 sm:p-4 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                <div class="p-2.5 sm:p-3 bg-sky-50 text-sky-600 rounded-xl shrink-0">
+                    <i class="fa-solid fa-map-location-dot text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-[10px] sm:text-xs text-slate-500 font-extrabold uppercase tracking-wide">Mandalams</p>
+                    <h3 id="stat-mandalams" class="text-lg sm:text-2xl font-black text-sky-600">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <section id="page-dashboard" class="space-y-4 sm:space-y-6">
+            <!-- Upload & Export Banner -->
+            <div class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 p-5 sm:p-6 rounded-2xl text-white shadow-lg space-y-4">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                    <div class="space-y-1 max-w-2xl">
+                        <h2 class="text-base sm:text-lg font-black flex items-center">
+                            <i class="fa-solid fa-file-excel mr-2 text-2xl text-emerald-200"></i> Excel Upload & Report Downloads
+                        </h2>
+                        <p class="text-xs text-emerald-100 leading-relaxed">
+                            Upload Excel files to merge student records or export real-time check-in reports.
+                        </p>
+                    </div>
+
+                    <!-- Excel Actions -->
+                    <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+                        <label class="cursor-pointer bg-white text-emerald-800 hover:bg-emerald-50 font-black text-xs sm:text-sm px-4 py-3 rounded-xl transition flex items-center shrink-0 shadow-md touch-target active:scale-95">
+                            <i class="fa-solid fa-cloud-arrow-up mr-2 text-lg text-emerald-600"></i> Upload Excel
+                            <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" onchange="handleExcelUpload(event)" class="hidden">
+                        </label>
+
+                        <button onclick="exportCheckedInExcel()" class="bg-slate-900 hover:bg-slate-800 text-white font-black text-xs sm:text-sm px-4 py-3 rounded-xl transition flex items-center shrink-0 shadow-md active:scale-95">
+                            <i class="fa-solid fa-file-export mr-2 text-emerald-400"></i> Export Checked-In
+                        </button>
+
+                        <button onclick="exportAllStudentsExcel()" class="bg-emerald-800/80 hover:bg-emerald-800 text-white font-extrabold text-xs px-3.5 py-3 rounded-xl transition flex items-center shrink-0 shadow border border-emerald-500/40">
+                            <i class="fa-solid fa-download mr-1.5"></i> Export All
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Student Database Table -->
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-3.5 sm:p-4 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h3 class="font-extrabold text-xs sm:text-sm text-slate-700 flex items-center">
+                            <i class="fa-solid fa-database text-sky-500 mr-2"></i> Registered Students Database
+                        </h3>
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        <input type="text" id="dash-search" oninput="renderDashboardTable()" placeholder="Search student..." class="w-full sm:w-64 bg-white border border-slate-300 text-xs rounded-xl px-3.5 py-2 outline-none font-medium focus:ring-2 focus:ring-sky-500">
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs sm:text-sm text-slate-600">
+                        <thead class="bg-slate-100 text-[11px] uppercase font-black text-slate-500 border-b border-slate-200">
+                            <tr>
+                                <th class="p-3 sm:p-4">#</th>
+                                <th class="p-3 sm:p-4">Name</th>
+                                <th class="p-3 sm:p-4">Phone Number</th>
+                                <th class="p-3 sm:p-4">Mandalam</th>
+                                <th class="p-3 sm:p-4">Unit</th>
+                                <th class="p-3 sm:p-4 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dash-table-body" class="divide-y divide-slate-100">
+                            <!-- Dashboard Rows Render Here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-[11px] text-slate-400 font-bold">
+        Teen Space Higher Secondary Students Conference &bull; Bus Check-In Portal
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="auth-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-sm shadow-2xl border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-base font-extrabold text-slate-800">Admin Login</h3>
+                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="event.preventDefault(); submitLogin();" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Email Address</label>
+                    <input type="email" id="login-email" required placeholder="admin@teenspace.org" class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" class="w-full border border-slate-300 p-3 rounded-xl text-sm outline-none focus:ring-2 focus:ring-sky-500">
+                </div>
+                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl text-sm transition shadow-lg">
+                    Log In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-slate-900 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start space-x-2 pointer-events-none">
+        <span id="toast-msg"></span>
+    </div>
+
+    <script>
+        // Render Data Table in Dashboard
+        function renderDashboardTable() {
+            const search = document.getElementById('dash-search').value.toLowerCase().trim();
+            const tbody = document.getElementById('dash-table-body');
+            
+            let filtered = window.studentsList || [];
+            if (search) {
+                filtered = filtered.filter(s => 
+                    (s.name && s.name.toLowerCase().includes(search)) ||
+                    (s.mobile && s.mobile.includes(search)) ||
+                    (s.mandalam && s.mandalam.toLowerCase().includes(search)) ||
+                    (s.unit && s.unit.toLowerCase().includes(search))
+                );
+            }
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400 font-bold">No student data available.</td></tr>`;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach((s, index) => {
+                html += `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="p-3 sm:p-4 text-xs font-black text-slate-400">${index + 1}</td>
+                        <td class="p-3 sm:p-4 font-bold text-slate-800">
+                            ${s.name}
+                            ${s.addedManually ? '<span class="ml-1.5 bg-pink-100 text-pink-700 text-[9px] font-black px-1.5 py-0.5 rounded">Spot Added</span>' : ''}
+                        </td>
+                        <td class="p-3 sm:p-4 font-semibold">${s.mobile || '-'}</td>
+                        <td class="p-3 sm:p-4"><span class="bg-sky-50 text-sky-700 px-2.5 py-1 rounded-md text-[11px] font-bold">${s.mandalam || '-'}</span></td>
+                        <td class="p-3 sm:p-4"><span class="bg-purple-50 text-purple-700 px-2.5 py-1 rounded-md text-[11px] font-bold">${s.unit || '-'}</span></td>
+                        <td class="p-3 sm:p-4 text-center">
+                            ${s.checkedIn ? 
+                                `<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full">Boarded</span>` : 
+                                `<span class="bg-slate-100 text-slate-500 text-[10px] font-extrabold px-2.5 py-1 rounded-full">Pending</span>`
+                            }
+                        </td>
+                    </tr>
+                `;
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        // Update Summary Stats
+        function updateStats(mandalamCount = 0) {
+            const total = window.studentsList.length;
+            const checkedIn = window.studentsList.filter(s => s.checkedIn).length;
+            const pending = total - checkedIn;
+
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-checkedin').textContent = checkedIn;
+            document.getElementById('stat-pending').textContent = pending;
+            document.getElementById('stat-mandalams').textContent = mandalamCount;
+        }
+
+        // Handle Excel Upload
+        function handleExcelUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                    window.uploadExcelData(jsonData);
+                } catch (err) {
+                    showToast("Failed to read Excel file!", "error");
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Export Checked-In Students Only Excel
+        function exportCheckedInExcel() {
+            const checkedInStudents = (window.studentsList || []).filter(s => s.checkedIn);
+
+            if (checkedInStudents.length === 0) {
+                showToast("No checked-in students to export yet!", "error");
+                return;
+            }
+
+            const exportData = checkedInStudents.map((s, index) => ({
+                "SL No": index + 1,
+                "Student Name": s.name || "",
+                "Mobile Phone": s.mobile || "",
+                "Mandalam": s.mandalam || "",
+                "Unit": s.unit || "",
+                "Boarding Status": "Checked-In",
+                "Check-In Time": s.checkInTime ? new Date(s.checkInTime).toLocaleString() : "Yes"
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Checked_In_Students");
+
+            XLSX.writeFile(workbook, `TeenSpace_Boarded_Students_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showToast("Checked-In Students exported successfully!", "success");
+        }
+
+        // Export All Registered Data Excel
+        function exportAllStudentsExcel() {
+            const allStudents = window.studentsList || [];
+
+            if (allStudents.length === 0) {
+                showToast("No student records available to export!", "error");
+                return;
+            }
+
+            const exportData = allStudents.map((s, index) => ({
+                "SL No": index + 1,
+                "Student Name": s.name || "",
+                "Mobile Phone": s.mobile || "",
+                "Mandalam": s.mandalam || "",
+                "Unit": s.unit || "",
+                "Boarding Status": s.checkedIn ? "Checked-In" : "Pending",
+                "Check-In Time": s.checkInTime ? new Date(s.checkInTime).toLocaleString() : "-"
+            }));
+
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "All_Students");
+
+            XLSX.writeFile(workbook, `TeenSpace_All_Students_${new Date().toISOString().slice(0,10)}.xlsx`);
+            showToast("All Student records exported successfully!", "success");
+        }
+
+        // Auth Modal Controls
+        function openAuthModal() {
+            document.getElementById('auth-modal').classList.remove('hidden');
+        }
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+        }
+        function submitLogin() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            window.loginUser(email, password);
+        }
+
+        // Toast Helper
+        function showToast(msg, type = "info") {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            toastMsg.textContent = msg;
+
+            if (type === "success") toast.className = "fixed bottom-4 right-4 left-4 sm:left-auto z-50 transition-all duration-300 bg-emerald-600 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start pointer-events-none";
+            else if (type === "error") toast.className = "fixed bottom-4 right-4 left-4 sm:left-auto z-50 transition-all duration-300 bg-rose-600 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start pointer-events-none";
+            else toast.className = "fixed bottom-4 right-4 left-4 sm:left-auto z-50 transition-all duration-300 bg-slate-900 text-white text-xs sm:text-sm font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center justify-center sm:justify-start pointer-events-none";
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
