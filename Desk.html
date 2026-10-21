@@ -58,7 +58,6 @@
 </head>
 <body class="bg-gradient-to-br from-slate-50 via-indigo-50/40 to-pink-50/50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-pink-500 selection:text-white">
 
-  <!-- Top Navigation Header -->
   <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16 sm:h-20">
@@ -86,7 +85,6 @@
     </div>
   </header>
 
-  <!-- Navigation Bar Tabs -->
   <nav class="bg-white/60 border-b border-slate-200/80 sticky top-16 sm:top-20 z-30 backdrop-blur-sm shadow-xs">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex space-x-2 py-2 overflow-x-auto scrollbar-none">
@@ -108,14 +106,15 @@
     </div>
   </nav>
 
-  <!-- Main Content Container -->
   <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
     <!-- DASHBOARD VIEW -->
     <section id="view-dashboard" class="tab-view space-y-6">
-      <!-- Quick Stats Grid -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+      
+      <!-- Primary Quick Stats Grid -->
+      <div class="grid grid-cols-2 md:grid-cols-6 gap-4">
+        <!-- Total Registrations -->
+        <div class="col-span-2 md:col-span-2 bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition">
           <div class="flex justify-between items-center text-slate-500">
             <span class="text-xs font-bold uppercase tracking-wider">Total Regs</span>
             <i data-lucide="users" class="w-4 h-4 text-pink-500"></i>
@@ -123,7 +122,26 @@
           <p id="statTotal" class="text-3xl font-extrabold text-slate-800 mt-2">0</p>
         </div>
 
-        <div class="bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+        <!-- Total Boys Count -->
+        <div class="col-span-1 md:col-span-1 bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-sky-100/80 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+          <div class="flex justify-between items-center text-sky-600">
+            <span class="text-xs font-bold uppercase tracking-wider">Boys</span>
+            <i data-lucide="user" class="w-4 h-4 text-sky-500"></i>
+          </div>
+          <p id="statBoys" class="text-3xl font-extrabold text-sky-600 mt-2">0</p>
+        </div>
+
+        <!-- Total Girls Count -->
+        <div class="col-span-1 md:col-span-1 bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-pink-100/80 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+          <div class="flex justify-between items-center text-pink-600">
+            <span class="text-xs font-bold uppercase tracking-wider">Girls</span>
+            <i data-lucide="user" class="w-4 h-4 text-pink-500"></i>
+          </div>
+          <p id="statGirls" class="text-3xl font-extrabold text-pink-600 mt-2">0</p>
+        </div>
+
+        <!-- Synced -->
+        <div class="col-span-1 md:col-span-1 bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition">
           <div class="flex justify-between items-center text-emerald-600">
             <span class="text-xs font-bold uppercase tracking-wider">Synced</span>
             <i data-lucide="cloud-check" class="w-4 h-4"></i>
@@ -131,20 +149,13 @@
           <p id="statSynced" class="text-3xl font-extrabold text-emerald-600 mt-2">0</p>
         </div>
 
-        <div class="bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+        <!-- Pending -->
+        <div class="col-span-1 md:col-span-1 bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition">
           <div class="flex justify-between items-center text-amber-600">
             <span class="text-xs font-bold uppercase tracking-wider">Pending</span>
             <i data-lucide="cloud-off" class="w-4 h-4"></i>
           </div>
           <p id="statPending" class="text-3xl font-extrabold text-amber-600 mt-2">0</p>
-        </div>
-
-        <div class="bg-white/80 backdrop-blur-md p-5 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between hover:shadow-md transition">
-          <div class="flex justify-between items-center text-sky-600">
-            <span class="text-xs font-bold uppercase tracking-wider">Last Sync</span>
-            <i data-lucide="clock" class="w-4 h-4"></i>
-          </div>
-          <p id="statLastSync" class="text-sm font-semibold text-slate-600 mt-4 truncate">Never</p>
         </div>
       </div>
 
@@ -165,7 +176,6 @@
         </button>
       </div>
 
-      <!-- Recent Activity View -->
       <div class="bg-white/80 backdrop-blur-md rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
         <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
           <h3 class="font-bold text-slate-800 text-sm flex items-center space-x-2">
@@ -184,7 +194,6 @@
       </div>
     </section>
 
-    <!-- REGISTRATION FORM VIEW -->
     <section id="view-registration" class="tab-view hidden max-w-2xl mx-auto space-y-6">
       
       <!-- Desk Banner -->
@@ -226,13 +235,13 @@
               <label id="genderMaleLabel" onclick="selectGender('Male')" class="cursor-pointer flex items-center justify-center space-x-3 p-3.5 rounded-xl border bg-sky-50/60 border-sky-400 text-sky-700 transition-all shadow-sm">
                 <input type="radio" name="gender" value="Male" checked class="hidden" />
                 <i data-lucide="user" class="w-4 h-4"></i>
-                <span class="font-bold text-sm">Male</span>
+                <span class="font-bold text-sm">Male (Boy)</span>
               </label>
 
               <label id="genderFemaleLabel" onclick="selectGender('Female')" class="cursor-pointer flex items-center justify-center space-x-3 p-3.5 rounded-xl border bg-slate-50 border-slate-200 text-slate-500 transition-all opacity-80">
                 <input type="radio" name="gender" value="Female" class="hidden" />
                 <i data-lucide="user" class="w-4 h-4"></i>
-                <span class="font-bold text-sm">Female</span>
+                <span class="font-bold text-sm">Female (Girl)</span>
               </label>
             </div>
           </div>
@@ -250,7 +259,7 @@
             </div>
           </div>
 
-          <!-- Mobile Number with Privacy Masking -->
+          <!-- Mobile Number Entry without Star Masking -->
           <div>
             <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
               Mobile Number <span class="text-pink-500">*</span>
@@ -259,8 +268,7 @@
               <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
                 <i data-lucide="phone" class="w-4 h-4"></i>
               </span>
-              <input type="hidden" id="fieldFullPhone" />
-              <input type="tel" id="fieldPhone" required maxlength="15" placeholder="Enter Mobile Number" oninput="handleFormPhoneInput(this)" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-3.5 text-slate-800 font-semibold focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition shadow-xs" />
+              <input type="tel" id="fieldPhone" required maxlength="15" placeholder="Enter Mobile Number" class="w-full bg-slate-50 border border-slate-200 rounded-2xl pl-10 pr-4 py-3.5 text-slate-800 font-semibold focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition shadow-xs" />
             </div>
           </div>
 
@@ -288,7 +296,6 @@
       </form>
     </section>
 
-    <!-- RECORDS MANAGEMENT VIEW -->
     <section id="view-records" class="tab-view hidden space-y-6">
       
       <!-- Top Filters Bar -->
@@ -345,7 +352,6 @@
 
   </main>
 
-  <!-- Edit Student Modal -->
   <div id="editModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 w-full max-w-lg rounded-3xl p-6 space-y-4 shadow-xl relative">
       <div class="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -378,8 +384,7 @@
           </div>
           <div>
             <label class="block font-semibold text-slate-700 mb-1">Mobile Number</label>
-            <input type="hidden" id="editFullPhone" />
-            <input type="tel" id="editPhone" required maxlength="15" oninput="handleEditPhoneInput(this)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 font-medium focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition" />
+            <input type="tel" id="editPhone" required maxlength="15" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 font-medium focus:ring-2 focus:ring-pink-500 focus:bg-white focus:outline-none transition" />
           </div>
         </div>
 
@@ -508,7 +513,6 @@
       });
     }
 
-    // INDEXEDDB ENGINE
     const DB_NAME = "TeenspaceRegistrationDB";
     const DB_VERSION = 2;
     const STORE_NAME = "registrations";
@@ -643,7 +647,6 @@
       }
     }
 
-    // NETWORK ONLINE / OFFLINE DETECTOR
     function updateOnlineStatus() {
       const isOnline = navigator.onLine;
       const badge = document.getElementById("connectionBadge");
@@ -693,73 +696,6 @@
       return `TS-${timestamp}${randomNum}`;
     }
 
-    // MASKING UTILS (SHOWS ONLY LAST 3 DIGITS)
-    function maskPhoneNumber(phone) {
-      if (!phone) return '';
-      const str = phone.toString();
-      if (str.length <= 3) return str;
-      const visibleLength = 3;
-      const maskedPart = '*'.repeat(str.length - visibleLength);
-      const visiblePart = str.slice(-visibleLength);
-      return maskedPart + visiblePart;
-    }
-
-    // FORM INPUT DYNAMIC MASKING HANDLERS
-    window.handleFormPhoneInput = function(input) {
-      const hiddenInput = document.getElementById('fieldFullPhone');
-      let currentFull = hiddenInput.value || "";
-      let entered = input.value;
-
-      if (!entered) {
-        hiddenInput.value = "";
-        input.value = "";
-        return;
-      }
-
-      const digitsOnly = entered.replace(/\D/g, '');
-      if (entered.includes('*')) {
-        const lastChar = entered.slice(-1);
-        if (/\d/.test(lastChar)) {
-          currentFull += lastChar;
-        } else if (entered.length < maskPhoneNumber(currentFull).length) {
-          currentFull = currentFull.slice(0, -1);
-        }
-      } else {
-        currentFull = digitsOnly;
-      }
-
-      hiddenInput.value = currentFull;
-      input.value = maskPhoneNumber(currentFull);
-    };
-
-    window.handleEditPhoneInput = function(input) {
-      const hiddenInput = document.getElementById('editFullPhone');
-      let currentFull = hiddenInput.value || "";
-      let entered = input.value;
-
-      if (!entered) {
-        hiddenInput.value = "";
-        input.value = "";
-        return;
-      }
-
-      const digitsOnly = entered.replace(/\D/g, '');
-      if (entered.includes('*')) {
-        const lastChar = entered.slice(-1);
-        if (/\d/.test(lastChar)) {
-          currentFull += lastChar;
-        } else if (entered.length < maskPhoneNumber(currentFull).length) {
-          currentFull = currentFull.slice(0, -1);
-        }
-      } else {
-        currentFull = digitsOnly;
-      }
-
-      hiddenInput.value = currentFull;
-      input.value = maskPhoneNumber(currentFull);
-    };
-
-    // FORM SUBMISSION
     window.handleFormSubmit = async function(e) {
       e.preventDefault();
       
@@ -768,11 +704,7 @@
 
       const name = document.getElementById('fieldName').value.trim();
       const place = document.getElementById('fieldPlace').value.trim();
-      
-      const phoneInputVal = document.getElementById('fieldPhone').value.trim();
-      const fullPhoneVal = document.getElementById('fieldFullPhone').value.trim();
-      const phone = fullPhoneVal || phoneInputVal;
-      
+      const phone = document.getElementById('fieldPhone').value.trim();
       const age = document.getElementById('fieldAge').value.trim();
       const gender = selectedGender;
 
@@ -786,7 +718,7 @@
       const isDuplicate = existingRecords.some(r => r.phone === phone && !r.isDeleted);
 
       if (isDuplicate) {
-        if (!confirm(`Phone number ${maskPhoneNumber(phone)} is already registered. Continue saving?`)) {
+        if (!confirm(`Phone number ${phone} is already registered. Continue saving?`)) {
           submitBtn.disabled = false;
           return;
         }
@@ -807,7 +739,6 @@
       try {
         await saveToLocalDB(newRecord);
         document.getElementById('studentForm').reset();
-        document.getElementById('fieldFullPhone').value = "";
         selectGender('Male');
         
         if (navigator.onLine) {
@@ -826,17 +757,20 @@
       }
     };
 
-    // UI REFRESH
     async function refreshUI() {
       const records = await getAllLocalRecords();
       const activeRecords = records.filter(r => !r.isDeleted);
 
       const total = activeRecords.length;
+      const boys = activeRecords.filter(r => r.gender === 'Male').length;
+      const girls = activeRecords.filter(r => r.gender === 'Female').length;
       const synced = activeRecords.filter(r => r.syncStatus === 'SYNCED').length;
       const pending = activeRecords.filter(r => r.syncStatus === 'PENDING' || r.syncStatus === 'FAILED').length;
       const lastSync = localStorage.getItem("teenspace_last_sync") || "Never";
 
       document.getElementById('statTotal').innerText = total;
+      document.getElementById('statBoys').innerText = boys;
+      document.getElementById('statGirls').innerText = girls;
       document.getElementById('statSynced').innerText = synced;
       document.getElementById('statPending').innerText = pending;
       document.getElementById('statLastSync').innerText = lastSync;
@@ -870,7 +804,7 @@
                 ? '<span class="text-[10px] font-bold bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full border border-pink-200">Girl</span>' 
                 : '<span class="text-[10px] font-bold bg-sky-100 text-sky-700 px-2 py-0.5 rounded-full border border-sky-200">Boy</span>'}
             </div>
-            <p class="text-xs text-slate-500 font-medium">${escapeHtml(r.place)} • <span class="font-mono text-slate-600 font-bold">${r.id}</span> • <span class="font-mono text-slate-600 font-bold">${maskPhoneNumber(r.phone)}</span></p>
+            <p class="text-xs text-slate-500 font-medium">${escapeHtml(r.place)} • <span class="font-mono text-slate-600 font-bold">${r.id}</span> • <span class="font-mono text-slate-600 font-bold">${escapeHtml(r.phone)}</span></p>
           </div>
           <div>
             ${renderSyncBadge(r.syncStatus)}
@@ -879,7 +813,6 @@
       `).join('');
     }
 
-    // TABLE RENDERING
     window.renderRecordsTable = async function() {
       const records = await getAllLocalRecords();
       const activeRecords = records.filter(r => !r.isDeleted);
@@ -916,7 +849,7 @@
               : '<span class="text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full border border-sky-200">Male</span>'}
           </td>
           <td class="py-3.5 px-4 text-xs font-semibold text-slate-600">${escapeHtml(r.place)}</td>
-          <td class="py-3.5 px-4 text-xs font-mono font-bold text-slate-700">${maskPhoneNumber(r.phone)}</td>
+          <td class="py-3.5 px-4 text-xs font-mono font-bold text-slate-700">${escapeHtml(r.phone)}</td>
           <td class="py-3.5 px-4 text-xs font-semibold text-slate-600">${r.age}</td>
           <td class="py-3.5 px-4">
             ${renderSyncBadge(r.syncStatus)}
@@ -947,7 +880,6 @@
       }
     }
 
-    // EDIT & DELETE MODAL ACTIONS
     window.openEditModal = async function(id) {
       const record = await getLocalRecord(id);
       if (!record) return;
@@ -956,10 +888,7 @@
       document.getElementById('editName').value = record.name;
       document.getElementById('editGender').value = record.gender || "Male";
       document.getElementById('editPlace').value = record.place;
-      
-      document.getElementById('editFullPhone').value = record.phone;
-      document.getElementById('editPhone').value = maskPhoneNumber(record.phone);
-      
+      document.getElementById('editPhone').value = record.phone;
       document.getElementById('editAge').value = record.age;
 
       document.getElementById('editModal').classList.remove('hidden');
@@ -979,11 +908,7 @@
       record.name = document.getElementById('editName').value.trim();
       record.gender = document.getElementById('editGender').value;
       record.place = document.getElementById('editPlace').value.trim();
-      
-      const phoneInputVal = document.getElementById('editPhone').value.trim();
-      const fullPhoneVal = document.getElementById('editFullPhone').value.trim();
-      record.phone = fullPhoneVal || phoneInputVal;
-      
+      record.phone = document.getElementById('editPhone').value.trim();
       record.age = document.getElementById('editAge').value.trim();
       record.updatedAt = new Date().toISOString();
       record.syncStatus = "PENDING";
@@ -1053,7 +978,6 @@
       showToast("CSV exported!", "emerald");
     };
 
-    // TOAST NOTIFICATIONS
     function showToast(message, type = "sky") {
       const container = document.getElementById("toastContainer");
       if (!container) return;
